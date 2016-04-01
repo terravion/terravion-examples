@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+		<script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+
+		<script>
+			$( document ).ready(function() {
+			var access_token='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
+			var user_id='5bad4dfa-7262-4a0a-b1e5-da30793cec65'
+			var epochStart='1456200627'
+			var epochEnd='1456632627'
+			var mymap = L.map('map').setView([38.540580, -121.877271], 15);
+			var layersControl = L.control.layers();
+
+			var mapbox_Layer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
+				drawControl: false,
+				maxZoom: 22,
+				maxNativeZoom: 19
+			}).addTo(mymap);
+			var nc_layer=L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=NC&access_token='+access_token, {
+				attribution: 'TerrAvion',
+				maxZoom: 19,
+				tms: true
+			}).addTo(mymap);
+			var cir_layer=L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=CIR&access_token='+access_token, {
+				attribution: 'TerrAvion',
+				maxZoom: 19,
+				tms: true
+			})//.addTo(mymap);
+			var ndvi_layer=L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=NDVI&colorMap=GRANULAR&access_token='+access_token, {
+				attribution: 'TerrAvion',
+				maxZoom: 19,
+				tms: true
+			})//.addTo(mymap);
+			var tirs_layer=L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=TIRS&colorMap=T&access_token='+access_token, {
+				attribution: 'TerrAvion',
+				maxZoom: 19,
+				tms: true
+			})//.addTo(mymap);
+			var zone_layer=L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=ZONE&colorMap=GRANULAR&access_token='+access_token, {
+				attribution: 'TerrAvion',
+				maxZoom: 19,
+				tms: true
+			})//.addTo(mymap);
+
+			layersControl.addOverlay(mapbox_Layer,'mapbox')
+			layersControl.addOverlay(nc_layer,'nc')
+			layersControl.addOverlay(cir_layer,'cir')
+			layersControl.addOverlay(ndvi_layer,'ndvi')
+			layersControl.addOverlay(tirs_layer,'thermal')
+			layersControl.addOverlay(zone_layer,'zone')
+			layersControl.addTo(mymap)
+			})
+			
+		</script>
+	</head>
+	<body>
+		<div id="map" style="height:1000px;width:1000px"></div>
+	</body>
+</html>
