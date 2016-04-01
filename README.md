@@ -1,7 +1,7 @@
 # terravion-examples
 
 This repository contains example codes to use [TerrAvion's API](http://docs.terravionv1.apiary.io/#)
-Pleaese contact wmaio@terravion.com for your access_token.
+Pleaese contact support@terravion.com for your access_token.
 
 Downloading Geotiff 
 ====================
