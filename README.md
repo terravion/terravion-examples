@@ -14,13 +14,13 @@ The following is are the parameters of the end point
 Parameter| Description | Type 
 --- | --- | ---
 userIdOrEmail | id or email of the user | Text 
-product| Product Type | Text
+product| Product Type (NC,CIR,NDVI,TIRS, ZONE) | Text
 epochStart| Start date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer
 epochEnd| End date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer
 z| Tile Zoom Level | Integer
 x| Tile x-axis position | Integer
 y| Tile Y-axis position | Integer 
-colorMap| Color Map to apply for NDVI, ZONE, TIRS Example: N-R3.Default: NONE. | Text 
+colorMap| Color Map to apply for NDVI, ZONE, TIRS Example: N-R2, ,N-R3,N-AVHRR, T, N  Default: NONE. | Text 
 access_token| acess_token (contact support@terravion.com for access) |Text
 
 Integrating TerrAvion Tiles with Google Maps 
