@@ -42,8 +42,12 @@ The following is an example html that pulls tiles from support+demo@terravion.co
 		});
 	map.overlayMapTypes.push(terravion_nc);
 ```
+code: 
+<a href="https://github.com/terravion/terravion-examples/master/terravion_gmap_example.html" target="_blank">terravion_gmap_example.html</a>
 
-[terravion_gmap_example.html](https://github.com/terravion/terravion-examples/blob/master/terravion_gmap_example.html)
+
+preview: 
+<a href="https://rawgit.com/terravion/terravion-examples/master/terravion_gmap_example.html" target="_blank">terravion_gmap_example.html</a>
 
 Integrating Terravion Tiles with Leaflet 
 --------------------
@@ -62,8 +66,14 @@ If you host your own Leaflet map application, you may directly pull the png tile
 	}).addTo(mymap);
 ```
 
+code: 
+<a href="https://github.com/terravion/terravion-examples/master/terravion_leaflet_example.html" target="_blank">terravion_leaflet_example.html</a>
 
-[terravion_leaflet_example.html](https://github.com/terravion/terravion-examples/blob/master/terravion_leaflet_example.html)
+
+preview: 
+<a href="https://rawgit.com/terravion/terravion-examples/master/terravion_leaflet_example.html" target="_blank">terravion_leaflet_example.html</a>
+
+
 
 Geotiff Download 
 ====================
