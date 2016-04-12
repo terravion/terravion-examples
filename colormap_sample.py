@@ -46,22 +46,22 @@ import json
 # default Colormap => N-R3
 
 '''
-  "ndvi.colormap.N-AVHRR": "AVHRR",
-  "ndvi.colormap.N": "Historic",
-  "ndvi.colormap.N-R2": "Wide Range",
-  "ndvi.colormap.N-R3": "Default",
-  "ndvi.colormap.N-GREENG": "Green Gradient",
-  "ndvi.colormap.BW": "Westbrook",
-  "ndvi.colormap.GM-RGB3": "GM RGB3",
-  "ndvi.colormap.GM-QUAD": "GM QUAD",
-  "ndvi.colormap.JG": "JG 0.5 Step Rainbow Palette",
-  "ndvi.colormap.GM-COMP1": "GM Complete Range",
-  "ndvi.colormap.GRANULAR": "Granular",
-  "ndvi.colormap.RW-LEGACY": "RW Legacy",
-  "ndvi.colormap.GRANULAR": "Granular",
-  "ndvi.colormap.SMWE": "SMWE",
-  "ndvi.colormap.CHS-LEGACY": "CHS Legacy",
-  "ndvi.colormap.TRICOLOR": "Tricolor",
+  "N-AVHRR": "AVHRR",
+  "N": "Historic",
+  "N-R2": "Wide Range",
+  "N-R3": "Default",
+  "N-GREENG": "Green Gradient",
+  "BW": "Westbrook",
+  "GM-RGB3": "GM RGB3",
+  "GM-QUAD": "GM QUAD",
+  "JG": "JG 0.5 Step Rainbow Palette",
+  "GM-COMP1": "GM Complete Range",
+  "GRANULAR": "Granular",
+  "RW-LEGACY": "RW Legacy",
+  "GRANULAR": "Granular",
+  "SMWE": "SMWE",
+  "CHS-LEGACY": "CHS Legacy",
+  "TRICOLOR": "Tricolor",
 '''
 
 def main(argv):
