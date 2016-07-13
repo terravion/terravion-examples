@@ -32,7 +32,7 @@
 # http://www.terravion.com
 #
 ################################################################################
-
+import urllib
 import os, sys,base64,argparse
 from os.path import basename
 from urllib2 import Request, urlopen, URLError, HTTPError
@@ -41,6 +41,9 @@ import time
 from datetime import datetime
 from time import mktime
 import json
+import httplib
+httplib.HTTPConnection._http_vsn = 10
+httplib.HTTPConnection._http_vsn_str = 'HTTP/1.0'
 
 # Contact wmaio@terravion.com for access_token
 # Access_token 
@@ -220,31 +223,32 @@ def get_geotiff(layer_info,product_name,color_map,username,access_token,working_
 		out_file_name=os.path.join(working_dir,date_object.strftime('%Y-%m-%d_%H%M-%S')+'_'+layer_info['block_name'].replace('/','-')+'_'+layer_info['block_id']+'_'+product_name+'.tiff')		
 	else: 
 		out_file_name=os.path.join(working_dir,date_object.strftime('%Y-%m-%d_%H%M-%S')+'_'+layer_info['block_name'].replace('/','-')+'_'+product_name+'.tiff')
-	if product_name=='MULTIBAND':
-		request_url='https://api.terravion.com/v1/layers/'+layer_id+'/geotiffs/multiband.tiff'+'?access_token='+access_token
-		request = Request(request_url)
-	elif 'NC'==layer_info['product'] or 'CIR'==layer_info['product']:
-		request_url='https://api.terravion.com/v1/layers/'+layer_id+'/geotiffs/image.tiff?colorMap=null'+'&access_token='+access_token
-		request = Request(request_url)
-	elif 'TIRS' ==layer_info['product']:
-		request_url='https://api.terravion.com/v1/layers/'+layer_id+'/geotiffs/image.tiff?colorMap=T'+'&access_token='+access_token
-		request = Request(request_url)
-	elif 'NDVI' ==layer_info['product'] or 'ZONE' ==layer_info['product']:
-		request_url='https://api.terravion.com/v1/layers/'+layer_id+'/geotiffs/image.tiff?colorMap='+color_map+'&access_token='+access_token
-		request = Request(request_url)
-	print request_url
-	response_file = urlopen(request)
+	if not os.path.isfile(out_file_name):
+		if product_name=='MULTIBAND':
+			request_url='https://api.terravion.com/v1/layers/'+layer_id+'/geotiffs/multiband.tiff'+'?access_token='+access_token
+			request = Request(request_url)
+		elif 'NC'==layer_info['product'] or 'CIR'==layer_info['product']:
+			request_url='https://api.terravion.com/v1/layers/'+layer_id+'/geotiffs/image.tiff?colorMap=null'+'&access_token='+access_token
+			request = Request(request_url)
+		elif 'TIRS' ==layer_info['product']:
+			request_url='https://api.terravion.com/v1/layers/'+layer_id+'/geotiffs/image.tiff?colorMap=T'+'&access_token='+access_token
+			request = Request(request_url)
+		elif 'NDVI' ==layer_info['product'] or 'ZONE' ==layer_info['product']:
+			request_url='https://api.terravion.com/v1/layers/'+layer_id+'/geotiffs/image.tiff?colorMap='+urllib.quote(color_map)+'&access_token='+access_token
+			request = Request(request_url)
+		print request_url
+		response_file = urlopen(request)
 
-	try:
-		print 'writing',out_file_name
-		with open(out_file_name, "wb") as local_file:
-			local_file.write(response_file.read())
-	except HTTPError, e:
-		#handle errors
-		print "HTTP Error:", e.code, url
-	except URLError, e:
-		print "URL Error:", e.reason, url
-	return out_file_name
+		try:
+			print 'writing',out_file_name
+			with open(out_file_name, "wb") as local_file:
+				local_file.write(response_file.read())
+		except HTTPError, e:
+			#handle errors
+			print "HTTP Error:", e.code, url
+		except URLError, e:
+			print "URL Error:", e.reason, url
+		return out_file_name
 
 def get_block_list_with_id(username,access_token):
 	# Getting the list of blocks owned by the user
