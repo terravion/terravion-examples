@@ -164,9 +164,9 @@ def check_duplicate_block_name(block_dic):
 		block_name_list.append(block_dic[block_id]['block_name'])
 		block_id_list.append(block_id)
 	if len(tuple(set(block_name_list)))==len(tuple(set(block_id_list))):
-		return True
-	else: 
 		return None
+	else: 
+		return True
 def get_all_layers_list(block_dic_struct,product_name,username,access_token):
 	if product_name=='MULTIBAND':
 		product_name='NDVI'
