@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>A simple map</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+</head>
+<body>
+
+<div id='map'></div>
+<script>
+  L.mapbox.accessToken = 'pk.eyJ1Ijoid21haW91aXJ1IiwiYSI6ImNpajJkN3hwYjAwMGN0dWtwbGV2ZTAzdHAifQ.3Q0TCWrorExd2iTOa-5NfA';
+  var map = L.mapbox.map('map', 'mapbox.streets')
+      .setView([38.540580, -121.877271], 15);
+  var access_token='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
+	var user_id='support+demo@terravion.com'
+	var epochStart='1456200627'
+	var epochEnd='1456632627'
+  L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=NC&access_token='+access_token,{tms:true}).addTo(map);
+</script>
+
+
+</body>
+</html>
+
