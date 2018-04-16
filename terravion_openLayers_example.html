@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+    <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+
+    <script>
+      $( document ).ready(function() {
+        // TerrAvion Layer Parameter
+        var access_token = '2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
+        var user_id = 'support+demo@terravion.com'
+        var epochStart = '1456200627'
+        var epochEnd = '1456632627'
+        var product = 'NC'
+
+        // openlayer view parameter
+        var viewLat = 38.540580;
+        var viewLng = -121.877271;
+        var viewZoomLevel = 15;
+
+        // oms layer parameter
+        var omsOpacity = 0.5; 
+
+        var omsLayer = new ol.layer.Tile({
+          opacity: omsOpacity,
+          source: new ol.source.OSM()
+        });
+
+        var terrAvionLayer = getTerrAvionLayer(
+          user_id, access_token, epochStart,
+          epochEnd, product
+          );
+
+        var view = new ol.View({
+          projection: 'EPSG:4326',
+          center: [viewLng, viewLat],
+          zoom: viewZoomLevel
+        });
+
+        var map = new ol.Map({
+          layers: [omsLayer, terrAvionLayer],
+          target: 'map',
+          view: view
+        });
+      })
+
+      function getTerrAvionLayer(user_id, access_token, epochStart, epochEnd, product){        
+        // TerrAvion Layer openLayer configuration
+        var terrAvionLayerOpacity = 0.8;
+        var maxZoomLevel = 20;
+        var tileSize = 256;
+        var projection = ol.proj.get('EPSG:3857');
+
+        var projectionExtent = projection.getExtent();
+        var maxResolution = ol.extent.getWidth(projectionExtent) / (tileSize * 2);
+
+        var terrAvionUrlTemplate= getTerrAvionUrlTemplate(
+          user_id, epochStart,
+          epochEnd, access_token, product);
+        var resolutions = new Array(maxZoomLevel);
+        for (var z = 0; z <= maxZoomLevel; ++z) {
+            resolutions[z] = maxResolution / Math.pow(2, z);
+        }
+        var tileGrid = new ol.tilegrid.TileGrid({
+          extent : projectionExtent,
+          resolutions: resolutions,
+          tileSize: tileSize
+        });
+        var terrAvionSource = new ol.source.XYZ({
+          attributions: 'TerrAvion',
+          maxZoom: maxZoomLevel,
+          tileGrid:tileGrid,
+          projection: projection,
+          tileSize: 256,
+          wrapX: true,
+          // url:url, 
+          tileUrlFunction: function(tileCoord) {
+            var url = terrAvionUrlTemplate.replace('{z}', (tileCoord[0]+1).toString())
+                .replace('{x}', tileCoord[1].toString())
+                .replace('{-y}', (-tileCoord[2] - 1).toString());
+            return url;
+          },
+        });
+
+        var terrAvionLayer = new ol.layer.Tile({
+          opacity: terrAvionLayerOpacity,
+          source: terrAvionSource,
+        })
+        return terrAvionLayer
+      }
+
+      function getTerrAvionUrlTemplate(user_id, epochStart, epochEnd, access_token, product){
+        var url = 'https://api.terravion.com/v1/users/';
+        url += user_id;
+        url += '/layers/tiles/'
+        url += '{z}/'
+        url += '{x}/'
+        url += '{-y}.png'
+        url += '?epochStart=' + epochStart
+        url += '&epochEnd=' + epochEnd 
+        url += '&product='+ product
+        url += '&access_token=' + access_token
+        url += '&useInverseY=false'
+        return url
+      }
+    </script>
+  </head>
+  <body>
+    <div id="map" style="height:1000px;width:1000px"></div>
+  </body>
+</html>
