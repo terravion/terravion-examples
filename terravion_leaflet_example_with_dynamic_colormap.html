@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
-
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
       $( document ).ready(function() {
         var accessToken = '2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
@@ -25,12 +25,12 @@
         };
         var thresholdRangeUrl = getThresholdRangeUrl(api2Url, userId, blockId,
           product, epochStart, epochEnd, accessToken);
-        $.getJSON({
-          url: thresholdRangeUrl,
-          crossDomain: true,
-          success: function(data){
-            var thresholdHigh = data.high;
-            var thresholdLow = data.low;
+          var config = {
+          };
+          axios.get(thresholdRangeUrl, config)
+          .then(function (response) {
+            var thresholdHigh = response.data.high;
+            var thresholdLow = response.data.low;
             var mymap = L.map('map').setView([mapLat, mapLng], 15);
             var layersControl = L.control.layers();
             var mapboxLayer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
@@ -49,8 +49,7 @@
             layersControl.addOverlay(mapboxLayer,'mapbox');
             layersControl.addOverlay(terrAvionLayer,'terrAvion');
             layersControl.addTo(mymap);
-          }
-        })
+          })
       })
       function getThresholdRangeUrl(api2Url, userId, blockId, product, epochStart, epochEnd, accessToken){
         var thresholdRangeUrl = api2Url + '/layerStats/getColormapThresholds/'
