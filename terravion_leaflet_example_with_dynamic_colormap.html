@@ -85,24 +85,24 @@
 
       function getThresholdRangeUrl(api2Url, userId, blockId, product, epochStart, epochEnd, accessToken){
         var thresholdRangeUrl = api2Url + '/layerStats/getColormapThresholds/'
-        thresholdRangeUrl += '?userId=' + userId
-        thresholdRangeUrl += '&blockId=' + blockId
-        thresholdRangeUrl += '&product=TIRS'
-        thresholdRangeUrl += '&epochStart=1508865698'
-        thresholdRangeUrl += '&epochEnd=1509038498'
-        thresholdRangeUrl += '&access_token=' + accessToken
+        thresholdRangeUrl += '?userId=' + userId;
+        thresholdRangeUrl += '&blockId=' + blockId;
+        thresholdRangeUrl += '&product=' + product;
+        thresholdRangeUrl += '&epochStart=' + epochStart;
+        thresholdRangeUrl += '&epochEnd=' + epochEnd;
+        thresholdRangeUrl += '&access_token=' + accessToken;
         return thresholdRangeUrl
       }
       
       function getTerrAvionTilesUrl(api2Url, userId, epochStart, epochEnd, product, colorMap, accessToken, thresholdLow, thresholdHigh){
         var terrAvionTilesUrl = api2Url + '/users/' + userId;
-            terrAvionTilesUrl += '/{z}/{x}/{y}.png?epochStart='+epochStart
-            terrAvionTilesUrl += '&epochEnd=' + epochEnd
-            terrAvionTilesUrl += '&product=' + product
-            terrAvionTilesUrl += '&colorMap=' + colorMap
-            terrAvionTilesUrl += '&access_token='+accessToken
-            terrAvionTilesUrl += '&a=' + thresholdLow
-            terrAvionTilesUrl += '&b=' + thresholdHigh
+            terrAvionTilesUrl += '/{z}/{x}/{y}.png?epochStart='+epochStart;
+            terrAvionTilesUrl += '&epochEnd=' + epochEnd;
+            terrAvionTilesUrl += '&product=' + product;
+            terrAvionTilesUrl += '&colorMap=' + colorMap;
+            terrAvionTilesUrl += '&access_token='+accessToken;
+            terrAvionTilesUrl += '&a=' + thresholdLow;
+            terrAvionTilesUrl += '&b=' + thresholdHigh;
         return terrAvionTilesUrl
       }
     </script>
