@@ -10,12 +10,10 @@
         var accessToken = '2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
         // NOTE That you cannot use email address for userId for now. In the future, we will support email address. 
         var userId = '5bad4dfa-7262-4a0a-b1e5-da30793cec65'; //'support+demo@terravion.com'
-        var blockId = '1d1cb782-6dff-4e6f-a53d-e4757b138c85';
         var api2Url = 'https://api2.terravion.com'
         var mapLat = 38.540580;
         var mapLng = -121.877271;
-        var epochStart = 1508865698;
-        var epochEnd = 1509038498;
+        var oneDayEpoch = 24*60*60;
         var product = 'TIRS';
         var colorMap = 'NDVI';
         if(product=='NDVI'){
@@ -23,34 +21,68 @@
         } else if (product == 'TIRS'){
           colorMap = 'T'
         };
-        var thresholdRangeUrl = getThresholdRangeUrl(api2Url, userId, blockId,
-          product, epochStart, epochEnd, accessToken);
-          var config = {
-          };
-          axios.get(thresholdRangeUrl, config)
-          .then(function (response) {
-            var thresholdHigh = response.data.high;
-            var thresholdLow = response.data.low;
-            var mymap = L.map('map').setView([mapLat, mapLng], 15);
-            var layersControl = L.control.layers();
-            var mapboxLayer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
-                drawControl: false,
-                maxZoom: 22,
-                maxNativeZoom: 19
-            }).addTo(mymap);
-            var terrAvionTilesUrl = getTerrAvionTilesUrl(api2Url, userId,
-              epochStart, epochEnd, product, colorMap, accessToken,
-              thresholdLow, thresholdHigh);
-            var terrAvionLayer=L.tileLayer(terrAvionTilesUrl, {
-                attribution: 'TerrAvion',
-                maxZoom: 19,
-                tms: true
-            }).addTo(mymap);
-            layersControl.addOverlay(mapboxLayer,'mapbox');
-            layersControl.addOverlay(terrAvionLayer,'terrAvion');
-            layersControl.addTo(mymap);
+        var config = {
+        };
+
+        // getting block id from GPS
+        var blocksFromGPSUrl = getBlocksFromGPSUrl(api2Url, userId, mapLat, mapLng, accessToken);
+        axios.get(blocksFromGPSUrl, config)
+        .then(function (blocksRsponse) {
+          var blockId = blocksRsponse.data[0].blockId;
+
+          // getting summary dates from blockId
+          var dateSummaryUrl = getDateSummaryUrl(api2Url, userId, blockId, accessToken);
+          axios.get(dateSummaryUrl, config).then(function(datesResponse){
+              var dateInfo = datesResponse.data[datesResponse.data.length-1];
+              var epochStart = dateInfo.layerDate - oneDayEpoch;
+              var epochEnd = dateInfo.layerDate + oneDayEpoch;
+              // getting thresholds date range and blockId
+              var thresholdRangeUrl = getThresholdRangeUrl(api2Url, userId, blockId,
+                product, epochStart, epochEnd, accessToken);
+              axios.get(thresholdRangeUrl, config).then(function(thresholdResponse){
+                // show map with tiles
+                var thresholdHigh = thresholdResponse.data.high;
+                var thresholdLow = thresholdResponse.data.low;
+                var mymap = L.map('map').setView([mapLat, mapLng], 15);
+                var layersControl = L.control.layers();
+                var mapboxLayer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
+                    drawControl: false,
+                    maxZoom: 22,
+                    maxNativeZoom: 19
+                }).addTo(mymap);
+                var terrAvionTilesUrl = getTerrAvionTilesUrl(api2Url, userId,
+                  epochStart, epochEnd, product, colorMap, accessToken,
+                  thresholdLow, thresholdHigh);
+                var terrAvionLayer=L.tileLayer(terrAvionTilesUrl, {
+                    attribution: 'TerrAvion',
+                    maxZoom: 19,
+                    tms: true
+                }).addTo(mymap);
+                layersControl.addOverlay(mapboxLayer,'mapbox');
+                layersControl.addOverlay(terrAvionLayer,'terrAvion');
+                layersControl.addTo(mymap);
+              })
+            })
           })
-      })
+        })
+
+      function getDateSummaryUrl(api2Url, userId, blockId, accessToken){
+        var DateSummaryUrl = api2Url + '/layers/getDateSummary';
+        DateSummaryUrl += '?userId=' + userId;
+        DateSummaryUrl += '&blockId=' + blockId;
+        DateSummaryUrl += '&access_token=' + accessToken
+        return DateSummaryUrl;
+      }
+
+      function getBlocksFromGPSUrl(api2Url, userId, lat, lng, accessToken){
+        var blocksFromGPSUrl = api2Url + '/userBlocks/getBlocksFromGPS';
+        blocksFromGPSUrl += '?userId=' + userId;
+        blocksFromGPSUrl += '&lat=' + lat;
+        blocksFromGPSUrl += '&lng=' + lng;
+        blocksFromGPSUrl += '&access_token=' + accessToken;
+        return blocksFromGPSUrl;
+      }
+
       function getThresholdRangeUrl(api2Url, userId, blockId, product, epochStart, epochEnd, accessToken){
         var thresholdRangeUrl = api2Url + '/layerStats/getColormapThresholds/'
         thresholdRangeUrl += '?userId=' + userId
@@ -61,7 +93,7 @@
         thresholdRangeUrl += '&access_token=' + accessToken
         return thresholdRangeUrl
       }
-
+      
       function getTerrAvionTilesUrl(api2Url, userId, epochStart, epochEnd, product, colorMap, accessToken, thresholdLow, thresholdHigh){
         var terrAvionTilesUrl = api2Url + '/users/' + userId;
             terrAvionTilesUrl += '/{z}/{x}/{y}.png?epochStart='+epochStart
