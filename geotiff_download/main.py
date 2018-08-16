@@ -89,6 +89,7 @@ def main(args):
     block_id_list = args.block_id_list
     lat = args.lat
     lng = args.lng
+    add_start_date = args.add_start_date
     start_date = args.start_date
     end_date = args.end_date
     if not (user_name and access_token):
@@ -97,7 +98,7 @@ def main(args):
         return 0
     elif download_multiband and (block_name or (lat and lng) or block_id_list):
         download_url_list = workflow_lib.get_multiband_download_links(user_name, access_token, block_name,
-            lat, lng, block_id_list, start_date, end_date)
+            lat, lng, block_id_list, start_date, end_date, add_start_date)
         for download_url in download_url_list:
             print download_url
     elif get_block_list:
@@ -162,6 +163,9 @@ if __name__ == '__main__':
 
     parser.add_argument('-block_id_list', help='block_id_list',
                         nargs='+', default=None)
+
+    parser.add_argument('-add_start_date', help='add_start_date',
+                        nargs='?', default=None)
 
     parser.add_argument('-start_date', help='start_date',
                         nargs='?', default=None)
