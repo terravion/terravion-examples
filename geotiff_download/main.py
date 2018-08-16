@@ -43,7 +43,6 @@ import traceback
 
 import lib.workflow_lib as workflow_lib
 
-
 from lib.api1.ta_user import TerrAvionAPI1User
 from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
@@ -96,14 +95,11 @@ def main(args):
         print 'email William Maio at wmaio@terravion.com if you need one'
         print parser.print_help()
         return 0
-    elif download_multiband and (block_name or (lat and lng) or block_id_list):
+    elif download_multiband and (block_name or (lat and lng) or block_id_list or add_start_date):
         download_url_list = workflow_lib.get_multiband_download_links(user_name, access_token, block_name,
-            lat, lng, block_id_list, start_date, end_date)
+            lat, lng, block_id_list, start_date, end_date, add_start_date)
         for download_url in download_url_list:
             print download_url
-    elif download_multiband and add_start_date:
-        
-        workflow_lib.get_layer_id_list_by_add_date(user_name, )
     elif get_block_list:
         ta1_user = TerrAvionAPI1User(access_token)
         user_block_list = ta1_user.get_user_blocks(user_name)

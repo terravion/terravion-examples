@@ -8,8 +8,8 @@ from lib.api2.ta_layer import TerrAvionAPI2Layer
 from lib.api2.ta_task import TerrAvionAPI2Task
 
 
-def get_multiband_download_links(user_name, access_token, block_name,
-    lat, lng, block_id_list, start_date=None, end_date=None, add_start_date=None):
+def get_multiband_download_links(user_name, access_token, block_name=None,
+    lat=None, lng=None, block_id_list=None, start_date=None, end_date=None, add_start_date=None):
     print user_name, access_token, block_name, lat, lng, block_id_list
 
     ta1_user = TerrAvionAPI1User(access_token)
@@ -38,6 +38,7 @@ def get_layer_id_list_by_blocks(user_id, block_name, lat, lng, block_id_list, st
 
 def get_layer_id_list_by_add_date_workflow(user_name, access_token, add_start_date):
     ta1_layer = TerrAvionAPI1Layer(access_token)
+    print 'ta1_layer', ta1_layer
     return get_layer_id_list_by_add_date(user_name, ta1_layer, add_start_date)
 
 def check_tasks_until_finish(task_id_list, ta2_task):
@@ -98,7 +99,9 @@ def get_layer_id_list_by_add_date(user_name, ta1_layer, add_start_date):
     layer_id_list = []
     add_start_epoch = int(datetime.datetime.strptime(add_start_date,"%Y-%m-%d").strftime('%s'))
     layers = ta1_layer.get_layers(user_name,'MULTIBAND',add_start_epoch)
-    print layers
+    for layer in layers:
+        layer_id_list.append(layer['id'])
+    return layer_id_list
     # layer_id_list.append(layer['ndviLayerId'])
     # return layer_id_list
 
