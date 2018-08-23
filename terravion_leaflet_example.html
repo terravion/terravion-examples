@@ -7,10 +7,13 @@
 
     <script>
       $( document ).ready(function() {
+        var apiUrl = 'https://api2.terravion.com'
+
         var access_token='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
-        var user_id='support+demo@terravion.com'
+        var user_id='5bad4dfa-7262-4a0a-b1e5-da30793cec65'
         var epochStart='1456200627'
         var epochEnd='1456632627'
+        var tileUrlTemplate = apiUrl + '/users/'+user_id+'/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&access_token='+access_token;
         var mymap = L.map('map').setView([38.540580, -121.877271], 15);
         var layersControl = L.control.layers();
 
@@ -19,27 +22,27 @@
           maxZoom: 22,
           maxNativeZoom: 19
         }).addTo(mymap);
-        var nc_layer=L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=NC&access_token='+access_token, {
+        var nc_layer=L.tileLayer(tileUrlTemplate + '&product=NC', {
           attribution: 'TerrAvion',
           maxZoom: 19,
           tms: true
         }).addTo(mymap);
-        var cir_layer=L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=CIR&access_token='+access_token, {
+        var cir_layer=L.tileLayer(tileUrlTemplate + '&product=CIR', {
           attribution: 'TerrAvion',
           maxZoom: 19,
           tms: true
         })//.addTo(mymap);
-        var ndvi_layer=L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=NDVI&colorMap=GRANULAR&access_token='+access_token, {
+        var ndvi_layer=L.tileLayer(tileUrlTemplate + '&product=NDVI&colorMap=GRANULAR', {
           attribution: 'TerrAvion',
           maxZoom: 19,
           tms: true
         })//.addTo(mymap);
-        var tirs_layer=L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=TIRS&colorMap=T&access_token='+access_token, {
+        var tirs_layer=L.tileLayer(tileUrlTemplate + '&product=TIRS&colorMap=T', {
           attribution: 'TerrAvion',
           maxZoom: 19,
           tms: true
         })//.addTo(mymap);
-        var zone_layer=L.tileLayer('https://api.terravion.com/v1/users/'+user_id+'/layers/tiles/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=ZONE&colorMap=GRANULAR&access_token='+access_token, {
+        var zone_layer=L.tileLayer(tileUrlTemplate + '&product=ZONE&colorMap=GRANULAR', {
           attribution: 'TerrAvion',
           maxZoom: 19,
           tms: true
