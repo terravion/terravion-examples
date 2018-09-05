@@ -9,7 +9,8 @@ from lib.api2.ta_task import TerrAvionAPI2Task
 
 
 def get_multiband_download_links(user_name, access_token, block_name=None,
-    lat=None, lng=None, block_id_list=None, start_date=None, end_date=None, add_start_date=None):
+    lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
+    add_start_date=None, geotiff_epsg=None):
     print user_name, access_token, block_name, lat, lng, block_id_list
 
     ta1_user = TerrAvionAPI1User(access_token)
@@ -18,10 +19,12 @@ def get_multiband_download_links(user_name, access_token, block_name=None,
     user_id = user_info['id']
     layer_id_list = []
     if (lat and lng) or block_id_list or block_name:
-        layer_id_list = get_layer_id_list_by_blocks(user_id, block_name, lat, lng, block_id_list, start_date, end_date, access_token)
+        layer_id_list = get_layer_id_list_by_blocks(user_id, block_name, lat,
+            lng, block_id_list, start_date, end_date, access_token)
     elif add_start_date:
-        layer_id_list = get_layer_id_list_by_add_date_workflow(user_name, access_token, add_start_date)
-    task_id_list = request_multiband_tasks(user_id, layer_id_list, ta2_task)
+        layer_id_list = get_layer_id_list_by_add_date_workflow(user_name,
+            access_token, add_start_date)
+    task_id_list = request_multiband_tasks(user_id, layer_id_list, ta2_task, geotiff_epsg)
     download_url_list = check_tasks_until_finish(task_id_list, ta2_task)
     return download_url_list
 
@@ -71,10 +74,10 @@ def get_finished_download_link(task_info):
         return task_info['response']['download_url']
 
 
-def request_multiband_tasks(user_id, layer_id_list, ta2_task):
+def request_multiband_tasks(user_id, layer_id_list, ta2_task, geotiff_epsg=None):
     task_id_list = []
     for layer_id in layer_id_list: 
-        task_info = ta2_task.request_geotiff_task(user_id, layer_id, multiband=True)
+        task_info = ta2_task.request_geotiff_task(user_id, layer_id, multiband=True, geotiff_epsg=geotiff_epsg)
         if task_info:
             if 'task_id' in task_info:
                 task_id_list.append(task_info['task_id'])

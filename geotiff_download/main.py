@@ -75,11 +75,11 @@ api_server = 'https://api2.terravion.com/'
 
 # Creating the folder if it does not exist
 def main(args):
-    # input_parameter
+    # Input Parameter
     user_name = args.user_name
     access_token = args.access_token
     
-    # workflow_parameters
+    # Workflow Parameters
     get_block_list = args.get_block_list
     download_multiband = args.download_multiband
 
@@ -91,13 +91,22 @@ def main(args):
     add_start_date = args.add_start_date
     start_date = args.start_date
     end_date = args.end_date
+
+    # Geotiff parameters
+    geotiff_epsg = args.EPSG
+    if geotiff_epsg:
+        if not geotiff_epsg.isdigit() or not len(geotiff_epsg) == 4:
+            print 'invalid EPSG Code:', geotiff_epsg
+            return 0
     if not (user_name and access_token):
         print 'email William Maio at wmaio@terravion.com if you need one'
         print parser.print_help()
         return 0
     elif download_multiband and (block_name or (lat and lng) or block_id_list or add_start_date):
-        download_url_list = workflow_lib.get_multiband_download_links(user_name, access_token, block_name,
-            lat, lng, block_id_list, start_date, end_date, add_start_date)
+        download_url_list = workflow_lib.get_multiband_download_links(user_name,
+            access_token, block_name,
+            lat, lng, block_id_list, start_date, end_date, add_start_date,
+            geotiff_epsg)
         for download_url in download_url_list:
             print download_url
     elif get_block_list:
@@ -172,6 +181,9 @@ if __name__ == '__main__':
     parser.add_argument('-end_date', help='end_date',
                         nargs='?', default=None)
 
+    # geotiff parameters
+    parser.add_argument('-EPSG', help='EPSG',
+                        nargs='?', default=None)
 
     args = parser.parse_args()
     main(args)

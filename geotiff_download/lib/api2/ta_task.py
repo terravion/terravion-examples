@@ -7,7 +7,8 @@ class TerrAvionAPI2Task:
     def __init__(self, access_token):
         self.access_token = access_token
         self.api2_domain = config.api2_domain
-    def request_geotiff_task(self, user_id, layer_id, multiband=True):
+    def request_geotiff_task(self, user_id, layer_id, multiband=True,
+        geotiff_epsg=None):
         q_url = self.api2_domain
         if user_id and layer_id:
             q_url += 'tasks/requestGeotiffTask'
@@ -15,6 +16,8 @@ class TerrAvionAPI2Task:
             q_url += '&layerId=' + layer_id
             if multiband:
                 q_url += '&multiband=true'
+            if geotiff_epsg:
+                q_url += '&epsgCode=' + geotiff_epsg
             q_url += '&access_token=' + self.access_token
             print q_url
         else:
