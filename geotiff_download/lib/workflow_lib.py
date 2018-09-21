@@ -115,7 +115,6 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product=
                 task_info['blockId'] = layer_info['blockId']
                 if 'task_id' in task_info:
                     task_info_list.append(task_info)
-            break
     return task_info_list
 
 

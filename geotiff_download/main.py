@@ -94,7 +94,7 @@ def main(args):
         print 'email William Maio at wmaio@terravion.com if you need one'
         print parser.print_help()
         return 0
-    elif product and (block_name or (lat and lng) or block_id_list or add_start_date):
+    elif product and (block_name or (lat and lng) or block_id_list or add_start_date or start_date or end_date):
         print 'downloading geotiffs'
         download_info_list = workflow_lib.get_download_links(user_name,
             access_token, block_name,
