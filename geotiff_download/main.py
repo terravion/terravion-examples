@@ -34,19 +34,12 @@
 ##########################################################################
 import os
 import json
-import sys
-import urllib
 import argparse
 from os.path import basename
-import datetime
-import traceback
-
 import lib.workflow_lib as workflow_lib
-
 from lib.api1.ta_user import TerrAvionAPI1User
 from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
-from lib.api2.ta_layer import TerrAvionAPI2Layer
 
 # Contact wmaio@terravion.com for access_token
 # Access_token
@@ -56,7 +49,6 @@ from lib.api2.ta_layer import TerrAvionAPI2Layer
     CIR => Color Infrared
     NDVI => NDVI
     TIRS => Thermal
-    ZONE => Zoning
     FULL => all of the above
 '''
 
@@ -78,10 +70,10 @@ def main(args):
     # Input Parameter
     user_name = args.user_name
     access_token = args.access_token
-    
+    working_dir = args.working_dir
     # Workflow Parameters
     get_block_list = args.get_block_list
-    download_multiband = args.download_multiband
+    product = args.product
 
     # Optional Filters
     block_name = args.block_name
@@ -102,39 +94,27 @@ def main(args):
         print 'email William Maio at wmaio@terravion.com if you need one'
         print parser.print_help()
         return 0
-    elif download_multiband and (block_name or (lat and lng) or block_id_list or add_start_date):
-        download_url_list = workflow_lib.get_multiband_download_links(user_name,
+    elif product and (block_name or (lat and lng) or block_id_list or add_start_date or start_date or end_date):
+        print 'downloading geotiffs'
+        download_info_list = workflow_lib.get_download_links(user_name,
             access_token, block_name,
             lat, lng, block_id_list, start_date, end_date, add_start_date,
-            geotiff_epsg)
-        for download_url in download_url_list:
-            print download_url
+            geotiff_epsg, product=product)
+        if download_info_list:
+            if working_dir:
+                workflow_lib.donwload_imagery(access_token, working_dir, download_info_list)
+            else:
+                for download_info in download_info_list:
+                    print download_info
+        return 0
     elif get_block_list:
         ta1_user = TerrAvionAPI1User(access_token)
-        user_block_list = ta1_user.get_user_blocks(user_name)
+        user_info = ta1_user.get_user(user_name)
+        ta2_user_block = TerrAvionAPI2UserBlock(user_info['id'], access_token)
+        user_block_list = ta2_user_block.get_user_blocks()
         print 'block_id, name'
         for user_block in user_block_list:
-            print ','.join([user_block['block']['id'], user_block['block']['name']])
-    elif block_name:
-        ta1_user = TerrAvionAPI1User(access_token)
-        ta2_user_block = TerrAvionAPI2UserBlock(access_token)
-        ta2_layer = TerrAvionAPI2Layer(access_token)
-        user_info = ta1_user.get_user(user_name)
-        user_id = user_info['id']
-        user_blocks = ta2_user_block.get_user_blocks_from_name(user_id, block_name)
-        for user_block in user_blocks:
-            print user_block
-            workflow_lib.get_layer_id_list([user_block['blockId']], ta2_layer, start_date, end_date)
-    elif lat and lng:
-        ta1_user = TerrAvionAPI1User(access_token)
-        ta2_user_block = TerrAvionAPI2UserBlock(access_token)
-        ta2_layer = TerrAvionAPI2Layer(access_token)
-        user_info = ta1_user.get_user(user_name)
-        user_id = user_info['id']
-        user_blocks = ta2_user_block.get_user_blocks_from_gps(user_id, lat,lng)
-        for user_block in user_blocks:
-            print user_block
-            workflow_lib.get_layer_id_list([user_block['blockId']], ta2_layer, start_date, end_date)
+            print ','.join([user_block['blockId'], user_block['fieldName']])
     else:
         print '--------------------------------------------------------------------------------------------------------------------------------'
         print parser.print_help()
@@ -152,12 +132,16 @@ if __name__ == '__main__':
 
     parser.add_argument('-access_token', help='access_token',
                         nargs='?', default=None)
+    parser.add_argument('-working_dir', help='working_dir',
+                        nargs='?', default=None)
+
+
 
     # workflow parameters
 
     parser.add_argument('-get_block_list', help='get_block_list',
                         nargs='?', default=None)
-    parser.add_argument('-download_multiband', help='download_multiband',
+    parser.add_argument('-product', help='NC, CIR, NDVI, TIRS, MULTIBAND, FULL',
                         nargs='?', default=None)
 
     # Optional Filters
