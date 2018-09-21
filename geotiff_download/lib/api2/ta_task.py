@@ -4,15 +4,16 @@ import datetime
 import traceback
 import util.config as config
 class TerrAvionAPI2Task:
-    def __init__(self, access_token):
+    def __init__(self, user_id, access_token):
         self.access_token = access_token
+        self.user_id = user_id
         self.api2_domain = config.api2_domain
-    def request_geotiff_task(self, user_id, layer_id, multiband=True,
+    def request_geotiff_task(self, layer_id, multiband=None,
         geotiff_epsg=None):
         q_url = self.api2_domain
-        if user_id and layer_id:
+        if self.user_id and layer_id:
             q_url += 'tasks/requestGeotiffTask'
-            q_url += '?userId=' + user_id
+            q_url += '?userId=' + self.user_id
             q_url += '&layerId=' + layer_id
             if multiband:
                 q_url += '&multiband=true'
