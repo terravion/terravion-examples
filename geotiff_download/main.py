@@ -88,14 +88,14 @@ def main(args):
     geotiff_epsg = args.EPSG
     if geotiff_epsg:
         if not geotiff_epsg.isdigit() or not len(geotiff_epsg) == 4:
-            print 'invalid EPSG Code:', geotiff_epsg
+            print('invalid EPSG Code:', geotiff_epsg)
             return 0
     if not (user_name and access_token):
-        print 'email William Maio at wmaio@terravion.com if you need one'
-        print parser.print_help()
+        print('email William Maio at wmaio@terravion.com if you need one')
+        print(parser.print_help())
         return 0
     elif product and (block_name or (lat and lng) or block_id_list or add_start_date or start_date or end_date):
-        print 'downloading geotiffs'
+        print('downloading geotiffs')
         download_info_list = workflow_lib.get_download_links(user_name,
             access_token, block_name,
             lat, lng, block_id_list, start_date, end_date, add_start_date,
@@ -105,20 +105,20 @@ def main(args):
                 workflow_lib.donwload_imagery(access_token, working_dir, download_info_list)
             else:
                 for download_info in download_info_list:
-                    print download_info
+                    print(download_info)
         return 0
     elif get_block_list:
         ta1_user = TerrAvionAPI1User(access_token)
         user_info = ta1_user.get_user(user_name)
         ta2_user_block = TerrAvionAPI2UserBlock(user_info['id'], access_token)
         user_block_list = ta2_user_block.get_user_blocks()
-        print 'block_id, name'
+        print('block_id, name')
         for user_block in user_block_list:
-            print ','.join([user_block['blockId'], user_block['fieldName']])
+            print(','.join([user_block['blockId'], user_block['fieldName']]))
     else:
-        print '--------------------------------------------------------------------------------------------------------------------------------'
-        print parser.print_help()
-        print '--------------------------------------------------------------------------------------------------------------------------------'
+        print('--------------------------------------------------------------------------------------------------------------------------------')
+        print(parser.print_help())
+        print('--------------------------------------------------------------------------------------------------------------------------------')
 
 
 if __name__ == '__main__':

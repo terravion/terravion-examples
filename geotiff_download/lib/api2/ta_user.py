@@ -20,9 +20,9 @@ class TerrAvionAPI2User:
         query_dic['where'] = where_dic
         q_url += json.dumps(query_dic)
         q_url += '&access_token=' + self.access_token
-        print q_url
+        print(q_url)
         r = requests.get(q_url)
-        print 'status code', r.status_code
+        print('status code', r.status_code)
         if r.status_code == 200:
             result = r.json()
             if result:
