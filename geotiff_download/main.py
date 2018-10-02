@@ -50,6 +50,7 @@ from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
     NDVI => NDVI
     TIRS => Thermal
     FULL => all of the above
+    ALL => all of the above + MULTIABND
 '''
 
 '''
@@ -141,7 +142,7 @@ if __name__ == '__main__':
 
     parser.add_argument('-get_block_list', help='get_block_list',
                         nargs='?', default=None)
-    parser.add_argument('-product', help='NC, CIR, NDVI, TIRS, MULTIBAND, FULL',
+    parser.add_argument('-product', help='NC, CIR, NDVI, TIRS, MULTIBAND, FULL, ALL',
                         nargs='?', default=None)
 
     # Optional Filters

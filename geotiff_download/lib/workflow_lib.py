@@ -98,6 +98,12 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product=
                 product_info_list.append({'layer_id': layer_info['cirLayerId'], 'product': 'CIR'})
                 product_info_list.append({'layer_id': layer_info['ndviLayerId'], 'product': 'NDVI'})
                 product_info_list.append({'layer_id': layer_info['thermalLayerId'], 'product': 'THERMAL'})
+            elif product == 'ALL':
+                product_info_list.append({'layer_id': layer_info['ncLayerId'], 'product': 'RGB'})
+                product_info_list.append({'layer_id': layer_info['cirLayerId'], 'product': 'CIR'})
+                product_info_list.append({'layer_id': layer_info['ndviLayerId'], 'product': 'NDVI'})
+                product_info_list.append({'layer_id': layer_info['thermalLayerId'], 'product': 'THERMAL'})
+                product_info_list.append({'layer_id': layer_info['ndviLayerId'], 'product': 'MULTIBAND'})
             elif product == 'NC':
                 product_info_list.append({'layer_id': layer_info['ncLayerId'], 'product': 'RGB'})
             elif product == 'CIR': 
@@ -107,8 +113,12 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product=
             elif product == 'TIRS':
                 product_info_list.append({'layer_id': layer_info['thermalLayerId'], 'product': 'THERMAL'})
             for product_info in product_info_list:
-                task_info = ta2_task.request_geotiff_task(product_info['layer_id'],
-                    geotiff_epsg=geotiff_epsg)
+                if product_info['product'] == 'MULTIBAND':
+                    task_info = ta2_task.request_geotiff_task(product_info['layer_id'],
+                        geotiff_epsg=geotiff_epsg, multiband=True)
+                else:
+                    task_info = ta2_task.request_geotiff_task(product_info['layer_id'],
+                        geotiff_epsg=geotiff_epsg)
                 task_info['product'] = product_info['product']
                 task_info['addDateEpoch'] = add_epoch
                 task_info['layerDateEpoch'] = layer_epoch
