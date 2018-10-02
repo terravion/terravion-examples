@@ -29,7 +29,7 @@ def analyze_tif_cm_4326(input_file):
     west_east_pix_res = geoT[1]
     north_south_pix_res = geoT[5]
     ground_resolution_cm = round(latLon2Meters(
-        lat, lng, lat + west_east_pix_res, lng) * 1000 * 100, 2)
+        lat, lng, lat + west_east_pix_res, lng) * 100, 2)
     return ground_resolution_cm
 def latLon2Meters(lat1, lon1, lat2, lon2):
     '''
@@ -55,8 +55,7 @@ def latLon2Meters(lat1, lon1, lat2, lon2):
     np.cos(lat2 * np.pi / 180) * np.sin(dLon / 2) * np.sin(dLon / 2)
     c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
     d = R * c
-
-    return d
+    return d * 1000
 
 if __name__ == '__main__':
     argument_sample = 'python ' + basename(os.path.realpath(__file__)) + \
