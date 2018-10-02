@@ -17,7 +17,7 @@ def date_to_epoch(date_string):
 def get_download_links(user_name, access_token, block_name=None,
     lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
     add_start_date=None, geotiff_epsg=None, product=None):
-    print user_name, access_token, block_name, lat, lng, block_id_list
+    print(user_name, access_token, block_name, lat, lng, block_id_list)
 
     ta1_user = TerrAvionAPI1User(access_token)
     user_info = ta1_user.get_user(user_name)
@@ -35,7 +35,7 @@ def get_download_links(user_name, access_token, block_name=None,
     else:
         layer_info_list = ta2_layer.get_layers(field_name=block_name)
     if not layer_info_list:
-        print 'no layers found'
+        print('no layers found')
         return None
 
     ta2_task = TerrAvionAPI2Task(user_id, access_token)
@@ -132,6 +132,6 @@ def donwload_imagery(access_token, working_dir, download_info_list):
         root_name += '_' + field_name + '_'
         root_name += download_info['product'] + '.tif'
         out_file = os.path.join(working_dir, root_name)
-        print 'url', download_info['download_url']
-        print 'out_file', out_file
+        print('url', download_info['download_url'])
+        print('out_file', out_file)
         file_util.run_download_file(download_info['download_url'], out_file)

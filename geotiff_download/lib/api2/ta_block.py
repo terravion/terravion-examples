@@ -11,7 +11,7 @@ class TerrAvionAPI2Block:
         q_url = self.api2_domain
         q_url += 'blocks/' + block_id
         q_url += '?&access_token=' + self.access_token
-        print q_url
+        print(q_url)
         r = requests.get(q_url)
         if r.status_code == 200:
             result = r.json()

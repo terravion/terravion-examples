@@ -15,9 +15,9 @@ class TerrAvionAPI2UserBlock:
         q_url += '&lat=' + lat
         q_url += '&lng=' + lng
         q_url += '&access_token=' + self.access_token
-        print q_url
+        print(q_url)
         r = requests.get(q_url)
-        print 'status code', r.status_code
+        print('status code', r.status_code)
         if r.status_code == 200:
             result = r.json()
             if result:
@@ -32,9 +32,9 @@ class TerrAvionAPI2UserBlock:
         q_url += '?userId=' + self.user_id
         q_url += '&blockName=' + block_name
         q_url += '&access_token=' + self.access_token
-        print q_url
+        print(q_url)
         r = requests.get(q_url)
-        print 'status code', r.status_code
+        print('status code', r.status_code)
         if r.status_code == 200:
             result = r.json()
             if result:
@@ -48,9 +48,9 @@ class TerrAvionAPI2UserBlock:
         q_url += 'userBlocks/getUserBlocksForMap'
         q_url += '?userId=' + self.user_id
         q_url += '&access_token=' + self.access_token
-        print q_url
+        print(q_url)
         r = requests.get(q_url)
-        print 'status code', r.status_code
+        print('status code', r.status_code)
         if r.status_code == 200:
             result = r.json()
             if result:

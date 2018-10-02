@@ -44,14 +44,14 @@ def download_file(url, outfilename):
 
     for attempt in range(download_try_limit):
         try:
-            print 'download_url:', url
-            print 'download_filename:', outfilename
+            print('download_url:', url)
+            print('download_filename:', outfilename)
             run_download_file(url, outfilename)
 
         except:
             # thread_a.stop()
             # thread_b.stop()
-            print "download stuck?"
+            print "download stuck?")
             error_log_list.append(str(traceback.format_exc()))
 
             if os.path.isfile(outfilename):
@@ -119,8 +119,8 @@ class DownloadingReport(object):
 
     def print_download_record_list(self):
         if self.download_record_list:
-            print '---------------------------------------------------------------------------------------'
-            print ' '.join(self.csv_header_list)
+            print('---------------------------------------------------------------------------------------')
+            print(' '.join(self.csv_header_list))
 
             for download_record in self.download_record_list:
                 output_filename = None

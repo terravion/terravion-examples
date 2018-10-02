@@ -20,11 +20,11 @@ class TerrAvionAPI2Task:
             if geotiff_epsg:
                 q_url += '&epsgCode=' + geotiff_epsg
             q_url += '&access_token=' + self.access_token
-            print q_url
+            print(q_url)
         else:
             return None
         r = requests.post(q_url)
-        print 'status code', r.status_code
+        print('status code', r.status_code)
         if r.status_code == 200:
             result = r.json()
             if result:
@@ -39,11 +39,11 @@ class TerrAvionAPI2Task:
         if task_id:
             q_url += 'tasks/' + task_id
             q_url += '?access_token=' + self.access_token
-            print q_url
+            print(q_url)
         else:
             return None
         r = requests.get(q_url)
-        print 'status code', r.status_code
+        print('status code', r.status_code)
         if r.status_code == 200:
             result = r.json()
             if result:

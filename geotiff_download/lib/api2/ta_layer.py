@@ -30,7 +30,7 @@ class TerrAvionAPI2Layer:
     def get_layers_by_block_id_list(self, block_id_list):
         maser_layer_list = []
         for block_id in block_id_list:
-            print 'block_id', block_id
+            print('block_id', block_id)
             layers = self.get_layers(block_id = block_id)
             if layers:
                 maser_layer_list += layers
@@ -43,7 +43,7 @@ class TerrAvionAPI2Layer:
         q_url += 'access_token=' + self.access_token
         if not block_id and self.epoch_start and self.epoch_end\
             and self.add_epoch_start and self.add_epoch_end and field_name:
-            print 'please supply an filter'
+            print('please supply an filter')
             return None
         if block_id:
             q_url += '&blockId=' + block_id
@@ -58,9 +58,9 @@ class TerrAvionAPI2Layer:
             q_url += '&addEpochStart=' + str(self.add_epoch_start)
         if self.add_epoch_end:
             q_url += '&addEpochEnd=' + str(self.add_epoch_end)
-        print 'q_url', q_url
+        print('q_url', q_url)
         r = requests.get(q_url)
-        print 'status code', r.status_code
+        print('status code', r.status_code)
         if r.status_code == 200:
             result = r.json()
             if result:
