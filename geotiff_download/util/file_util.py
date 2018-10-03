@@ -51,7 +51,7 @@ def download_file(url, outfilename):
         except:
             # thread_a.stop()
             # thread_b.stop()
-            print "download stuck?")
+            print("download stuck?")
             error_log_list.append(str(traceback.format_exc()))
 
             if os.path.isfile(outfilename):
@@ -148,4 +148,4 @@ class DownloadingReport(object):
                 if 'request_url' in download_record:
                     request_url = download_record['request_url']
 
-                print output_filename, status, download_url, timestamp, message
+                print(output_filename, status, download_url, timestamp, message)
