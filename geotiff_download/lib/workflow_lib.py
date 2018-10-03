@@ -37,7 +37,7 @@ def get_download_links(user_name, access_token, block_name=None,
     if not layer_info_list:
         print('no layers found')
         return None
-
+    print('found ',len(layer_info_list),'layers')
     ta2_task = TerrAvionAPI2Task(user_id, access_token)
     task_info_list = request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg, product)
     download_url_list = check_tasks_until_finish(task_info_list, ta2_task)
@@ -47,6 +47,8 @@ def check_tasks_until_finish(task_info_list, ta2_task):
     download_url_list = []
     new_task_info_list = []
     while True:
+        if task_info_list:
+            print(len(task_info_list), 'tasks remaining')
         for task_info in task_info_list:
             task_response = ta2_task.get_task_info(task_info['task_id'])
             download_url = get_finished_download_link(task_response)
@@ -88,7 +90,6 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product=
                 task_info['blockId'] = layer_info['blockId']
                 if 'task_id' in task_info:
                     task_info_list.append(task_info)
-            break
         else:
             product_info_list = []
             add_epoch = layer_info['addDateEpoch']
