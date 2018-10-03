@@ -82,7 +82,7 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product=
             task_info = ta2_task.request_geotiff_task(layer_id, multiband=True,
                 geotiff_epsg=geotiff_epsg)
             if task_info:
-                task_info['prodcut'] = 'MULTIBAND' 
+                task_info['product'] = 'MULTIBAND' 
                 task_info['addDateEpoch'] = layer_info['addDateEpoch']
                 task_info['layerDateEpoch'] = layer_info['layerDateEpoch']
                 task_info['blockId'] = layer_info['blockId']
@@ -134,6 +134,7 @@ def donwload_imagery(access_token, working_dir, download_info_list):
     ta_b = TerrAvionAPI2Block(access_token)
     import util.file_util as file_util
     for download_info in download_info_list:
+        print(download_info)
         block_info = ta_b.get_block(download_info['blockId'])
         field_name = file_util.clean_filename(block_info['name'])
         layer_date = datetime.datetime.utcfromtimestamp(download_info['layerDateEpoch'])
