@@ -134,6 +134,7 @@ def donwload_imagery(access_token, working_dir, download_info_list):
         os.mkdir(working_dir)
     ta_b = TerrAvionAPI2Block(access_token)
     import util.file_util as file_util
+    print(len(download_info_list), 'files to be downloaded')
     for download_info in download_info_list:
         print(download_info)
         block_info = ta_b.get_block(download_info['blockId'])
