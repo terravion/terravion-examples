@@ -135,14 +135,27 @@ def donwload_imagery(access_token, working_dir, download_info_list):
     ta_b = TerrAvionAPI2Block(access_token)
     import util.file_util as file_util
     print(len(download_info_list), 'files to be downloaded')
+
+    unique_names = True
+    check_unique_dic = {}
+    for download_info in download_info_list:
+        block_info = ta_b.get_block(download_info['blockId'])
+        field_name = file_util.clean_filename(block_info['name'])
+        if not field_name in check_unique_dic:
+            check_unique_dic[field_name] = True
+        else:
+            unique_names = False
+            break
     for download_info in download_info_list:
         print(download_info)
         block_info = ta_b.get_block(download_info['blockId'])
         field_name = file_util.clean_filename(block_info['name'])
         layer_date = datetime.datetime.utcfromtimestamp(download_info['layerDateEpoch'])
         layer_date_string = layer_date.strftime("%Y-%m-%d")
-        root_name = layer_date_string 
+        root_name = layer_date_string
         root_name += '_' + field_name + '_'
+        if not unique_names:
+            root_name += download_info['blockId'] + '_'
         root_name += download_info['product'] + '.tif'
         out_file = os.path.join(working_dir, root_name)
         print('url', download_info['download_url'])
