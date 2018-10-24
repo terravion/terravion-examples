@@ -16,7 +16,7 @@ def date_to_epoch(date_string):
 
 def get_download_links(user_name, access_token, block_name=None,
     lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
-    add_start_date=None, geotiff_epsg=None, product=None):
+    add_start_date=None, geotiff_epsg=None, product=None, with_colormap=False):
     print(user_name, access_token, block_name, lat, lng, block_id_list)
 
     ta1_user = TerrAvionAPI1User(access_token)
@@ -39,7 +39,8 @@ def get_download_links(user_name, access_token, block_name=None,
         return None
     print('found ',len(layer_info_list),'layers')
     ta2_task = TerrAvionAPI2Task(user_id, access_token)
-    task_info_list = request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg, product)
+    task_info_list = request_geotiff_tasks(ta2_task, layer_info_list,
+        geotiff_epsg, product, with_colormap)
     download_url_list = check_tasks_until_finish(task_info_list, ta2_task)
     return download_url_list
 
@@ -76,7 +77,7 @@ def get_finished_download_link(task_info):
     elif 'download_url' in task_info['response']:
         return task_info['response']['download_url']
 
-def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product='MULTIBAND'):
+def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product='MULTIBAND', with_colormap=False):
     task_info_list = []
     for layer_info in layer_info_list:
         if product == 'MULTIBAND' and layer_info['ndviLayerId']:
@@ -118,8 +119,14 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product=
                     task_info = ta2_task.request_geotiff_task(product_info['layer_id'],
                         geotiff_epsg=geotiff_epsg, multiband=True)
                 else:
+                    colormap = None
+                    if with_colormap:
+                        if product_info['product'] == 'THERMAL':
+                            colormap = 'T'
+                        elif product_info['product'] == 'NDVI':
+                            colormap = 'NDVI_2'
                     task_info = ta2_task.request_geotiff_task(product_info['layer_id'],
-                        geotiff_epsg=geotiff_epsg)
+                        geotiff_epsg=geotiff_epsg, colormap=colormap)
                 task_info['product'] = product_info['product']
                 task_info['addDateEpoch'] = add_epoch
                 task_info['layerDateEpoch'] = layer_epoch
