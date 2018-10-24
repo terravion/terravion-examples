@@ -35,11 +35,15 @@
 import os
 import json
 import argparse
+import logging
 from os.path import basename
 import lib.workflow_lib as workflow_lib
 from lib.api1.ta_user import TerrAvionAPI1User
 from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
+
+
+logging.basicConfig(level=logging.INFO)
 
 # Contact wmaio@terravion.com for access_token
 # Access_token
@@ -84,12 +88,12 @@ def main(args):
     add_start_date = args.add_start_date
     start_date = args.start_date
     end_date = args.end_date
-
+    with_colormap = args.with_colormap
     # Geotiff parameters
     geotiff_epsg = args.EPSG
     if geotiff_epsg:
         if not geotiff_epsg.isdigit() or not len(geotiff_epsg) == 4:
-            print('invalid EPSG Code:', geotiff_epsg)
+            logging.info('invalid EPSG Code:', geotiff_epsg)
             return 0
     if not (user_name and access_token):
         print('email William Maio at wmaio@terravion.com if you need one')
@@ -100,7 +104,7 @@ def main(args):
         download_info_list = workflow_lib.get_download_links(user_name,
             access_token, block_name,
             lat, lng, block_id_list, start_date, end_date, add_start_date,
-            geotiff_epsg, product=product)
+            geotiff_epsg, product=product, with_colormap=with_colormap)
         if download_info_list:
             if working_dir:
                 workflow_lib.donwload_imagery(access_token, working_dir, download_info_list)
@@ -165,6 +169,9 @@ if __name__ == '__main__':
 
     parser.add_argument('-end_date', help='end_date',
                         nargs='?', default=None)
+
+    parser.add_argument('-with_colormap', help='with_colormap',
+                        action='store_true')
 
     # geotiff parameters
     parser.add_argument('-EPSG', help='EPSG',

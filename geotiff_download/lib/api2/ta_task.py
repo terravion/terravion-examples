@@ -1,4 +1,5 @@
 import json
+import logging
 import requests
 import datetime
 import traceback
@@ -9,7 +10,7 @@ class TerrAvionAPI2Task:
         self.user_id = user_id
         self.api2_domain = config.api2_domain
     def request_geotiff_task(self, layer_id, multiband=None,
-        geotiff_epsg=None):
+        geotiff_epsg=None, colormap=None):
         q_url = self.api2_domain
         if self.user_id and layer_id:
             q_url += 'tasks/requestGeotiffTask'
@@ -19,15 +20,19 @@ class TerrAvionAPI2Task:
                 q_url += '&multiband=true'
             if geotiff_epsg:
                 q_url += '&epsgCode=' + geotiff_epsg
+            if colormap:
+                q_url += '&colorMap=' + colormap
+                q_url += '&colormapRgb=false'
             q_url += '&access_token=' + self.access_token
-            print(q_url)
+            logging.info(q_url)
         else:
             return None
         r = requests.post(q_url)
-        print('status code', r.status_code)
+        logging.info('status code'+str(r.status_code))
         if r.status_code == 200:
             result = r.json()
             if result:
+                logging.info('result'+json.dumps(result))
                 return result
             else:
                 return None
@@ -39,11 +44,11 @@ class TerrAvionAPI2Task:
         if task_id:
             q_url += 'tasks/' + task_id
             q_url += '?access_token=' + self.access_token
-            print(q_url)
+            logging.info(q_url)
         else:
             return None
         r = requests.get(q_url)
-        print('status code', r.status_code)
+        logging.info('status code'+str(r.status_code))
         if r.status_code == 200:
             result = r.json()
             if result:
