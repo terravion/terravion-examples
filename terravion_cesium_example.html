@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cesiumjs.org/releases/1.51/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesiumjs.org/releases/1.51/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <div id="cesiumContainer" style="width: 700px; height:400px"></div>
+  <script>
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkOGZlMDczNS1lYzgzLTQyZTctODE2ZC1mNjM5NGYzZjFjMTAiLCJpZCI6NDYxMCwic2NvcGVzIjpbImFzciIsImdjIl0sImlhdCI6MTU0MTE4NzMwN30.0v0hx4mbV8WjBvePidyKPnQ5iGn7t1AVzWhmdw6NpT0';
+    var accessToken='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa';
+    var userId='5bad4dfa-7262-4a0a-b1e5-da30793cec65';
+    var epochStart='1456200627';
+    var epochEnd='1456632627';
+    var api2Url = 'https://api2.terravion.com';
+    var viewer = new Cesium.Viewer('cesiumContainer');
+    var mapLat = 38.540580;
+    var mapLng = -121.877271;
+    var tileUrlTemplate = api2Url;
+    tileUrlTemplate += '/users/'+userId
+    tileUrlTemplate += '/{z}/{x}/{y}.png'
+    tileUrlTemplate += '?epochStart=' + epochStart
+    tileUrlTemplate += '&epochEnd='+ epochEnd
+    tileUrlTemplate += '&access_token='+accessToken;
+    tileUrlTemplate += '&product=NC'
+    tileUrlTemplate += '&tms=false'
+    var tms = new Cesium.UrlTemplateImageryProvider({
+        url : tileUrlTemplate,
+        credit : 'TerrAvion',
+        maximumLevel : 20
+    });
+    var layers = viewer.scene.imageryLayers;
+    layers.addImageryProvider(tms);
+
+
+    // Create an initial camera view
+    var initialPosition = new Cesium.Cartesian3.fromDegrees(mapLng, mapLat , 2631.082799425431);
+    var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(0, -90, 0);
+    var homeCameraView = {
+        destination : initialPosition,
+        orientation : {
+            heading : initialOrientation.heading,
+            pitch : initialOrientation.pitch,
+            roll : initialOrientation.roll
+        }
+    };
+    // Set the initial view
+    viewer.scene.camera.setView(homeCameraView);
+
+
+    var blocksFromGPSUrl = getBlocksFromGPSUrl(api2Url, userId, mapLat, mapLng, accessToken);
+    axios.get(blocksFromGPSUrl)
+    .then(function (blocksRsponse) {
+      var blockId = blocksRsponse.data[0].blockId;
+      // getting summary dates from blockId
+      var dateSummaryUrl = getDateSummaryUrl(api2Url, userId, blockId, accessToken);
+      axios.get(dateSummaryUrl).then(function(datesResponse){
+      console.log('dates ', datesResponse.data);
+      })
+    })
+    function getDateSummaryUrl(api2Url, userId, blockId, accessToken){
+      var DateSummaryUrl = api2Url + '/layers/getDateSummary';
+      DateSummaryUrl += '?userId=' + userId;
+      DateSummaryUrl += '&blockId=' + blockId;
+      DateSummaryUrl += '&access_token=' + accessToken
+      return DateSummaryUrl;
+    }
+    function getBlocksFromGPSUrl(api2Url, userId, lat, lng, accessToken){
+      var blocksFromGPSUrl = api2Url + '/userBlocks/getBlocksFromGPS';
+      blocksFromGPSUrl += '?userId=' + userId;
+      blocksFromGPSUrl += '&lat=' + lat;
+      blocksFromGPSUrl += '&lng=' + lng;
+      blocksFromGPSUrl += '&access_token=' + accessToken;
+      return blocksFromGPSUrl;
+    }
+
+  </script>
+</body>
+</html>
