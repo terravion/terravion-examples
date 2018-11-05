@@ -7,8 +7,8 @@ from lib.api1.ta_user import TerrAvionAPI1User
 from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 import lib.workflow_lib as workflow_lib
-logging.basicConfig(level=logging.DEBUG)
-
+# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 class TestMain(object):
     def test_get_block_list(self):
         user_name = config.USER_NAME
@@ -31,7 +31,7 @@ class TestMain(object):
         block_name = None
         lat = None
         lng = None
-        block_id_list = None
+        block_id_list = ['82f9ecc1-7b29-440a-87fc-3dd8b47e400c']
         start_date = '2017-10-23'
         end_date = '2017-10-30'
         add_start_date = None
@@ -59,7 +59,7 @@ class TestMain(object):
         block_name = None
         lat = None
         lng = None
-        block_id_list = None
+        block_id_list = ['c0dac568-f49d-4d9f-a1d5-20f32bb0d402']
         start_date = None
         end_date = None
         add_start_date = '2017-11-20'

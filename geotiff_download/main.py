@@ -95,6 +95,7 @@ def run_geotiff_download(user_name=None, access_token=None,
             geotiff_epsg, product=product, with_colormap=with_colormap)
         if download_info_list:
             if working_dir:
+                log.info('download start:' + len(download_info_list) +' files to be downloaded')
                 workflow_lib.donwload_imagery(access_token, working_dir,
                     download_info_list)
             else:

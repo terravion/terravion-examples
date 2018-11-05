@@ -50,6 +50,7 @@ def check_tasks_until_finish(task_info_list, ta2_task):
     log = logging.getLogger(__name__)
     download_url_list = []
     new_task_info_list = []
+    log.info(str(len(task_info_list)) + ' tasks to be downloaded')
     while True:
         if task_info_list:
             log.debug(str(len(task_info_list)) +  ' tasks remaining')
@@ -66,6 +67,7 @@ def check_tasks_until_finish(task_info_list, ta2_task):
         task_info_list = new_task_info_list
         new_task_info_list = []
         time.sleep(1)
+    log.info(str(len(download_url_list)) + ' downloads ready')
     return download_url_list
 
 def get_finished_download_link(task_info):
@@ -161,6 +163,7 @@ def donwload_imagery(access_token, working_dir, download_info_list):
     logging.info(str(len(download_info_list)) + ' files to be downloaded')
     unique_names = True
     check_unique_dic = {}
+    downloaded_list = []
     for download_info in download_info_list:
         block_info = ta_b.get_block(download_info['blockId'])
         field_name = file_util.clean_filename(block_info['name'])
@@ -186,6 +189,8 @@ def donwload_imagery(access_token, working_dir, download_info_list):
             logging.debug('out_file: '+out_file)
             logging.debug(json.dumps(download_info, sort_keys=True, indent=2))
             file_util.run_download_file(download_info['download_url'], out_file)
+            downloaded_list.append(out_file)
         except:
             log.critical('download failed: '+ str(download_info['download_url']))
             log.critical('out_file: '+ out_file)
+    log.info('download end:' + len(downloaded_list) +' files downloaded')
