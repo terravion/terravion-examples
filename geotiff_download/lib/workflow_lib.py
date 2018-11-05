@@ -193,4 +193,4 @@ def donwload_imagery(access_token, working_dir, download_info_list):
         except:
             log.critical('download failed: '+ str(download_info['download_url']))
             log.critical('out_file: '+ out_file)
-    log.info('download end:' + len(downloaded_list) +' files downloaded')
+    log.info('download end:' + str(len(downloaded_list)) +' files downloaded')
