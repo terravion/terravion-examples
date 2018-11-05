@@ -1,4 +1,5 @@
 import os
+import logging
 import json
 import datetime
 import time
@@ -17,7 +18,8 @@ def date_to_epoch(date_string):
 def get_download_links(user_name, access_token, block_name=None,
     lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
     add_start_date=None, geotiff_epsg=None, product=None, with_colormap=False):
-    print(user_name, access_token, block_name, lat, lng, block_id_list)
+    log = logging.getLogger(__name__)
+    log.debug(' '.join([str(user_name), str(access_token), str(block_name), str(lat), str(lng), str(block_id_list)]))
 
     ta1_user = TerrAvionAPI1User(access_token)
     user_info = ta1_user.get_user(user_name)
@@ -35,9 +37,9 @@ def get_download_links(user_name, access_token, block_name=None,
     else:
         layer_info_list = ta2_layer.get_layers(field_name=block_name)
     if not layer_info_list:
-        print('no layers found')
+        log.debug('no layers found')
         return None
-    print('found ',len(layer_info_list),'layers')
+    log.info('found: ' + str(len(layer_info_list)) + ' layers')
     ta2_task = TerrAvionAPI2Task(user_id, access_token)
     task_info_list = request_geotiff_tasks(ta2_task, layer_info_list,
         geotiff_epsg, product, with_colormap)
@@ -45,11 +47,12 @@ def get_download_links(user_name, access_token, block_name=None,
     return download_url_list
 
 def check_tasks_until_finish(task_info_list, ta2_task):
+    log = logging.getLogger(__name__)
     download_url_list = []
     new_task_info_list = []
     while True:
         if task_info_list:
-            print(len(task_info_list), 'tasks remaining')
+            log.debug(str(len(task_info_list)) +  ' tasks remaining')
         for task_info in task_info_list:
             task_response = ta2_task.get_task_info(task_info['task_id'])
             download_url = get_finished_download_link(task_response)
@@ -78,6 +81,7 @@ def get_finished_download_link(task_info):
         return task_info['response']['download_url']
 
 def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product='MULTIBAND', with_colormap=False):
+    log = logging.getLogger(__name__)
     task_info_list = []
     for layer_info in layer_info_list:
         if product == 'MULTIBAND' and layer_info['ndviLayerId']:
@@ -98,23 +102,33 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product=
             if product == 'FULL':
                 product_info_list.append({'layer_id': layer_info['ncLayerId'], 'product': 'RGB'})
                 product_info_list.append({'layer_id': layer_info['cirLayerId'], 'product': 'CIR'})
-                product_info_list.append({'layer_id': layer_info['ndviLayerId'], 'product': 'NDVI'})
-                product_info_list.append({'layer_id': layer_info['thermalLayerId'], 'product': 'THERMAL'})
+                if layer_info['ndviLayerId']:
+                    product_info_list.append({'layer_id': layer_info['ndviLayerId'], 'product': 'NDVI'})
+                if layer_info['thermalLayerId']:
+                    product_info_list.append({'layer_id': layer_info['thermalLayerId'], 'product': 'THERMAL'})
             elif product == 'ALL':
                 product_info_list.append({'layer_id': layer_info['ncLayerId'], 'product': 'RGB'})
                 product_info_list.append({'layer_id': layer_info['cirLayerId'], 'product': 'CIR'})
-                product_info_list.append({'layer_id': layer_info['ndviLayerId'], 'product': 'NDVI'})
-                product_info_list.append({'layer_id': layer_info['thermalLayerId'], 'product': 'THERMAL'})
+                if layer_info['ndviLayerId']:
+                    product_info_list.append({'layer_id': layer_info['ndviLayerId'], 'product': 'NDVI'})
+                if layer_info['thermalLayerId']:
+                    product_info_list.append({'layer_id': layer_info['thermalLayerId'], 'product': 'THERMAL'})
                 product_info_list.append({'layer_id': layer_info['ndviLayerId'], 'product': 'MULTIBAND'})
             elif product == 'NC':
                 product_info_list.append({'layer_id': layer_info['ncLayerId'], 'product': 'RGB'})
             elif product == 'CIR': 
                 product_info_list.append({'layer_id': layer_info['cirLayerId'], 'product': 'CIR'})
             elif product == 'NDVI':
-                product_info_list.append({'layer_id': layer_info['ndviLayerId'], 'product': 'NDVI'})
+                if layer_info['ndviLayerId']:
+                    product_info_list.append({'layer_id': layer_info['ndviLayerId'], 'product': 'NDVI'})
             elif product == 'TIRS':
-                product_info_list.append({'layer_id': layer_info['thermalLayerId'], 'product': 'THERMAL'})
+                if layer_info['thermalLayerId']:
+                    product_info_list.append({'layer_id': layer_info['thermalLayerId'], 'product': 'THERMAL'})
             for product_info in product_info_list:
+                log.debug(json.dumps(product_info, indent=2, sort_keys=True))
+                if not product_info['layer_id']:
+                    log.debug('missing layer_id')
+                    continue
                 if product_info['product'] == 'MULTIBAND':
                     task_info = ta2_task.request_geotiff_task(product_info['layer_id'],
                         geotiff_epsg=geotiff_epsg, multiband=True)
@@ -135,14 +149,16 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product=
                     task_info_list.append(task_info)
     return task_info_list
 
-
 def donwload_imagery(access_token, working_dir, download_info_list):
+    log = logging.getLogger(__name__)
     if not os.path.exists(working_dir):
         os.mkdir(working_dir)
     ta_b = TerrAvionAPI2Block(access_token)
     import util.file_util as file_util
-    print(len(download_info_list), 'files to be downloaded')
-
+    if not download_info_list:
+        logging.info('no download links')
+        return None
+    logging.info(str(len(download_info_list)) + ' files to be downloaded')
     unique_names = True
     check_unique_dic = {}
     for download_info in download_info_list:
@@ -154,17 +170,22 @@ def donwload_imagery(access_token, working_dir, download_info_list):
             unique_names = False
             break
     for download_info in download_info_list:
-        print(download_info)
-        block_info = ta_b.get_block(download_info['blockId'])
-        field_name = file_util.clean_filename(block_info['name'])
-        layer_date = datetime.datetime.utcfromtimestamp(download_info['layerDateEpoch'])
-        layer_date_string = layer_date.strftime("%Y-%m-%d")
-        root_name = layer_date_string
-        root_name += '_' + field_name + '_'
-        if not unique_names:
-            root_name += download_info['blockId'] + '_'
-        root_name += download_info['product'] + '.tif'
-        out_file = os.path.join(working_dir, root_name)
-        print('url', download_info['download_url'])
-        print('out_file', out_file)
-        file_util.run_download_file(download_info['download_url'], out_file)
+        try:
+            logging.debug(json.dumps(download_info, sort_keys=True, indent=2))
+            block_info = ta_b.get_block(download_info['blockId'])
+            field_name = file_util.clean_filename(block_info['name'])
+            layer_date = datetime.datetime.utcfromtimestamp(download_info['layerDateEpoch'])
+            layer_date_string = layer_date.strftime("%Y-%m-%d")
+            root_name = layer_date_string
+            root_name += '_' + field_name + '_'
+            if not unique_names:
+                root_name += download_info['blockId'] + '_'
+            root_name += download_info['product'] + '.tif'
+            out_file = os.path.join(working_dir, root_name)
+            logging.debug('url: '+str(download_info['download_url']))
+            logging.debug('out_file: '+out_file)
+            logging.debug(json.dumps(download_info, sort_keys=True, indent=2))
+            file_util.run_download_file(download_info['download_url'], out_file)
+        except:
+            log.critical('download failed: '+ str(download_info['download_url']))
+            log.critical('out_file: '+ out_file)

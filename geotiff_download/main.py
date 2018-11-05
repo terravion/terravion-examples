@@ -42,7 +42,6 @@ from lib.api1.ta_user import TerrAvionAPI1User
 from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 
-
 logging.basicConfig(level=logging.INFO)
 
 # Contact wmaio@terravion.com for access_token
@@ -70,8 +69,51 @@ logging.basicConfig(level=logging.INFO)
 timeout_seconds = 7200  # 2 hours
 api_server = 'https://api2.terravion.com/'
 
+
+def run_geotiff_download(user_name=None, access_token=None,
+            working_dir=None, get_block_list= None,
+            product=None,
+            block_name=None, block_id_list=None, lat=None, lng=None,
+            add_start_date=None,
+            start_date=None, end_date= None,
+            with_colormap=False, geotiff_epsg=None):
+    log = logging.getLogger(__name__)
+    if geotiff_epsg:
+        if not geotiff_epsg.isdigit() or not len(geotiff_epsg) == 4:
+            log.critical('invalid EPSG Code: '+str(geotiff_epsg))
+            return False
+    if not (user_name and access_token):
+        log.critical('email api@terravion.com for access_token')
+        log.critical(parser.print_help())
+        return False
+    elif product and (block_name or (lat and lng) or block_id_list or
+        add_start_date or start_date or end_date):
+        log.debug('downloading geotiffs')
+        download_info_list = workflow_lib.get_download_links(user_name,
+            access_token, block_name,
+            lat, lng, block_id_list, start_date, end_date, add_start_date,
+            geotiff_epsg, product=product, with_colormap=with_colormap)
+        if download_info_list:
+            if working_dir:
+                workflow_lib.donwload_imagery(access_token, working_dir,
+                    download_info_list)
+            else:
+                for download_info in download_info_list:
+                    log.debug(json.dumps(download_info, sort_keys=True, indent=2))
+        return True
+    elif get_block_list:
+        ta1_user = TerrAvionAPI1User(access_token)
+        user_info = ta1_user.get_user(user_name)
+        ta2_user_block = TerrAvionAPI2UserBlock(user_info['id'], access_token)
+        user_block_list = ta2_user_block.get_user_blocks()
+        log.info('block_id, name')
+
+        for user_block in user_block_list:
+            log.info(','.join([user_block['blockId'], user_block['fieldName']]))
+        return True
 # Creating the folder if it does not exist
 def main(args):
+    log = logging.getLogger(__name__)
     # Input Parameter
     user_name = args.user_name
     access_token = args.access_token
@@ -91,40 +133,15 @@ def main(args):
     with_colormap = args.with_colormap
     # Geotiff parameters
     geotiff_epsg = args.EPSG
-    if geotiff_epsg:
-        if not geotiff_epsg.isdigit() or not len(geotiff_epsg) == 4:
-            logging.info('invalid EPSG Code:', geotiff_epsg)
-            return 0
-    if not (user_name and access_token):
-        print('email William Maio at wmaio@terravion.com if you need one')
-        print(parser.print_help())
-        return 0
-    elif product and (block_name or (lat and lng) or block_id_list or add_start_date or start_date or end_date):
-        print('downloading geotiffs')
-        download_info_list = workflow_lib.get_download_links(user_name,
-            access_token, block_name,
-            lat, lng, block_id_list, start_date, end_date, add_start_date,
-            geotiff_epsg, product=product, with_colormap=with_colormap)
-        if download_info_list:
-            if working_dir:
-                workflow_lib.donwload_imagery(access_token, working_dir, download_info_list)
-            else:
-                for download_info in download_info_list:
-                    print(download_info)
-        return 0
-    elif get_block_list:
-        ta1_user = TerrAvionAPI1User(access_token)
-        user_info = ta1_user.get_user(user_name)
-        ta2_user_block = TerrAvionAPI2UserBlock(user_info['id'], access_token)
-        user_block_list = ta2_user_block.get_user_blocks()
-        print('block_id, name')
-        for user_block in user_block_list:
-            print(','.join([user_block['blockId'], user_block['fieldName']]))
-    else:
-        print('--------------------------------------------------------------------------------------------------------------------------------')
-        print(parser.print_help())
-        print('--------------------------------------------------------------------------------------------------------------------------------')
-
+    run_flag = run_geotiff_download(user_name=user_name, access_token=access_token,
+        working_dir=working_dir, get_block_list= get_block_list,
+        product=product, block_name=block_name,
+        block_id_list=block_id_list, lat=lat, lng=lng,
+        add_start_date=add_start_date,
+        start_date=start_date, end_date=end_date,
+        with_colormap=with_colormap, geotiff_epsg=geotiff_epsg)
+    if not run_flag:
+        log.info(parser.print_help())
 
 if __name__ == '__main__':
     argument_sample = 'python ' + basename(os.path.realpath(__file__)) + \
@@ -139,8 +156,6 @@ if __name__ == '__main__':
                         nargs='?', default=None)
     parser.add_argument('-working_dir', help='working_dir',
                         nargs='?', default=None)
-
-
 
     # workflow parameters
 
@@ -177,5 +192,19 @@ if __name__ == '__main__':
     parser.add_argument('-EPSG', help='EPSG',
                         nargs='?', default=None)
 
+    parser.add_argument('-l', '-log', '--log', type=str,
+                        default='INFO', help='Input log level')
+    log_level_dict = {
+        'CRITICAL': 50,
+        'ERROR': 40,
+        'WARNING': 30,
+        'INFO': 20,
+        'DEBUG': 10,
+        'NOTSET': 0
+    }
     args = parser.parse_args()
+    # Get log level value from log_level_dict lookup
+    log_level = log_level_dict[args.log.upper()]
+    logger = logging.getLogger()
+    logger.setLevel(log_level)
     main(args)
