@@ -1,8 +1,10 @@
 import os
+import logging
+import json
 import traceback
 import re
 import requests
-
+import time
 timeout_seconds = 1000
 
 def check_duplicate_block_name(block_dic):
@@ -36,6 +38,7 @@ def run_download_file(url, outfilename):
 
 
 def download_file(url, outfilename):
+    log = logging.getLogger(__name__)
     error_log_list = []
     download_try_limit = 5
     download_time_elapsed = 0
@@ -44,19 +47,19 @@ def download_file(url, outfilename):
 
     for attempt in range(download_try_limit):
         try:
-            print('download_url:', url)
-            print('download_filename:', outfilename)
+            log.debug('download_url:'+ url)
+            log.debug('download_filename:'+ outfilename)
             run_download_file(url, outfilename)
 
         except:
             # thread_a.stop()
             # thread_b.stop()
-            print("download stuck?")
+            log.debug("download stuck?")
             error_log_list.append(str(traceback.format_exc()))
 
             if os.path.isfile(outfilename):
                 os.remove(outfilename)
-
+            time.sleep(5)
             continue
 
         if os.path.isfile(outfilename):
@@ -73,7 +76,7 @@ class DownloadingReport(object):
                                 'request_url', 'download_url',
                                 'timestamp', 'message']
         self.download_record_list = []
-
+        self.log = logging.getLogger(__name__)
     def insert_download_result(self, download_record):
         self.download_record_list.append(download_record)
 
@@ -119,8 +122,8 @@ class DownloadingReport(object):
 
     def print_download_record_list(self):
         if self.download_record_list:
-            print('---------------------------------------------------------------------------------------')
-            print(' '.join(self.csv_header_list))
+            self.log.debug('---------------------------------------------------------------------------------------')
+            self.log.debug(' '.join(self.csv_header_list))
 
             for download_record in self.download_record_list:
                 output_filename = None
@@ -147,5 +150,4 @@ class DownloadingReport(object):
 
                 if 'request_url' in download_record:
                     request_url = download_record['request_url']
-
-                print(output_filename, status, download_url, timestamp, message)
+                self.log.debug(' '.join([output_filename, status, download_url, timestamp, message]))

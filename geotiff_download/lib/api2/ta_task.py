@@ -9,51 +9,49 @@ class TerrAvionAPI2Task:
         self.access_token = access_token
         self.user_id = user_id
         self.api2_domain = config.api2_domain
+        self.log = logging.getLogger(__name__)
+    def parse_response(self, r):
+        if r.status_code == 200:
+            self.log.debug('-----------------Response-------------------')
+            self.log.debug(json.dumps(r.json(), sort_keys=True, indent=2))
+            self.log.debug('------------------------------------')
+            result = r.json()
+            return result
+        else:
+            self.log.debug('error:' + str(r.status_code))
+            self.log.debug(r.text)
+            self.log.debug('-------------------------------------------------------')
     def request_geotiff_task(self, layer_id, multiband=None,
         geotiff_epsg=None, colormap=None):
+        if not self.user_id:
+            self.log.debug('missing user_id')
+            return None
+        if not layer_id:
+            self.log.debug('missing layer_id')
+            return None
         q_url = self.api2_domain
-        if self.user_id and layer_id:
-            q_url += 'tasks/requestGeotiffTask'
-            q_url += '?userId=' + self.user_id
-            q_url += '&layerId=' + layer_id
-            if multiband:
-                q_url += '&multiband=true'
-            if geotiff_epsg:
-                q_url += '&epsgCode=' + geotiff_epsg
-            if colormap:
-                q_url += '&colorMap=' + colormap
-                q_url += '&colormapRgb=false'
-            q_url += '&access_token=' + self.access_token
-            logging.info(q_url)
-        else:
-            return None
+        q_url += 'tasks/requestGeotiffTask'
+        q_url += '?userId=' + self.user_id
+        q_url += '&layerId=' + layer_id
+        if multiband:
+            q_url += '&multiband=true'
+        if geotiff_epsg:
+            q_url += '&epsgCode=' + geotiff_epsg
+        if colormap:
+            q_url += '&colorMap=' + colormap
+            q_url += '&colormapRgb=false'
+        q_url += '&access_token=' + self.access_token
+        self.log.debug(q_url)
         r = requests.post(q_url)
-        logging.info('status code'+str(r.status_code))
-        if r.status_code == 200:
-            result = r.json()
-            if result:
-                logging.info('result'+json.dumps(result))
-                return result
-            else:
-                return None
-        else:
-            return None
+        return self.parse_response(r)
 
     def get_task_info(self, task_id):
+        if not task_id:
+            self.log.debug('missing task_id')
+            return None
         q_url = self.api2_domain
-        if task_id:
-            q_url += 'tasks/' + task_id
-            q_url += '?access_token=' + self.access_token
-            logging.info(q_url)
-        else:
-            return None
+        q_url += 'tasks/' + task_id
+        q_url += '?access_token=' + self.access_token
+        self.log.debug(q_url)
         r = requests.get(q_url)
-        logging.info('status code'+str(r.status_code))
-        if r.status_code == 200:
-            result = r.json()
-            if result:
-                return result
-            else:
-                return None
-        else:
-            return None
+        return self.parse_response(r)

@@ -29,7 +29,6 @@
         axios.get(blocksFromGPSUrl, config)
         .then(function (blocksRsponse) {
           var blockId = blocksRsponse.data[0].blockId;
-
           // getting summary dates from blockId
           var dateSummaryUrl = getDateSummaryUrl(api2Url, userId, blockId, accessToken);
           axios.get(dateSummaryUrl, config).then(function(datesResponse){

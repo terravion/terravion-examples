@@ -65,26 +65,26 @@ import json
 '''
 
 def main(argv):
-	working_dir=argv[0]
-	user_id='support+demo@terravion.com'
-	access_token='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
-	layer_id='f229593c-feb4-43a8-8259-d7618244a3bc'
-	colorMap_list=['N','N-GREENG','N-R2','N-R3','T','N-AVHRR','JG','BW','RW-LEGACY','GRANULAR','GM-COMP1','GM-RGB3','GM-QUAD','CVC','CHS_HC2','CHS_HC1','SMWE','10 Class Agroprecision Grey','6 Class Agroprecision','6 Class Agroprecision Grey','10 Class Agroprecision','CHS-LEGACY','TRICOLOR','TWE']
-	for color_map in colorMap_list:
-		out_file_name=os.path.join(working_dir,color_map+'.tiff')
-		request_url=('https://api.terravion.com/v1/layers/'+layer_id+'/geotiffs/image.tiff?colorMap='+color_map+'&access_token='+access_token).replace(' ','%20')
-		request = Request(request_url)
-		print request_url
-		response_file = urlopen(request)
-		try:
-			print 'writing',out_file_name
-			with open(out_file_name, "wb") as local_file:
-				local_file.write(response_file.read())
-		except HTTPError, e:
-			#handle errors
-			print "HTTP Error:", e.code, url
-		except URLError, e:
-			print "URL Error:", e.reason, url
+    working_dir=argv[0]
+    user_id='support+demo@terravion.com'
+    access_token='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
+    layer_id='f229593c-feb4-43a8-8259-d7618244a3bc'
+    colorMap_list=['N','N-GREENG','N-R2','N-R3','T','N-AVHRR','JG','BW','RW-LEGACY','GRANULAR','GM-COMP1','GM-RGB3','GM-QUAD','CVC','CHS_HC2','CHS_HC1','SMWE','10 Class Agroprecision Grey','6 Class Agroprecision','6 Class Agroprecision Grey','10 Class Agroprecision','CHS-LEGACY','TRICOLOR','TWE']
+    for color_map in colorMap_list:
+        out_file_name=os.path.join(working_dir,color_map+'.tiff')
+        request_url=('https://api.terravion.com/v1/layers/'+layer_id+'/geotiffs/image.tiff?colorMap='+color_map+'&access_token='+access_token).replace(' ','%20')
+        request = Request(request_url)
+        print request_url
+        response_file = urlopen(request)
+        try:
+            print 'writing',out_file_name
+            with open(out_file_name, "wb") as local_file:
+                local_file.write(response_file.read())
+        except HTTPError, e:
+            #handle errors
+            print "HTTP Error:", e.code, url
+        except URLError, e:
+            print "URL Error:", e.reason, url
 
 if __name__ == '__main__':
-	main(sys.argv[1:])
+    main(sys.argv[1:])
