@@ -41,10 +41,23 @@ def get_download_links(user_name, access_token, block_name=None,
         return None
     log.info('found: ' + str(len(layer_info_list)) + ' layers')
     ta2_task = TerrAvionAPI2Task(user_id, access_token)
-    task_info_list = request_geotiff_tasks(ta2_task, layer_info_list,
-        geotiff_epsg, product, with_colormap)
-    download_url_list = check_tasks_until_finish(task_info_list, ta2_task)
-    return download_url_list
+
+    if product:
+        task_info_list = request_geotiff_tasks(ta2_task, layer_info_list,
+            geotiff_epsg, product, with_colormap)
+        download_url_list = check_tasks_until_finish(task_info_list, ta2_task)
+        return download_url_list
+    else:
+        for layer_info in layer_info_list:
+            if 'layerDateEpoch' in layer_info:
+                layer_date = datetime.datetime.utcfromtimestamp(layer_info['layerDateEpoch'])
+                layer_date_string = layer_date.strftime("%Y-%m-%d")
+                add_date = datetime.datetime.utcfromtimestamp(layer_info['addDateEpoch'])
+                add_date_string = add_date.strftime("%Y-%m-%d")
+                log.info(json.dumps(layer_info, sort_keys=True, indent=2))
+                log.info('layer_date:'+ str(layer_date_string))
+                log.info('add_date:'+ str(add_date_string))
+
 
 def check_tasks_until_finish(task_info_list, ta2_task):
     log = logging.getLogger(__name__)

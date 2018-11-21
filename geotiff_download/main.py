@@ -86,7 +86,7 @@ def run_geotiff_download(user_name=None, access_token=None,
         log.critical('email api@terravion.com for access_token')
         log.critical(parser.print_help())
         return False
-    elif product and (block_name or (lat and lng) or block_id_list or
+    elif (block_name or (lat and lng) or block_id_list or
         add_start_date or start_date or end_date):
         log.debug('downloading geotiffs')
         download_info_list = workflow_lib.get_download_links(user_name,
@@ -100,7 +100,7 @@ def run_geotiff_download(user_name=None, access_token=None,
                     download_info_list)
             else:
                 for download_info in download_info_list:
-                    log.debug(json.dumps(download_info, sort_keys=True, indent=2))
+                    log.info(json.dumps(download_info, sort_keys=True, indent=2))
         return True
     elif get_block_list:
         ta1_user = TerrAvionAPI1User(access_token)
