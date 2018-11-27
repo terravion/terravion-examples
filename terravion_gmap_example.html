@@ -27,7 +27,7 @@
 
 			var terravion_nc = new google.maps.ImageMapType({
 			getTileUrl: function(coord, zoom) {
-				return 'https://api.terravion.com/v1/users/support+demo@terravion.com/layers/tiles/'+zoom+'/'+coord.x+'/'+(Math.pow(2,zoom)-coord.y-1)+'.png?epochStart=1456200627&epochEnd=1456632627&product=NC&access_token=2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
+				return 'https://api2.terravion.com/v1/users/support+demo@terravion.com/layers/tiles/'+zoom+'/'+coord.x+'/'+(Math.pow(2,zoom)-coord.y-1)+'.png?epochStart=1456200627&epochEnd=1456632627&product=NC&access_token=2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
 			},
 			tileSize: new google.maps.Size(256, 256),
 			isPng: true ,
