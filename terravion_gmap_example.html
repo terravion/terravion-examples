@@ -1,46 +1,46 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Simple Map</title>
-		<meta name="viewport" content="initial-scale=1.0">
-		<meta charset="utf-8">
-		<style>
-		html, body {
-			height: 100%;
-			margin: 0;
-			padding: 0;
-		}
-		#map {
-			height: 100%;
-		}
-		</style>
-	</head>
-	<body>
-		<div id="map"></div>
-		<script>
-		var map;
-		function initMap() {
-			map = new google.maps.Map(document.getElementById('map'), {
-			center: {lat: 38.540580, lng: -121.877271},
-			zoom: 15
-			});
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      height: 100%;
+    }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+    var map;
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: 38.540580, lng: -121.877271},
+      zoom: 15
+      });
 
-			var user_id = '5bad4dfa-7262-4a0a-b1e5-da30793cec65';
-			var terravion_nc = new google.maps.ImageMapType({
-			getTileUrl: function(coord, zoom) {
-				return 'https://api2.terravion.com/users/'+user_id+'/'+zoom+'/'+coord.x+'/'+(Math.pow(2,zoom)-coord.y-1)+'.png?product=NC&epochStart=1456200627&epochEnd=1456632627&access_token=2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
-			},
-			tileSize: new google.maps.Size(256, 256),
-			isPng: true ,
-			maxZoom: 19,
-			minZoom: 0,
-			name: 'nc'
-			});
-			map.overlayMapTypes.push(terravion_nc);
-		}
-		</script>
-		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsK1KCwqyowSCoIoxWP1MznvKBEyhw6TA&callback=initMap"
-		async defer>
-		</script>
-	</body>
+      var user_id = '5bad4dfa-7262-4a0a-b1e5-da30793cec65';
+      var terravion_nc = new google.maps.ImageMapType({
+      getTileUrl: function(coord, zoom) {
+        return 'https://api2.terravion.com/users/'+user_id+'/'+zoom+'/'+coord.x+'/'+(Math.pow(2,zoom)-coord.y-1)+'.png?product=NC&epochStart=1456200627&epochEnd=1456632627&access_token=2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
+      },
+      tileSize: new google.maps.Size(256, 256),
+      isPng: true ,
+      maxZoom: 19,
+      minZoom: 0,
+      name: 'nc'
+      });
+      map.overlayMapTypes.push(terravion_nc);
+    }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBsK1KCwqyowSCoIoxWP1MznvKBEyhw6TA&callback=initMap"
+    async defer>
+    </script>
+  </body>
 </html>

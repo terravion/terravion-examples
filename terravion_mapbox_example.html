@@ -19,9 +19,9 @@
   var map = L.mapbox.map('map', 'mapbox.streets')
       .setView([38.540580, -121.877271], 15);
   var access_token='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
-	var user_id='5bad4dfa-7262-4a0a-b1e5-da30793cec65';
-	var epochStart='1456200627'
-	var epochEnd='1456632627'
+  var user_id='5bad4dfa-7262-4a0a-b1e5-da30793cec65';
+  var epochStart='1456200627'
+  var epochEnd='1456632627'
   L.tileLayer('https://api2.terravion.com/users/'+user_id+'/{z}/{x}/{y}.png?product=NC&epochStart='+epochStart+'&epochEnd='+epochEnd+'&access_token='+access_token,{tms:true}).addTo(map);
 </script>
 
