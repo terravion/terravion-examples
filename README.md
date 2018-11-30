@@ -7,7 +7,8 @@ Pleaese contact api@terravion.com for your access_token.
 
 TerrAvion v2 Tiles End Point Specification
 ====================
-https://api2.terravion.com/users/**\<userId\>**/**\<z\>**/**\<x\>**/**\<y\>**.png?colorMap=**\<colorMap\>**&epochStart=**\<epochStart\>**&epochEnd=**\<epochEnd\>**&product=**\<product\>**access_token=**\<access_token\>**
+
+https://api2.terravion.com/users/<userId\>/<z\>/<x\>/<y\>.png?colorMap=<colorMap\>&epochStart=<epochStart\>&epochEnd=<epochEnd\>&product=<product\>&access_token=<access_token\>
 
 The following is are the parameters of the end point 
 
