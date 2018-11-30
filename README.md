@@ -1,19 +1,19 @@
 terravion-examples
 ====================
-This repository contains example codes to use [TerrAvion's API](http://docs.terravionv1.apiary.io/#)
+This repository contains example codes to use [TerrAvion's API](https://api2.terravion.com/)
 Pleaese contact api@terravion.com for your access_token.
 
-[TerrAvion API Tile Request Endpoint Documentation](http://docs.terravionv1.apiary.io/#reference/layers/usersuseridoremaillayerstileszxypngcolormapepochstartepochendproduct/get)
+[TerrAvion API Tile Request Endpoint Documentation](https://api2.terravion.com/#operation/TaUser.prototype.layerTiles)
 
-TerrAvion v1 Tiles End Point Specification
+TerrAvion v2 Tiles End Point Specification
 ====================
-https:/api.terravion.com/v1/users/**\<userIdOrEmail\>**/layers/tiles/**\<z\>**/**\<x\>**/**\<y\>**.png?colorMap=**\<colorMap\>**&epochStart=**\<epochStart\>**&epochEnd=**\<epochEnd\>**&product=**\<product\>**access_token=**\<access_token\>**
+https://api2.terravion.com/users/**\<userId\>**/**\<z\>**/**\<x\>**/**\<y\>**.png?colorMap=**\<colorMap\>**&epochStart=**\<epochStart\>**&epochEnd=**\<epochEnd\>**&product=**\<product\>**access_token=**\<access_token\>**
 
 The following is are the parameters of the end point 
 
 Parameter| Description | Type 
 --- | --- | ---
-userIdOrEmail | id or email of the user | Text 
+user | user id | Text 
 product| Product Type (NC,CIR,NDVI,TIRS, ZONE) | Text
 epochStart| Start date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer
 epochEnd| End date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer
@@ -32,7 +32,7 @@ The following is an example html that pulls tiles from support+demo@terravion.co
 ```javascript
   var terravion_nc = new google.maps.ImageMapType({
 	  getTileUrl: function(coord, zoom) {
-	  return 'https://api.terravion.com/v1/users/5bad4dfa-7262-4a0a-b1e5-da30793cec65/layers/tiles/'+zoom+'/'+coord.x+'/'+(Math.pow(2,zoom)-coord.y-1)+'.png?epochStart=1456200627&epochEnd=1456632627&product=NC&access_token=2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
+	  return 'https://api2.terravion.com/v1/users/5bad4dfa-7262-4a0a-b1e5-da30793cec65/layers/tiles/'+zoom+'/'+coord.x+'/'+(Math.pow(2,zoom)-coord.y-1)+'.png?epochStart=1456200627&epochEnd=1456632627&product=NC&access_token=2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
 		},
 		tileSize: new google.maps.Size(256, 256),
 		isPng: true ,
