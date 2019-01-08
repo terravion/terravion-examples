@@ -1,3 +1,6 @@
 .DS_Store
 *.pyc
 *.tif
+*/node_modules
+*package-lock.json
+*.env
