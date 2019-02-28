@@ -13,7 +13,7 @@ from lib.api2.ta_task import TerrAvionAPI2Task
 
 def date_to_epoch(date_string):
     if date_string:
-        return int(datetime.datetime.strptime(date_string, "%Y-%m-%d").strftime('%s'))
+        return int((datetime.datetime.strptime(date_string, "%Y-%m-%d") - datetime.datetime(1970,1,1)).total_seconds())
 
 def get_download_links(user_name, access_token, block_name=None,
     lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
