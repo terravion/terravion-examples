@@ -28,3 +28,14 @@ class TerrAvionAPI2Block:
         self.log.debug(q_url)
         r = requests.get(q_url)
         return self.parse_response(r)
+
+    def get_geom(self, block_id):
+        self.log.debug('get_geom')
+        q_url = self.api2_domain
+        q_url += 'blocks/' + block_id
+        q_url += '/geom.geojson?&access_token=' + self.access_token
+        self.log.debug(q_url)
+        r = requests.get(q_url)
+        return self.parse_response(r)
+
+        

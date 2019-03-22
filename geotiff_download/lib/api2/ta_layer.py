@@ -9,7 +9,7 @@ from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 class TerrAvionAPI2Layer:
     def __init__(self, user_id, access_token, epoch_start=None,
         epoch_end=None, add_epoch_start=None,
-        add_epoch_end=None):
+        add_epoch_end=None, use_beta=False):
         self.api2_domain = config.api2_domain
         self.user_id = user_id
         self.access_token = access_token
@@ -17,6 +17,7 @@ class TerrAvionAPI2Layer:
         self.epoch_end = epoch_end
         self.add_epoch_start = add_epoch_start
         self.add_epoch_end = add_epoch_end
+        self.use_beta = use_beta
         self.log = logging.getLogger(__name__)
     def parse_response(self, r):
         if r.status_code == 200:
@@ -71,6 +72,8 @@ class TerrAvionAPI2Layer:
             q_url += '&addEpochStart=' + str(self.add_epoch_start)
         if self.add_epoch_end:
             q_url += '&addEpochEnd=' + str(self.add_epoch_end)
+        if self.use_beta:
+            q_url += '&useBeta=true'
         self.log.debug(q_url)
         r = requests.get(q_url)
         return self.parse_response(r)

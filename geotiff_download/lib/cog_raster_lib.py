@@ -39,7 +39,7 @@ import rasterio
 import json
 import logging
 import platform
-
+from os.path import basename
 if platform.system() == 'Darwin':
     os.environ['CURL_CA_BUNDLE'] = '/usr/local/etc/openssl/cert.pem'
 else:
@@ -48,8 +48,10 @@ else:
 class CogRasterLib(object):
     def __init__(self):
         self.log = logging.getLogger(__name__)
-    def download_cog_from_s3(self, outfile, s3_url, epsg=4326, geojson_file=None, geojson_string=None):
-
+    def download_cog_from_s3(self, s3_url, epsg=4326, geojson_file=None, geojson_string=None, working_dir=None):
+        outfile = basename(s3_url)
+        if working_dir:
+            outfile = os.path.join(working_dir, basename(s3_url))
         gdalwarp_cmd_list = [
             'gdalwarp',
             '--config GDAL_CACHEMAX 500',
@@ -73,8 +75,11 @@ class CogRasterLib(object):
         ]
 
         gdalwarp_cmd = ' '.join(gdalwarp_cmd_list)
-        self.log.debug(str(gdalwarp_cmd))
-        os.system(gdalwarp_cmd)
+        if working_dir:
+            self.log.debug(str(gdalwarp_cmd))
+            os.system(gdalwarp_cmd)
+        else:
+            self.log.info('cmd: %s', str(gdalwarp_cmd))
     def validate_terravion_cog(self, file_path):
         '''
             Checking whether it is valid terravion cog geotiff

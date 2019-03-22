@@ -41,23 +41,36 @@ import logging
 import logging.config
 from os.path import basename
 from lib.cog_raster_lib import CogRasterLib
+from lib.api2.ta_layer import TerrAvionAPI2Layer
+from lib.api2.ta_block import TerrAvionAPI2Block
 def main(args):
     log = logging.getLogger(__name__)
     # Input Parameter
     input_tif = args.input_tif
     working_dir = args.working_dir
-    download_cog = args.download_cog
     validate_terravion_cog = args.validate_terravion_cog
+    block_id = args.block_id
+    layer_date = args.layer_date
+    get_layers = args.get_layers
+    user_id = args.user_id
+    access_token = args.access_token
     if validate_terravion_cog and input_tif:
         cr_lib = CogRasterLib()
         if cr_lib.validate_terravion_cog(input_tif):
             log.info('%s is a valid terravion cog', input_tif)
         else:
             log.info('%s is not a valid terravion cog', input_tif)
-    elif download_cog and working_dir:
+    elif get_layers and user_id and access_token:
         cr_lib = CogRasterLib()
-        outfile = os.path.join(working_dir, 'cog.tif')
-        # cr_lib.download_cog_from_s3(self, , s3_url, epsg=4326, geojson_file=None, geojson_string=None)
+        tapi2_layer = TerrAvionAPI2Layer(user_id, access_token, use_beta=True)
+        tapi2_block = TerrAvionAPI2Block(access_token)
+        layers = tapi2_layer.get_layers()
+        for layer in layers:
+            log.info(json.dumps(layer, indent=2, sort_keys=True))
+            block_id = layer['blockId']
+            block_info = tapi2_block.get_geom(block_id)
+            log.info(json.dumps(block_info))
+            cr_lib.download_cog_from_s3(layer['cogUrl'], epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir)
     else:
         parser.print_help()
 
@@ -68,9 +81,19 @@ if __name__ == '__main__':
     # flags
     parser.add_argument('--validate_terravion_cog', help='validate_terravion_cog',
                         action='store_true')
-    parser.add_argument('--download_cog', help='download_cog',
+    parser.add_argument('--get_layers', help='get_layers',
                         action='store_true')
+
     # parameters
+
+    parser.add_argument('--user_id', help='user_id',
+                        nargs='?', default=None)
+    parser.add_argument('--access_token', help='access_token',
+                        nargs='?', default=None)
+    parser.add_argument('--block_id', help='block_id',
+                        nargs='?', default=None)
+    parser.add_argument('--layer_date', help='layer_date',
+                        nargs='?', default=None)
     parser.add_argument('--input_tif', help='input_tif',
                         nargs='?', default=None)
     parser.add_argument('--working_dir', help='working_dir',
