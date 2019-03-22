@@ -8,12 +8,14 @@
     <script>
       $( document ).ready(function() {
         var apiUrl = 'https://api2.terravion.com'
-
         var access_token='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
         var user_id='5bad4dfa-7262-4a0a-b1e5-da30793cec65'
         var epochStart='1456200627'
         var epochEnd='1456632627'
-        var tileUrlTemplate = apiUrl + '/users/'+user_id+'/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&access_token='+access_token;
+        var tileUrlTemplate = apiUrl + '/users/'+ user_id
+        tileUrlTemplate += '/{z}/{x}/{y}.png'
+        tileUrlTemplate += '?epochStart='+epochStart+'&epochEnd='+ epochEnd
+        tileUrlTemplate += '&access_token='+access_token;
         var mymap = L.map('map').setView([38.540580, -121.877271], 15);
         var layersControl = L.control.layers();
 
