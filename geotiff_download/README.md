@@ -1,4 +1,4 @@
-geotiff_download
+geotiff_download [main.py]
 ====================
 
 Request api@terravion.com for an access_token
@@ -16,3 +16,20 @@ Request api@terravion.com for an access_token
 **Retrieve download links by block_name:**
 
 `python main.py -user_name <email> -access_token <access_token> -block_name <block_name> -product MULTIBAND`
+
+
+cloud optimized geotiff download [cog_main.py]
+====================
+
+In order to leverage cloud optimized geotiff and use this example code, gdal and rasterio must be downloaded. 
+
+https://www.gdal.org/
+
+
+Installing gdal on mac:
+http://www.kyngchaos.com/software/frameworks/
+
+
+
+
+Run tests to check out example usage

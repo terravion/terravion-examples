@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+
+    <script>
+      $( document ).ready(()=>{
+        const apiUrl = 'https://api2.terravion.com';
+        var accessToken='f39fde23-9169-418c-9945-92b3c0267adf'
+        var userId='1455cf90-af48-4fae-87d0-57523de51b8b'
+        var epochStart=1531408011;
+        var epochEnd=1531580811;
+        const lat = 36.918078;
+        const lng = -101.788173;
+        var tileUrlTemplate = `${apiUrl}/users/${userId}/{z}/{x}/{y}.png`;
+        tileUrlTemplate+= `?epochStart=${epochStart}&epochEnd=${epochEnd}&access_token=${accessToken}`;
+        var mymap = L.map('map').setView([lat, lng], 15);
+        var layersControl = L.control.layers();
+
+        var mapbox_Layer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
+          drawControl: false,
+          maxZoom: 22,
+          maxNativeZoom: 19
+        }).addTo(mymap);
+        var nc_layer=L.tileLayer(tileUrlTemplate + '&product=NC', {
+          attribution: 'TerrAvion',
+          maxZoom: 19,
+          tms: true
+        }).addTo(mymap);
+        var cir_layer=L.tileLayer(tileUrlTemplate + '&product=CIR', {
+          attribution: 'TerrAvion',
+          maxZoom: 19,
+          tms: true
+        })//.addTo(mymap);
+        var ndvi_layer=L.tileLayer(tileUrlTemplate + '&product=NDVI&colorMap=GRANULAR', {
+          attribution: 'TerrAvion',
+          maxZoom: 19,
+          tms: true
+        })//.addTo(mymap);
+        var tirs_layer=L.tileLayer(tileUrlTemplate + '&product=TIRS&colorMap=T', {
+          attribution: 'TerrAvion',
+          maxZoom: 19,
+          tms: true
+        })//.addTo(mymap);
+
+        layersControl.addOverlay(mapbox_Layer,'mapbox')
+        layersControl.addOverlay(nc_layer,'nc')
+        layersControl.addOverlay(cir_layer,'cir')
+        layersControl.addOverlay(ndvi_layer,'ndvi')
+        layersControl.addOverlay(tirs_layer,'thermal')
+        layersControl.addTo(mymap)
+      })
+    </script>
+  </head>
+  <body>
+    <div id="map" style="height:1000px;width:1000px"></div>
+  </body>
+</html>

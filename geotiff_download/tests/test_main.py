@@ -1,8 +1,8 @@
 import os
 import json
 import logging
-import config
-import root_env
+import tests.config as config
+import tests.root_env
 from lib.api1.ta_user import TerrAvionAPI1User
 from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
