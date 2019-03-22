@@ -1,7 +1,7 @@
 import os
 import json
 import logging
-import tests.root_env
+from . import root_env
 from lib.cog_raster_lib import CogRasterLib
 logging.basicConfig(level=logging.INFO)
 class TestCogMain(object):
