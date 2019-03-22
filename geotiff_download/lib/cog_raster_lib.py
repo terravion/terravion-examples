@@ -84,6 +84,7 @@ class CogRasterLib(object):
             src = rasterio.open(file_path)
             self.log.debug('src.meta: %s', str(src.meta))
             tags = src.tags()
+            self.log.debug('tags: %s', str(tags))
             if not src.meta['count'] == 7:
                 return False
             if not 'NDVI_BETA' in tags or not 'NDVI_ALPHA' in tags:
