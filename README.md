@@ -7,7 +7,6 @@ Pleaese contact api@terravion.com for your access_token.
 
 TerrAvion v2 Tiles End Point Specification
 ====================
-
 https://api2.terravion.com/users/<userId\>/<z\>/<x\>/<y\>.png?colorMap=<colorMap\>&epochStart=<epochStart\>&epochEnd=<epochEnd\>&product=<product\>&access_token=<access_token\>
 
 The following is are the parameters of the end point 
@@ -28,7 +27,7 @@ Integrating TerrAvion Tiles with Google Maps
 ====================
 If you host your own map application with Google Maps as a base layer, you may directly pull png tiles from TerrAvion's API. Note that TerrAvion API TMS tile coordinate system needs to be translated to match Google Map tiles system in the y-axis. `Math.pow(2,zoom)-coord.y-1` More info: http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/
 
-The following is an example html that pulls tiles from support+demo@terravion.com's account which has the [sample academic blocks] (https://maps.terravion.com/#/demo). From the "Hello World" code of [Google Maps Javascript API Getting Started] (https://developers.google.com/maps/documentation/javascript/tutorial#The_Hello_World_of_Google_Maps_v3), you simply need to add the following code snippet to include TerrAvion's png tiles: 
+The following is an example html that pulls tiles from support+demo@terravion.com's (5bad4dfa-7262-4a0a-b1e5-da30793cec65) account which has the [sample academic blocks] (https://maps.terravion.com/#/demo). From the "Hello World" code of [Google Maps Javascript API Getting Started] (https://developers.google.com/maps/documentation/javascript/tutorial#The_Hello_World_of_Google_Maps_v3), you simply need to add the following code snippet to include TerrAvion's png tiles: 
 
 ```javascript
   var user_id = '5bad4dfa-7262-4a0a-b1e5-da30793cec65'; // support+demo@terravion.com
@@ -107,10 +106,10 @@ Downloading geotiff from TerrAvion API is easy, simply run the following python 
 
 -download the imagery 
 
-[terravion_api_bulk_download.py](https://github.com/terravion/terravion-examples/blob/master/terravion_api_bulk_download.py)
+[main.py](https://github.com/terravion/terravion-examples/blob/master/geotiff_download/main.py)
 
 
-TerrAvion API2 tiles endpoint
+TerrAvion API2 Dynamic Colormap tiles endpoint
 ====================
 Parameter| Description | Type | Required
 --- | --- | --- | --
