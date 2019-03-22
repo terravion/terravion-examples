@@ -1,20 +1,19 @@
 terravion-examples
 ====================
-This repository contains example codes to use [TerrAvion's API]
-(https://api2.terravion.com/)
-Pleaese contact api@terravion.com for your access_token or follow Oauth2 flow.
+This repository contains example codes to use [TerrAvion's API](https://api2.terravion.com/)
+Pleaese contact api@terravion.com for your access_token.
 
 [TerrAvion API Tile Request Endpoint Documentation](https://api2.terravion.com/#operation/TaUser.prototype.layerTiles)
 
 TerrAvion v2 Tiles End Point Specification
 ====================
-https:/api2.terravion.com/users/**\<userId\>**/**\<z\>**/**\<x\>**/**\<y\>**.png?colorMap=**\<colorMap\>**&epochStart=**\<epochStart\>**&epochEnd=**\<epochEnd\>**&product=**\<product\>**access_token=**\<access_token\>**
+https://api2.terravion.com/users/<userId\>/<z\>/<x\>/<y\>.png?colorMap=<colorMap\>&epochStart=<epochStart\>&epochEnd=<epochEnd\>&product=<product\>&access_token=<access_token\>
 
 The following is are the parameters of the end point 
 
 Parameter| Description | Type 
 --- | --- | ---
-userId | user id | Text 
+user | user id | Text 
 product| Product Type (NC,CIR,NDVI,TIRS, ZONE) | Text
 epochStart| Start date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer
 epochEnd| End date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer
@@ -31,18 +30,29 @@ If you host your own map application with Google Maps as a base layer, you may d
 The following is an example html that pulls tiles from support+demo@terravion.com's (5bad4dfa-7262-4a0a-b1e5-da30793cec65) account which has the [sample academic blocks] (https://maps.terravion.com/#/demo). From the "Hello World" code of [Google Maps Javascript API Getting Started] (https://developers.google.com/maps/documentation/javascript/tutorial#The_Hello_World_of_Google_Maps_v3), you simply need to add the following code snippet to include TerrAvion's png tiles: 
 
 ```javascript
+  var user_id = '5bad4dfa-7262-4a0a-b1e5-da30793cec65'; // support+demo@terravion.com
+  var access_token = '2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
+  var epochStart = '1456200627'
+  var epochEnd = '1456632627'
   var terravion_nc = new google.maps.ImageMapType({
     getTileUrl: function(coord, zoom) {
-    return 'https://api2.terravion.com/users/'+user_id+'/'+zoom+'/'+coord.x+'/'+(Math.pow(2,zoom)-coord.y-1)+'.png?product=NC&epochStart=1456200627&epochEnd=1456632627&access_token=2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
+      var tileUrl = 'https://api2.terravion.com/users/'
+      tileUrl += user_id+'/'+zoom+'/'+coord.x+'/'+(Math.pow(2,zoom)-coord.y-1)+'.png'
+      tileUrl += '?product=NC'
+      tileUrl += '&epochStart=' + epochStart
+      tileUrl += '&epochEnd=' + epochEnd
+      tileUrl += '&access_token=' + access_token
+      return tileUrl
     },
     tileSize: new google.maps.Size(256, 256),
     isPng: true ,
     maxZoom: 19,
     minZoom: 0,
     name: 'nc'
-    });
+  });
   map.overlayMapTypes.push(terravion_nc);
 ```
+
 code: 
 <a href="https://github.com/terravion/terravion-examples/blob/master/terravion_gmap_example.html" target="_blank">terravion_gmap_example.html</a>
 
@@ -54,16 +64,20 @@ Integrating Terravion Tiles with Leaflet
 --------------------
 If you host your own Leaflet map application, you may directly pull the png tiles from TerrAvion's API, the following is an simple example with toggle to different product. Note that in leaflet, the TMS options needs to be true for TerrAvion tiles to show up correctly. `tms: true`
 
-
 ```javascript
   var access_token='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
-  var user_id='5bad4dfa-7262-4a0a-b1e5-da30793cec65'
+  var user_id='5bad4dfa-7262-4a0a-b1e5-da30793cec65' // support+demo@terravion.com
   var epochStart='1456200627'
   var epochEnd='1456632627'
-  var nc_layer=L.tileLayer('https://api2.terravion.com/v1/users/'+user_id+'/{z}/{x}/{y}.png?epochStart='+epochStart+'&epochEnd='+epochEnd+'&product=NC&access_token='+access_token, {
-  attribution: 'TerrAvion',
-  maxZoom: 19,
-  tms: true
+  var tileUrlTemplate = apiUrl + '/users/'+ user_id
+  tileUrlTemplate += '/{z}/{x}/{y}.png'
+  tileUrlTemplate += '?epochStart='+epochStart+'&epochEnd='+ epochEnd
+  tileUrlTemplate += '&access_token='+access_token;
+
+  L.tileLayer(tileUrlTemplate + '&product=NC', {
+    attribution: 'TerrAvion',
+    maxZoom: 19,
+    tms: true
   }).addTo(mymap);
 ```
 
