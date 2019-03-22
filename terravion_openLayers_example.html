@@ -10,7 +10,7 @@
       $( document ).ready(function() {
         // TerrAvion Layer Parameter
         var access_token = '2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
-        var user_id = 'support+demo@terravion.com'
+        var user_id = '5bad4dfa-7262-4a0a-b1e5-da30793cec65'
         var epochStart = '1456200627'
         var epochEnd = '1456632627'
         var product = 'NC'
@@ -92,9 +92,9 @@
       }
 
       function getTerrAvionUrlTemplate(user_id, epochStart, epochEnd, access_token, product){
-        var url = 'https://api.terravion.com/v1/users/';
+        var url = 'https://api2.terravion.com/users/';
         url += user_id;
-        url += '/layers/tiles/'
+        url += '/'
         url += '{z}/'
         url += '{x}/'
         url += '{-y}.png'
@@ -102,7 +102,7 @@
         url += '&epochEnd=' + epochEnd 
         url += '&product='+ product
         url += '&access_token=' + access_token
-        url += '&useInverseY=false'
+        url += '&tms=false'
         return url
       }
     </script>
