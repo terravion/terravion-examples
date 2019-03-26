@@ -20,6 +20,14 @@ class TerrAvionAPI2User:
             self.log.debug('error:' + str(r.status_code))
             self.log.debug(r.text)
             self.log.debug('-------------------------------------------------------')
+    def get_user_id(self):
+        q_url = self.api2_domain
+        q_url += 'users/getUserId?'
+        q_url += '&access_token=' + self.access_token
+        self.log.debug(q_url)
+        r = requests.get(q_url)
+        return self.parse_response(r)
+
     def get_user(self, user_email):
         q_url = self.api2_domain
         q_url += 'users/?filter='
@@ -36,11 +44,3 @@ class TerrAvionAPI2User:
         self.log.debug(q_url)
         r = requests.get(q_url)
         return self.parse_response(r)
-        if r.status_code == 200:
-            result = r.json()
-            if result:
-                return result
-            else:
-                return None
-        else:
-            return None

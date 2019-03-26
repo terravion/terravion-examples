@@ -3,7 +3,6 @@ import json
 import logging
 from . import root_env
 import tests.config as config
-from lib.api1.ta_user import TerrAvionAPI1User
 from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 import lib.workflow_lib as workflow_lib
@@ -11,12 +10,11 @@ import lib.workflow_lib as workflow_lib
 logging.basicConfig(level=logging.INFO)
 class TestMain(object):
     def test_get_block_list(self):
-        user_name = config.USER_NAME
         access_token = config.ACCESS_TOKEN
         log = logging.getLogger(__name__)
-        ta1_user = TerrAvionAPI1User(access_token)
-        user_info = ta1_user.get_user(user_name)
-        ta2_user_block = TerrAvionAPI2UserBlock(user_info['id'], access_token)
+        ta2_user = TerrAvionAPI2User(access_token)
+        user_id = ta2_user.get_user_id()
+        ta2_user_block = TerrAvionAPI2UserBlock(user_id, access_token)
         user_block_list = ta2_user_block.get_user_blocks()
         log.info('block_id, name')
         for user_block in user_block_list:
@@ -24,7 +22,6 @@ class TestMain(object):
         assert True
     def test_start_end_date(self):
         log = logging.getLogger(__name__)
-        user_name = config.USER_NAME
         access_token = config.ACCESS_TOKEN
         root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         working_dir = os.path.join(root_dir, 'download')
@@ -38,7 +35,7 @@ class TestMain(object):
         geotiff_epsg = None
         product = 'ALL'
         with_colormap = False
-        download_info_list = workflow_lib.get_download_links(user_name,
+        download_info_list = workflow_lib.get_download_links(
             access_token, block_name,
             lat, lng, block_id_list, start_date, end_date, add_start_date,
             geotiff_epsg, product=product, with_colormap=with_colormap)
@@ -52,7 +49,6 @@ class TestMain(object):
         assert True
     def test_add_date(self):
         log = logging.getLogger(__name__)
-        user_name = config.USER_NAME
         access_token = config.ACCESS_TOKEN
         root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         working_dir = os.path.join(root_dir, 'download')
@@ -66,7 +62,7 @@ class TestMain(object):
         geotiff_epsg = None
         product = 'ALL'
         with_colormap = True
-        download_info_list = workflow_lib.get_download_links(user_name,
+        download_info_list = workflow_lib.get_download_links(
             access_token, block_name,
             lat, lng, block_id_list, start_date, end_date, add_start_date,
             geotiff_epsg, product=product, with_colormap=with_colormap)

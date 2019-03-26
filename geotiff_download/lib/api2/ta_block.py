@@ -37,5 +37,3 @@ class TerrAvionAPI2Block:
         self.log.debug(q_url)
         r = requests.get(q_url)
         return self.parse_response(r)
-
-        

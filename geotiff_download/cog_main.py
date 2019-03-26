@@ -40,19 +40,22 @@ import argparse
 import logging
 import logging.config
 from os.path import basename
+from lib import workflow_lib
 from lib.cog_raster_lib import CogRasterLib
-from lib.api2.ta_layer import TerrAvionAPI2Layer
-from lib.api2.ta_block import TerrAvionAPI2Block
 def main(args):
     log = logging.getLogger(__name__)
     # Input Parameter
     input_tif = args.input_tif
     working_dir = args.working_dir
     validate_terravion_cog = args.validate_terravion_cog
-    block_id = args.block_id
-    layer_date = args.layer_date
+    block_id_list = args.block_id_list
+    block_name = args.block_name
+    add_start_date = args.add_start_date
+    add_end_date = args.add_end_date
+    start_date = args.start_date
+    end_date = args.end_date
     get_layers = args.get_layers
-    user_id = args.user_id
+    get_summary = args.get_summary
     access_token = args.access_token
     if validate_terravion_cog and input_tif:
         cr_lib = CogRasterLib()
@@ -60,17 +63,11 @@ def main(args):
             log.info('%s is a valid terravion cog', input_tif)
         else:
             log.info('%s is not a valid terravion cog', input_tif)
-    elif get_layers and user_id and access_token:
-        cr_lib = CogRasterLib()
-        tapi2_layer = TerrAvionAPI2Layer(user_id, access_token, use_beta=True)
-        tapi2_block = TerrAvionAPI2Block(access_token)
-        layers = tapi2_layer.get_layers()
-        for layer in layers:
-            log.info(json.dumps(layer, indent=2, sort_keys=True))
-            block_id = layer['blockId']
-            block_info = tapi2_block.get_geom(block_id)
-            log.info(json.dumps(block_info))
-            cr_lib.download_cog_from_s3(layer['cogUrl'], epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir)
+    elif (get_summary or get_layers) and access_token:
+        workflow_lib.get_cog_multiband_download_links(access_token, block_name=None,
+            block_id_list=block_id_list, start_date=start_date, end_date=end_date,
+            add_start_date=add_start_date, working_dir=working_dir,
+            print_summary=get_summary)
     else:
         parser.print_help()
 
@@ -83,17 +80,25 @@ if __name__ == '__main__':
                         action='store_true')
     parser.add_argument('--get_layers', help='get_layers',
                         action='store_true')
+    parser.add_argument('--get_summary', help='get_summary',
+                        action='store_true')
 
     # parameters
-
-    parser.add_argument('--user_id', help='user_id',
-                        nargs='?', default=None)
     parser.add_argument('--access_token', help='access_token',
                         nargs='?', default=None)
-    parser.add_argument('--block_id', help='block_id',
+    parser.add_argument('--block_id_list', help='block_id_list',
+                        nargs='+', default=None)
+    parser.add_argument('--block_name', help='block_name <name>',
                         nargs='?', default=None)
-    parser.add_argument('--layer_date', help='layer_date',
+    parser.add_argument('--add_start_date', help='add start_date YY-MM-DD',
                         nargs='?', default=None)
+    parser.add_argument('--add_end_date', help='add end_date YY-MM-DD',
+                        nargs='?', default=None)
+    parser.add_argument('--start_date', help='capture start_date YY-MM-DD',
+                        nargs='?', default=None)
+    parser.add_argument('--end_date', help='capture end_date YY-MM-DD',
+                        nargs='?', default=None)
+
     parser.add_argument('--input_tif', help='input_tif',
                         nargs='?', default=None)
     parser.add_argument('--working_dir', help='working_dir',

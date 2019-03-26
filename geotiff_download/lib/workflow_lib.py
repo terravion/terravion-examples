@@ -4,27 +4,78 @@ import json
 import datetime
 import time
 
-from lib.api1.ta_user import TerrAvionAPI1User
+from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_block import TerrAvionAPI2Block
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 from lib.api2.ta_layer import TerrAvionAPI2Layer
 from lib.api2.ta_task import TerrAvionAPI2Task
-
+from lib.cog_raster_lib import CogRasterLib
 
 def date_to_epoch(date_string):
     if date_string:
         return int((datetime.datetime.strptime(date_string, "%Y-%m-%d") - datetime.datetime(1970,1,1)).total_seconds())
 
-def get_download_links(user_name, access_token, block_name=None,
+def get_cog_multiband_download_links(access_token, block_name=None,
+    lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
+    add_start_date=None, working_dir=None, print_summary=False):
+    log = logging.getLogger(__name__)
+    cr_lib = CogRasterLib()
+    ta2_user = TerrAvionAPI2User(access_token)
+    user_id = ta2_user.get_user_id()
+
+    ta2_layer = TerrAvionAPI2Layer(user_id, access_token,
+        epoch_start=date_to_epoch(start_date),
+        epoch_end=date_to_epoch(end_date),
+        add_epoch_start=date_to_epoch(add_start_date),
+        use_beta=True)
+    tapi2_block = TerrAvionAPI2Block(access_token)
+    layer_info_list = []
+    if block_id_list:
+        layer_info_list = ta2_layer.get_layers_by_block_id_list(block_id_list)
+    else:
+        layer_info_list = ta2_layer.get_layers(field_name=block_name)
+    if not layer_info_list:
+        log.info('no layer found')
+        return
+    if print_summary:
+        block_dic = {}
+        for layer_info in layer_info_list:
+            block_id = layer_info['blockId']
+            block_info = tapi2_block.get_block(block_id)
+            if block_id in block_dic:
+                block_info = block_dic[block_id]
+            log.debug('layer_info %s', json.dumps(layer_info, indent=2, sort_keys=True))
+            log.debug('block_info %s', json.dumps(block_info, indent=2, sort_keys=True))
+            epoch_time = layer_info['layerDateEpoch']
+            cog_url = layer_info['cogUrl']
+            cog_info = {}
+            cog_info['cog_url'] = cog_url
+            cog_info['layer_date'] = datetime.datetime.fromtimestamp(epoch_time).strftime('%Y-%m-%d')
+            layers = []
+            if 'layers' in block_info:
+                layers = block_info['layers']
+            layers.append(cog_info)
+            layers = sorted(layers, key=lambda x: x['layer_date'], reverse=True)
+            block_info['layers'] = layers
+            block_dic[block_id] = block_info
+        for block_id in block_dic:
+            log.info(json.dumps(block_dic[block_id], sort_keys=True, indent=2))
+    else:
+        for layer_info in layer_info_list:
+            log.debug('layer_info %s', json.dumps(layer_info, indent=2, sort_keys=True))
+            block_id = layer_info['blockId']
+            block_info = tapi2_block.get_geom(block_id)
+            log.debug('block_info: %s', json.dumps(block_info))
+            cr_lib.download_cog_from_s3(layer_info['cogUrl'], epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir)
+
+def get_download_links(access_token, block_name=None,
     lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
     add_start_date=None, geotiff_epsg=None, product=None, with_colormap=False):
     log = logging.getLogger(__name__)
-    log.debug(' '.join([str(user_name), str(access_token), str(block_name), str(lat), str(lng), str(block_id_list)]))
+    log.debug(' '.join([str(access_token), str(block_name), str(lat), str(lng), str(block_id_list)]))
 
-    ta1_user = TerrAvionAPI1User(access_token)
-    user_info = ta1_user.get_user(user_name)
-    user_id = user_info['id']
-
+    ta2_user = TerrAvionAPI2User(access_token)
+    user_id = ta2_user.get_user_id()
     ta2_layer = TerrAvionAPI2Layer(user_id, access_token,
         epoch_start=date_to_epoch(start_date),
         epoch_end=date_to_epoch(end_date),

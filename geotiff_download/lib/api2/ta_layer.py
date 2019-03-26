@@ -43,7 +43,7 @@ class TerrAvionAPI2Layer:
     def get_layers_by_block_id_list(self, block_id_list):
         maser_layer_list = []
         for block_id in block_id_list:
-            self.log.debug('block_id: ' + block_id)
+            self.log.debug('block_id: %s', block_id)
             layers = self.get_layers(block_id = block_id)
             if layers:
                 maser_layer_list += layers
