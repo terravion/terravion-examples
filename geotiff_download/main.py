@@ -38,7 +38,6 @@ import argparse
 import logging
 from os.path import basename
 import lib.workflow_lib as workflow_lib
-from lib.api1.ta_user import TerrAvionAPI1User
 from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 
@@ -70,7 +69,7 @@ timeout_seconds = 7200  # 2 hours
 api_server = 'https://api2.terravion.com/'
 
 
-def run_geotiff_download(user_name=None, access_token=None,
+def run_geotiff_download(access_token=None,
             working_dir=None, get_block_list= None,
             product=None,
             block_name=None, block_id_list=None, lat=None, lng=None,
@@ -82,14 +81,14 @@ def run_geotiff_download(user_name=None, access_token=None,
         if not geotiff_epsg.isdigit() or not len(geotiff_epsg) == 4:
             log.critical('invalid EPSG Code: '+str(geotiff_epsg))
             return False
-    if not (user_name and access_token):
+    if not access_token:
         log.critical('email api@terravion.com for access_token')
         log.critical(parser.print_help())
         return False
     elif (block_name or (lat and lng) or block_id_list or
         add_start_date or start_date or end_date):
         log.debug('downloading geotiffs')
-        download_info_list = workflow_lib.get_download_links(user_name,
+        download_info_list = workflow_lib.get_download_links(
             access_token, block_name,
             lat, lng, block_id_list, start_date, end_date, add_start_date,
             geotiff_epsg, product=product, with_colormap=with_colormap)
@@ -103,9 +102,9 @@ def run_geotiff_download(user_name=None, access_token=None,
                     log.info(json.dumps(download_info, sort_keys=True, indent=2))
         return True
     elif get_block_list:
-        ta1_user = TerrAvionAPI1User(access_token)
-        user_info = ta1_user.get_user(user_name)
-        ta2_user_block = TerrAvionAPI2UserBlock(user_info['id'], access_token)
+        ta2_user = TerrAvionAPI2User(access_token)
+        user_id = ta2_user.get_user_id()
+        ta2_user_block = TerrAvionAPI2UserBlock(user_id, access_token)
         user_block_list = ta2_user_block.get_user_blocks()
         log.info('block_id, name')
 
@@ -116,7 +115,6 @@ def run_geotiff_download(user_name=None, access_token=None,
 def main(args):
     log = logging.getLogger(__name__)
     # Input Parameter
-    user_name = args.user_name
     access_token = args.access_token
     working_dir = args.working_dir
     # Workflow Parameters
@@ -134,7 +132,7 @@ def main(args):
     with_colormap = args.with_colormap
     # Geotiff parameters
     geotiff_epsg = args.EPSG
-    run_flag = run_geotiff_download(user_name=user_name, access_token=access_token,
+    run_flag = run_geotiff_download(access_token=access_token,
         working_dir=working_dir, get_block_list= get_block_list,
         product=product, block_name=block_name,
         block_id_list=block_id_list, lat=lat, lng=lng,
@@ -149,9 +147,6 @@ if __name__ == '__main__':
         ' -working_dir <working_dir>  -access_token <access_token> '
 
     parser = argparse.ArgumentParser(description=argument_sample)
-
-    parser.add_argument('-user_name', help='user_name',
-                        nargs='?', default=None)
 
     parser.add_argument('-access_token', help='access_token',
                         nargs='?', default=None)

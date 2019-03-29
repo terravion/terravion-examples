@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 400px;
+      }
+      
+      td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        font-size: 14px;
+      }
+      
+      </style>
+    <script>
+      let mymap = undefined;
+      let tileLayer = undefined;
+      let tileUrlTemplate = undefined;
+      $( document ).ready(()=>{
+        const apiUrl = 'https://api2.terravion.com';
+        var accessToken='f39fde23-9169-418c-9945-92b3c0267adf'
+        var userId='1455cf90-af48-4fae-87d0-57523de51b8b'
+        var epochStart = 1531408011;
+        var epochEnd = 1531580811;
+        const initialZoom = 16;
+        const lat = 36.918078;
+        const lng = -101.788173;
+        tileUrlTemplate = `${apiUrl}/users/${userId}/{z}/{x}/{y}.png`;
+        tileUrlTemplate+= `?epochStart=${epochStart}&epochEnd=${epochEnd}&access_token=${accessToken}&useBeta=True`;
+        mymap = L.map('map').setView([lat, lng], initialZoom);
+        var layersControl = L.control.layers();
+
+        const mapboxLayer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
+          drawControl: false,
+          maxZoom: 22,
+          maxNativeZoom: 19
+        }).addTo(mymap);
+        tileLayer=L.tileLayer(tileUrlTemplate + '&equation=' + document.getElementById("equation").value, {
+          attribution: 'TerrAvion',
+          maxZoom: 19,
+          tms: true
+        }).addTo(mymap);
+      })
+    </script>
+  </head>
+  <body>
+    <div id="map" style="height:1000px;width:1000px"></div>
+    <select
+      id="product"
+      onchange="updateMap()"
+      style="position:fixed;
+        top:10px;
+        right:20px;
+        background:white;
+        height:30px;
+        font-size:20px;
+        "
+      selected="equation"
+    >
+      <option value="NC">NC</option>
+      <option value="CIR">CIR</option>
+      <option value="NDVI">NDVI</option>
+      <option value="TIRS">TIRS</option>
+      <option value="equation" selected>equation</option>
+    </select>
+
+    <input
+      id="equation" 
+      type="text"
+      name="equation"
+      style="
+        position:fixed;
+        top:50px;
+        right:20px;
+        background:white;
+        height:30px;
+        width: 300px;
+        font-size:20px;
+        "
+      value="B3*120,B2*120,B1*120" />
+    <button
+      id="button"
+      onclick="updateMapByEquation()"
+      style="
+        position:fixed;
+        top:90px;
+        right:20px;
+        background:white;height:30px;
+        font-size:20px;
+        "
+      type="button">Submit
+    </button>
+
+
+    <table
+    style="
+      position:fixed;
+      top:200px;
+      right:10px;
+      background:white;height:30px;
+      font-size:20px;
+      "
+    >
+      <tr>
+        <th>Equation</th>
+        <th>Description</th>
+        <th>Select Equation</th>
+      </tr>
+      <tr>
+        <td id='eq1'>B3*120,B2*120,B1*120</td>
+        <td>RGB Bright</td>
+        <td>
+          <button onclick="updateMapByEquation('eq1')">Select</button>
+        </td>
+      </tr>
+      <tr>
+        <td id='eq2'>B3*70,B2*70,B1*70</td>
+        <td>RGB Dark</td>
+        <td>
+          <button onclick="updateMapByEquation('eq2')">Select</button>
+        </td>
+      </tr>
+      <tr>
+        <td id='eq3'>B4*20,B1*80,B2*80</td>
+        <td>CIR Bright</td>
+        <td>
+          <button onclick="updateMapByEquation('eq3')">Select</button>
+        </td>
+      </tr>  
+      <tr>
+        <td id='eq4'>B4*16,B1*32,B2*32</td>
+        <td>CIR</td>
+        <td>
+          <button onclick="updateMapByEquation('eq4')">Select</button>
+        </td>
+      </tr>
+      <!-- 
+        <tr>
+          <td id='eq5'>(B4-B6)/(B4+B6)</td>
+          <td>NDVI</td>
+          <td>Select</td>
+        </tr>
+      -->
+    </table>
+
+    <script>
+        const updateMap = () => {
+          const product = document.getElementById("product").value;
+          if (product == 'equation') {
+            console.log('update display');
+          } else {
+            mymap.removeLayer(tileLayer);
+            let productQuery = product;
+            if (product == 'NDVI') {
+              productQuery += '&colorMap=GRANULAR';
+            } else if (product=='TIRS'){
+              productQuery += '&colorMap=T';
+            }
+            tileLayer=L.tileLayer(`${tileUrlTemplate}&product=${productQuery}`, {
+              attribution: 'TerrAvion',
+              maxZoom: 19,
+              tms: true
+            }).addTo(mymap);
+          }
+        }
+
+        const updateMapByEquation = (equationId) => {
+          let equation = document.getElementById("equation").value;
+          if (equationId) {
+            document.getElementById("equation").value = document.getElementById(equationId).textContent;
+            equation = document.getElementById(equationId).textContent;
+          }
+          mymap.removeLayer(tileLayer);
+          equation = encodeURIComponent(equation);
+          tileLayer=L.tileLayer(`${tileUrlTemplate}&equation=${equation}`, {
+            attribution: 'TerrAvion',
+            maxZoom: 19,
+            tms: true
+          }).addTo(mymap);
+        }
+      </script>
+  </body>
+</html>
