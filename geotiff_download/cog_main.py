@@ -52,6 +52,7 @@ def main(args):
     block_name = args.block_name
     add_start_date = args.add_start_date
     add_end_date = args.add_end_date
+    no_clipping = args.no_clipping
     start_date = args.start_date
     end_date = args.end_date
     get_layers = args.get_layers
@@ -64,10 +65,10 @@ def main(args):
         else:
             log.info('%s is not a valid terravion cog', input_tif)
     elif (get_summary or get_layers) and access_token:
-        workflow_lib.get_cog_multiband_download_links(access_token, block_name=None,
+        workflow_lib.get_cog_multiband_download_links(access_token, block_name=block_name,
             block_id_list=block_id_list, start_date=start_date, end_date=end_date,
             add_start_date=add_start_date, working_dir=working_dir,
-            print_summary=get_summary)
+            print_summary=get_summary, no_clipping=no_clipping)
     else:
         parser.print_help()
 
@@ -81,6 +82,8 @@ if __name__ == '__main__':
     parser.add_argument('--get_layers', help='get_layers',
                         action='store_true')
     parser.add_argument('--get_summary', help='get_summary',
+                        action='store_true')
+    parser.add_argument('--no_clipping', help='no_clipping',
                         action='store_true')
 
     # parameters
