@@ -3,7 +3,7 @@ import logging
 import json
 import datetime
 import time
-
+from os.path import basename
 from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_block import TerrAvionAPI2Block
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
@@ -17,7 +17,8 @@ def date_to_epoch(date_string):
 
 def get_cog_multiband_download_links(access_token, block_name=None,
     lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
-    add_start_date=None, working_dir=None, print_summary=False):
+    add_start_date=None, working_dir=None, print_summary=False,
+    no_clipping=False):
     log = logging.getLogger(__name__)
     cr_lib = CogRasterLib()
     ta2_user = TerrAvionAPI2User(access_token)
@@ -66,7 +67,14 @@ def get_cog_multiband_download_links(access_token, block_name=None,
             block_id = layer_info['blockId']
             block_info = tapi2_block.get_geom(block_id)
             log.debug('block_info: %s', json.dumps(block_info))
-            cr_lib.download_cog_from_s3(layer_info['cogUrl'], epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir)
+            s3_url = layer_info['cogUrl']
+            outfile = os.path.splitext(basename(s3_url))[0] + '.tif'
+            if not no_clipping:
+                outfile = block_id + '_' + os.path.splitext(basename(s3_url))[0] + '.tif'
+            if working_dir:
+                outfile = os.path.join(working_dir, basename(s3_url))
+
+            cr_lib.download_cog_from_s3(s3_url, outfile, epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir, no_clipping=no_clipping)
 
 def get_download_links(access_token, block_name=None,
     lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,

@@ -48,10 +48,7 @@ else:
 class CogRasterLib(object):
     def __init__(self):
         self.log = logging.getLogger(__name__)
-    def download_cog_from_s3(self, s3_url, epsg=4326, geojson_file=None, geojson_string=None, working_dir=None):
-        outfile = basename(s3_url)
-        if working_dir:
-            outfile = os.path.join(working_dir, basename(s3_url))
+    def download_cog_from_s3(self, s3_url, outfile, epsg=4326, geojson_file=None, geojson_string=None, working_dir=None, no_clipping=False):
         gdalwarp_cmd_list = [
             'gdalwarp',
             '--config GDAL_CACHEMAX 500',
@@ -60,15 +57,15 @@ class CogRasterLib(object):
             '--config GDALWARP_IGNORE_BAD_CUTLINE YES',
             '-t_srs EPSG:'+ str(epsg),
             '-of GTiff',
-            '-crop_to_cutline -cutline',
         ]
-
-        if geojson_file:
-            gdalwarp_cmd_list.append(geojson_file)
-        elif geojson_string:
-            gdalwarp_cmd_list.append("'"+ geojson_string+ "'")
-        else:
-            raise Exception('Need to supply geojson_file, geojson_string')
+        if not no_clipping:
+            gdalwarp_cmd_list.append('-crop_to_cutline -cutline')
+            if geojson_file:
+                gdalwarp_cmd_list.append(geojson_file)
+            elif geojson_string:
+                gdalwarp_cmd_list.append("'"+ geojson_string+ "'")
+            else:
+                raise Exception('Need to supply geojson_file, geojson_string')
         gdalwarp_cmd_list += [
             '/vsicurl/'+ s3_url.replace('s3://', 'https://s3-us-west-2.amazonaws.com/'),
             outfile
