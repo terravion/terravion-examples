@@ -3,10 +3,29 @@ terravion-examples
 This repository contains example codes to use [TerrAvion's API](https://api2.terravion.com/)
 Pleaese contact api@terravion.com for your access_token.
 
-[TerrAvion API Tile Request Endpoint Documentation](https://api2.terravion.com/#operation/TaUser.prototype.layerTiles)
+Cloud Optimized Geotiff Download
+====================
+Levearge cloud optimized geotiff to download imagery from TerrAvion API.
+
+Example Script: [cog_main.py](https://github.com/terravion/terravion-examples/blob/master/geotiff_download/cog_main.py)
+
+[Documentation](https://github.com/terravion/terravion-examples/tree/master/geotiff_download#cloud-optimized-geotiff-download-cog_mainpy)
+
+Geotiff Download 
+====================
+Downloading geotiff from TerrAvion API is easy, simply run the following python script to streamline the process.
+
+[main.py](https://github.com/terravion/terravion-examples/blob/master/geotiff_download/main.py)
+
+Workflow overview:
+1. get the blocks/fields 
+2. get the layers 
+3. download the imagery 
 
 TerrAvion v2 Tiles End Point Specification
 ====================
+[TerrAvion API Tile Request Endpoint Documentation](https://api2.terravion.com/#operation/TaUser.prototype.layerTiles)
+
 https://api2.terravion.com/users/<userId\>/<z\>/<x\>/<y\>.png?colorMap=<colorMap\>&epochStart=<epochStart\>&epochEnd=<epochEnd\>&product=<product\>&access_token=<access_token\>
 
 The following is are the parameters of the end point 
@@ -94,20 +113,6 @@ code:
 
 preview: 
 <a href="https://rawgit.com/terravion/terravion-examples/master/terravion_openLayers_example.html" target="_blank">terravion_openLayers_example.html</a>
-
-
-Geotiff Download 
-====================
-Downloading geotiff from TerrAvion API is easy, simply run the following python script to streamline the process.
-
--get the blocks 
-
--get the layers 
-
--download the imagery 
-
-[main.py](https://github.com/terravion/terravion-examples/blob/master/geotiff_download/main.py)
-
 
 TerrAvion API2 Dynamic Colormap tiles endpoint
 ====================
