@@ -40,27 +40,32 @@ def get_cog_multiband_download_links(access_token, block_name=None,
         return
     if print_summary:
         block_dic = {}
-        for layer_info in layer_info_list:
-            block_id = layer_info['blockId']
-            block_info = tapi2_block.get_block(block_id)
-            if block_id in block_dic:
-                block_info = block_dic[block_id]
-            log.debug('layer_info %s', json.dumps(layer_info, indent=2, sort_keys=True))
-            log.debug('block_info %s', json.dumps(block_info, indent=2, sort_keys=True))
-            epoch_time = layer_info['layerDateEpoch']
-            cog_url = layer_info['cogUrl']
-            cog_info = {}
-            cog_info['cog_url'] = cog_url
-            cog_info['layer_date'] = datetime.datetime.fromtimestamp(epoch_time).strftime('%Y-%m-%d')
-            layers = []
-            if 'layers' in block_info:
-                layers = block_info['layers']
-            layers.append(cog_info)
-            layers = sorted(layers, key=lambda x: x['layer_date'], reverse=True)
-            block_info['layers'] = layers
-            block_dic[block_id] = block_info
-        for block_id in block_dic:
-            log.info(json.dumps(block_dic[block_id], sort_keys=True, indent=2))
+        if layer_info_list:
+            log.info('found %s layers', str(len(layer_info_list)))
+            for layer_info in layer_info_list:
+                block_id = layer_info['blockId']
+                if block_id in block_dic:
+                    block_info = block_dic[block_id]
+                else:
+                    block_info = tapi2_block.get_block(block_id)
+                log.debug('layer_info %s', json.dumps(layer_info, indent=2, sort_keys=True))
+                log.debug('block_info %s', json.dumps(block_info, indent=2, sort_keys=True))
+                epoch_time = layer_info['layerDateEpoch']
+                cog_url = layer_info['cogUrl']
+                cog_info = {}
+                cog_info['cog_url'] = cog_url
+                cog_info['layer_date'] = datetime.datetime.fromtimestamp(epoch_time).strftime('%Y-%m-%d')
+                layers = []
+                if 'layers' in block_info:
+                    layers = block_info['layers']
+                layers.append(cog_info)
+                layers = sorted(layers, key=lambda x: x['layer_date'], reverse=True)
+                block_info['layers'] = layers
+                block_dic[block_id] = block_info
+            for block_id in block_dic:
+                log.info(json.dumps(block_dic[block_id], sort_keys=True, indent=2))
+        else:
+            log.info('found 0 layers')
     else:
         for layer_info in layer_info_list:
             log.debug('layer_info %s', json.dumps(layer_info, indent=2, sort_keys=True))
