@@ -27,8 +27,7 @@ def get_cog_multiband_download_links(access_token, block_name=None,
     ta2_layer = TerrAvionAPI2Layer(user_id, access_token,
         epoch_start=date_to_epoch(start_date),
         epoch_end=date_to_epoch(end_date),
-        add_epoch_start=date_to_epoch(add_start_date),
-        use_beta=True)
+        add_epoch_start=date_to_epoch(add_start_date))
     tapi2_block = TerrAvionAPI2Block(access_token)
     layer_info_list = []
     if block_id_list:
@@ -73,13 +72,14 @@ def get_cog_multiband_download_links(access_token, block_name=None,
             block_info = tapi2_block.get_geom(block_id)
             log.debug('block_info: %s', json.dumps(block_info))
             s3_url = layer_info['cogUrl']
-            outfile = os.path.splitext(basename(s3_url))[0] + '.tif'
-            if not no_clipping:
-                outfile = block_id + '_' + os.path.splitext(basename(s3_url))[0] + '.tif'
-            if working_dir:
-                outfile = os.path.join(working_dir, basename(s3_url))
+            if s3_url:
+                outfile = os.path.splitext(basename(s3_url))[0] + '.tif'
+                if not no_clipping:
+                    outfile = block_id + '_' + os.path.splitext(basename(s3_url))[0] + '.tif'
+                if working_dir:
+                    outfile = os.path.join(working_dir, basename(s3_url))
 
-            cr_lib.download_cog_from_s3(s3_url, outfile, epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir, no_clipping=no_clipping)
+                cr_lib.download_cog_from_s3(s3_url, outfile, epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir, no_clipping=no_clipping)
 
 def get_download_links(access_token, block_name=None,
     lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
