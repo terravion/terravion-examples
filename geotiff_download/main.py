@@ -70,7 +70,7 @@ api_server = 'https://api2.terravion.com/'
 
 
 def run_geotiff_download(access_token=None,
-            working_dir=None, get_block_list= None,
+            working_dir=None, get_block_list=None,
             product=None,
             block_name=None, block_id_list=None, lat=None, lng=None,
             add_start_date=None,
@@ -133,7 +133,7 @@ def main(args):
     # Geotiff parameters
     geotiff_epsg = args.EPSG
     run_flag = run_geotiff_download(access_token=access_token,
-        working_dir=working_dir, get_block_list= get_block_list,
+        working_dir=working_dir, get_block_list=get_block_list,
         product=product, block_name=block_name,
         block_id_list=block_id_list, lat=lat, lng=lng,
         add_start_date=add_start_date,
