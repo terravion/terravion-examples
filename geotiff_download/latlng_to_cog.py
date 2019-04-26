@@ -88,7 +88,7 @@ class LatLngToCOG:
         layers = self.get_layers()
         if layers:
             for layer in layers:
-                print(json.dumps(layers))
+                print(json.dumps(layer, sort_keys=True, indent=2))
                 outfile = None
                 if working_dir:
                     layer_date = datetime.datetime.utcfromtimestamp(layer['layerDateEpoch']).strftime('%Y-%m-%d')
