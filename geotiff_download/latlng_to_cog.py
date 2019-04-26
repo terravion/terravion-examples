@@ -81,7 +81,7 @@ class LatLngToCOG:
             print(str(gdalwarp_cmd))
             os.system(gdalwarp_cmd)
         else:
-            print('cmd:', str(gdalwarp_cmd))
+            print(str(gdalwarp_cmd))
     def get_cogs(self, working_dir):
 
         self.user_id = self.get_user_id()
