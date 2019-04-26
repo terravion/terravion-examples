@@ -109,7 +109,7 @@ def main(args):
 
 if __name__ == '__main__':
     argument_sample = 'python ' + basename(os.path.realpath(__file__)) + \
-        ' --input_tif '
+        ' --lat <lat> --lng <lng> --access_token <access_token>'
     parser = argparse.ArgumentParser(description=argument_sample)
 
     # parameters
