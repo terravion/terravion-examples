@@ -1,5 +1,5 @@
 ##########################################################################
-# Validate Download Cog
+# Cog Main
 #
 # This material contains sample programming source code ("Sample Code").
 # TerrAvion grants you a nonexclusive license to compile, link, run,
@@ -34,7 +34,6 @@
 ##########################################################################
 
 import os
-import rasterio
 import json
 import argparse
 import logging
