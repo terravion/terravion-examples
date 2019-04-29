@@ -42,6 +42,8 @@ import platform
 from os.path import basename
 if platform.system() == 'Darwin':
     os.environ['CURL_CA_BUNDLE'] = '/usr/local/etc/openssl/cert.pem'
+elif platform.system() == 'Windows':
+    print('Specific CURL_CA_BUNDLE HERE')
 else:
     os.environ['CURL_CA_BUNDLE'] = '/etc/ssl/certs/ca-certificates.crt'
 
