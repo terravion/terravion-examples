@@ -16,7 +16,7 @@ class ProductLib(object):
         if not out_filepath and self.working_dir and self.root_name:
             out_filepath = os.path.join(self.working_dir, self.root_name + '_' + self.product + '.tif')
         if self.product == 'SYNTHETIC_NC':
-            self.make_synthetic_nc(out_filepath)
+            self.make_synthetic_nc()
 
     def make_synthetic_nc(self):
         self.log.info('Creating synthetic NC product')
@@ -76,7 +76,7 @@ class ProductLib(object):
         else:
             kwargs.update(alpha='no', count=3)
 
-        self.log.info('Writing file: %s', str(output_filepath))
+        self.log.info('Writing file: %s', str(self.output_filepath))
 
         with rasterio.open(output_filepath, 'w', **kwargs) as dst:
             dst.write(R, 1)
