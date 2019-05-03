@@ -51,6 +51,7 @@ class CogRasterLib(object):
     def __init__(self):
         self.log = logging.getLogger(__name__)
     def download_cog_from_s3(self, s3_url, outfile, epsg=4326, geojson_file=None, geojson_string=None, working_dir=None, no_clipping=False):
+        # Download Multiband from COG
         gdalwarp_cmd_list = [
             'gdalwarp',
             '--config GDAL_CACHEMAX 500',

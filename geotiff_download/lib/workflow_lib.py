@@ -9,26 +9,35 @@ from lib.api2.ta_block import TerrAvionAPI2Block
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 from lib.api2.ta_layer import TerrAvionAPI2Layer
 from lib.api2.ta_task import TerrAvionAPI2Task
-from lib.cog_raster_lib import CogRasterLib
 
 def date_to_epoch(date_string):
     if date_string:
         return int((datetime.datetime.strptime(date_string, "%Y-%m-%d") - datetime.datetime(1970,1,1)).total_seconds())
 
+def validate_product(product):
+    product_list = ['SYNTHETIC_NC'] # Coming Soon: NC, CIR, NDVI, THERMAL
+    if product in product_list:
+        return True
+
 def get_cog_multiband_download_links(access_token, block_name=None,
     lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
     add_start_date=None, working_dir=None, print_summary=False,
-    no_clipping=False):
+    no_clipping=False, product=None):
     log = logging.getLogger(__name__)
+
+    if product:
+        if not validate_product(product):
+            log.info('Pleaese select a valid product: SYNTHETIC_NC')
+            return
+    from lib.cog_raster_lib import CogRasterLib
     cr_lib = CogRasterLib()
     ta2_user = TerrAvionAPI2User(access_token)
+    tapi2_block = TerrAvionAPI2Block(access_token)
     user_id = ta2_user.get_user_id()
-
     ta2_layer = TerrAvionAPI2Layer(user_id, access_token,
         epoch_start=date_to_epoch(start_date),
         epoch_end=date_to_epoch(end_date),
         add_epoch_start=date_to_epoch(add_start_date))
-    tapi2_block = TerrAvionAPI2Block(access_token)
     layer_info_list = []
     if block_id_list:
         layer_info_list = ta2_layer.get_layers_by_block_id_list(block_id_list)
@@ -38,31 +47,8 @@ def get_cog_multiband_download_links(access_token, block_name=None,
         log.info('no layer found')
         return
     if print_summary:
-        block_dic = {}
         if layer_info_list:
-            log.info('found %s layers', str(len(layer_info_list)))
-            for layer_info in layer_info_list:
-                block_id = layer_info['blockId']
-                if block_id in block_dic:
-                    block_info = block_dic[block_id]
-                else:
-                    block_info = tapi2_block.get_block(block_id)
-                log.debug('layer_info %s', json.dumps(layer_info, indent=2, sort_keys=True))
-                log.debug('block_info %s', json.dumps(block_info, indent=2, sort_keys=True))
-                epoch_time = layer_info['layerDateEpoch']
-                cog_url = layer_info['cogUrl']
-                cog_info = {}
-                cog_info['cog_url'] = cog_url
-                cog_info['layer_date'] = datetime.datetime.fromtimestamp(epoch_time).strftime('%Y-%m-%d')
-                layers = []
-                if 'layers' in block_info:
-                    layers = block_info['layers']
-                layers.append(cog_info)
-                layers = sorted(layers, key=lambda x: x['layer_date'], reverse=True)
-                block_info['layers'] = layers
-                block_dic[block_id] = block_info
-            for block_id in block_dic:
-                log.info(json.dumps(block_dic[block_id], sort_keys=True, indent=2))
+            print_layer_summary(layer_info_list, access_token)
         else:
             log.info('found 0 layers')
     else:
@@ -73,13 +59,47 @@ def get_cog_multiband_download_links(access_token, block_name=None,
             log.debug('block_info: %s', json.dumps(block_info))
             s3_url = layer_info['cogUrl']
             if s3_url:
-                outfile = os.path.splitext(basename(s3_url))[0] + '.tif'
+                root_name = os.path.splitext(basename(s3_url))[0]
+                multiband_filename = root_name + '.tif'
                 if not no_clipping:
-                    outfile = block_id + '_' + os.path.splitext(basename(s3_url))[0] + '.tif'
+                    root_name = block_id + '_' + root_name
+                    multiband_filename = root_name + '.tif'
                 if working_dir:
-                    outfile = os.path.join(working_dir, basename(s3_url))
+                    multiband_filename = os.path.join(working_dir, multiband_filename)
 
-                cr_lib.download_cog_from_s3(s3_url, outfile, epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir, no_clipping=no_clipping)
+                cr_lib.download_cog_from_s3(s3_url, multiband_filename, epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir, no_clipping=no_clipping)
+                if multiband_filename and working_dir and product:
+                    from lib.product_lib import ProductLib
+                    p_l = ProductLib(product, layer_info['contrastBounds'], multiband_filename, working_dir, root_name)
+                    p_l.create_product()
+
+def print_layer_summary(layer_info_list, access_token):
+    log = logging.getLogger(__name__)
+    tapi2_block = TerrAvionAPI2Block(access_token)
+    block_dic = {}
+    log.info('found %s layers', str(len(layer_info_list)))
+    for layer_info in layer_info_list:
+        block_id = layer_info['blockId']
+        if block_id in block_dic:
+            block_info = block_dic[block_id]
+        else:
+            block_info = tapi2_block.get_block(block_id)
+        log.debug('layer_info %s', json.dumps(layer_info, indent=2, sort_keys=True))
+        log.debug('block_info %s', json.dumps(block_info, indent=2, sort_keys=True))
+        epoch_time = layer_info['layerDateEpoch']
+        cog_url = layer_info['cogUrl']
+        cog_info = {}
+        cog_info['cog_url'] = cog_url
+        cog_info['layer_date'] = datetime.datetime.fromtimestamp(epoch_time).strftime('%Y-%m-%d')
+        layers = []
+        if 'layers' in block_info:
+            layers = block_info['layers']
+        layers.append(cog_info)
+        layers = sorted(layers, key=lambda x: x['layer_date'], reverse=True)
+        block_info['layers'] = layers
+        block_dic[block_id] = block_info
+    for block_id in block_dic:
+        log.info(json.dumps(block_dic[block_id], sort_keys=True, indent=2))
 
 def get_download_links(access_token, block_name=None,
     lat=None, lng=None, block_id_list=None, start_date=None, end_date=None,
@@ -127,10 +147,10 @@ def check_tasks_until_finish(task_info_list, ta2_task):
     log = logging.getLogger(__name__)
     download_url_list = []
     new_task_info_list = []
-    log.info(str(len(task_info_list)) + ' tasks to be downloaded')
+    log.info('%s tasks to be downloaded', str(len(task_info_list)) )
     while True:
         if task_info_list:
-            log.debug(str(len(task_info_list)) +  ' tasks remaining')
+            log.debug('%s tasks remaining', str(len(task_info_list)))
         for task_info in task_info_list:
             task_response = ta2_task.get_task_info(task_info['task_id'])
             download_url = get_finished_download_link(task_response)
@@ -168,7 +188,7 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None, product=
             task_info = ta2_task.request_geotiff_task(layer_id, multiband=True,
                 geotiff_epsg=geotiff_epsg)
             if task_info:
-                task_info['product'] = 'MULTIBAND' 
+                task_info['product'] = 'MULTIBAND'
                 task_info['addDateEpoch'] = layer_info['addDateEpoch']
                 task_info['layerDateEpoch'] = layer_info['layerDateEpoch']
                 task_info['blockId'] = layer_info['blockId']

@@ -51,6 +51,7 @@ def main(args):
     block_name = args.block_name
     add_start_date = args.add_start_date
     add_end_date = args.add_end_date
+    product = args.product
     no_clipping = args.no_clipping
     start_date = args.start_date
     end_date = args.end_date
@@ -67,7 +68,7 @@ def main(args):
         workflow_lib.get_cog_multiband_download_links(access_token, block_name=block_name,
             block_id_list=block_id_list, start_date=start_date, end_date=end_date,
             add_start_date=add_start_date, working_dir=working_dir,
-            print_summary=get_summary, no_clipping=no_clipping)
+            print_summary=get_summary, no_clipping=no_clipping, product=product)
     else:
         parser.print_help()
 
@@ -100,7 +101,8 @@ if __name__ == '__main__':
                         nargs='?', default=None)
     parser.add_argument('--end_date', help='capture end_date YY-MM-DD',
                         nargs='?', default=None)
-
+    parser.add_argument('--product', help='product => SYNTHETIC_NC [Coming Soon: NC, NDVI, CIR, THERMAL]',
+                        nargs='?', default=None)
     parser.add_argument('--input_tif', help='input_tif',
                         nargs='?', default=None)
     parser.add_argument('--working_dir', help='working_dir',
