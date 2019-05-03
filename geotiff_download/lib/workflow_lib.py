@@ -67,10 +67,10 @@ def get_cog_multiband_download_links(access_token, block_name=None,
                     multiband_filename = root_name + '.tif'
                 if working_dir:
                     multiband_filename = os.path.join(working_dir, multiband_filename)
-                
+
                 cr_lib.download_cog_from_s3(s3_url, multiband_filename, epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir, no_clipping=no_clipping)
                 if multiband_filename and working_dir and product:
-                    p_l = ProductLib(product, product_args, multiband_filename, working_dir, root_name)
+                    p_l = ProductLib(product, layer_info['contrastBounds'], multiband_filename, working_dir, root_name)
                     p_l.create_product()
 
 def print_layer_summary(layer_info_list, access_token):

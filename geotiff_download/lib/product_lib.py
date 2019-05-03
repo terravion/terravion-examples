@@ -12,13 +12,13 @@ class ProductLib(object):
         self.working_dir = working_dir
         self.root_name = root_name
         self.input_filepath = input_filepath
-    def create_product(self, out_filepath):
+    def create_product(self, out_filepath=None):
         if not out_filepath and self.working_dir and self.root_name:
             out_filepath = os.path.join(self.working_dir, self.root_name + '_' + self.product + '.tif')
         if self.product == '':
             self.make_synthetic_nc(out_filepath)
 
-    def make_synthetic_nc(self, output_filepath):
+    def make_synthetic_nc(self):
         self.log.info('Creating synthetic NC product')
 
         with rasterio.open(self.input_filepath) as src:
