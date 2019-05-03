@@ -61,7 +61,7 @@ def get_cog_multiband_download_links(access_token, block_name=None,
             s3_url = layer_info['cogUrl']
             if s3_url:
                 root_name = os.path.splitext(basename(s3_url))[0]
-                multiband_filename =  root_name + '.tif'
+                multiband_filename = root_name + '.tif'
                 if not no_clipping:
                     root_name = block_id + '_' + root_name
                     multiband_filename = root_name + '.tif'
