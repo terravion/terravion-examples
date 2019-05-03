@@ -9,8 +9,6 @@ from lib.api2.ta_block import TerrAvionAPI2Block
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 from lib.api2.ta_layer import TerrAvionAPI2Layer
 from lib.api2.ta_task import TerrAvionAPI2Task
-from lib.cog_raster_lib import CogRasterLib
-from lib.product_lib import ProductLib
 
 def date_to_epoch(date_string):
     if date_string:
@@ -31,6 +29,7 @@ def get_cog_multiband_download_links(access_token, block_name=None,
         if not validate_product(product):
             log.info('Pleaese select a valid product: SYNTHETIC_NC')
             return
+    from lib.cog_raster_lib import CogRasterLib
     cr_lib = CogRasterLib()
     ta2_user = TerrAvionAPI2User(access_token)
     tapi2_block = TerrAvionAPI2Block(access_token)
@@ -70,6 +69,7 @@ def get_cog_multiband_download_links(access_token, block_name=None,
 
                 cr_lib.download_cog_from_s3(s3_url, multiband_filename, epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir, no_clipping=no_clipping)
                 if multiband_filename and working_dir and product:
+                    from lib.product_lib import ProductLib
                     p_l = ProductLib(product, layer_info['contrastBounds'], multiband_filename, working_dir, root_name)
                     p_l.create_product()
 
