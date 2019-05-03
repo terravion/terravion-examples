@@ -5,10 +5,10 @@ import logging
 import numpy as np
 import util.image_tools as image_tools
 class ProductLib(object):
-    def __init__(self, product, product_args, input_filepath, working_dir=None, root_name=None):
+    def __init__(self, product, contrast_bounds, input_filepath, working_dir=None, root_name=None):
         self.log = logging.getLogger(__name__)
         self.product = product
-        self.product_args = product_args
+        self.contrast_bounds = contrast_bounds
         self.working_dir = working_dir
         self.root_name = root_name
         self.input_filepath = input_filepath
@@ -52,9 +52,9 @@ class ProductLib(object):
         G = np.asarray(G, dtype=np.uint16)
         B = np.asarray(B, dtype=np.uint16)
 
-        if 'nc_lower_bound' in self.product_args and 'nc_upper_bound' in self.product_args:
-            lower = self.product_args['nc_lower_bound']
-            upper = self.product_args['nc_upper_bound']
+        if 'NC' in self.contrast_bounds and 'lower' in self.contrast_bounds['NC'] and 'upper' in self.contrast_bounds['NC']:
+            lower = self.contrast_bounds['NC']['lower']
+            upper = self.contrast_bounds['NC']['upper']
 
             R = image_tools.rescale_intensity_to_bounds(R, lower, upper)
             G = image_tools.rescale_intensity_to_bounds(G, lower, upper)
