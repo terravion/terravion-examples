@@ -76,9 +76,9 @@ class ProductLib(object):
         else:
             kwargs.update(alpha='no', count=3)
 
-        self.log.info('Writing file: %s', str(output_filepath))
+        self.log.info('Writing file: %s', str(out_filepath))
 
-        with rasterio.open(output_filepath, 'w', **kwargs) as dst:
+        with rasterio.open(out_filepath, 'w', **kwargs) as dst:
             dst.write(R, 1)
             dst.write(G, 2)
             dst.write(B, 3)
