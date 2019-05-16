@@ -32,6 +32,9 @@ https://www.gdal.org/
 Installing gdal on mac:
 http://www.kyngchaos.com/software/frameworks/
 
+Intalling rasterio:
+https://rasterio.readthedocs.io/en/stable/installation.html
+
 **Print account summary**
 
 `python cog_main.py --access_token <access_token> --get_summary`

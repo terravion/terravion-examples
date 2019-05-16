@@ -4,63 +4,115 @@
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
-
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-      $( document ).ready(function() {
-        var apiUrl = 'https://api2.terravion.com'
-        var access_token='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
-        var user_id='5bad4dfa-7262-4a0a-b1e5-da30793cec65'
-        var epochStart='1456200627'
-        var epochEnd='1456632627'
-        var tileUrlTemplate = apiUrl + '/users/'+ user_id
-        tileUrlTemplate += '/{z}/{x}/{y}.png'
-        tileUrlTemplate += '?epochStart='+epochStart+'&epochEnd='+ epochEnd
-        tileUrlTemplate += '&access_token='+access_token;
-        var mymap = L.map('map').setView([38.540580, -121.877271], 15);
-        var layersControl = L.control.layers();
-
-        var mapbox_Layer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
-          drawControl: false,
-          maxZoom: 22,
-          maxNativeZoom: 19
-        }).addTo(mymap);
-        var nc_layer=L.tileLayer(tileUrlTemplate + '&product=NC', {
-          attribution: 'TerrAvion',
-          maxZoom: 19,
-          tms: true
-        }).addTo(mymap);
-        var cir_layer=L.tileLayer(tileUrlTemplate + '&product=CIR', {
-          attribution: 'TerrAvion',
-          maxZoom: 19,
-          tms: true
-        })//.addTo(mymap);
-        var ndvi_layer=L.tileLayer(tileUrlTemplate + '&product=NDVI&colorMap=GRANULAR', {
-          attribution: 'TerrAvion',
-          maxZoom: 19,
-          tms: true
-        })//.addTo(mymap);
-        var tirs_layer=L.tileLayer(tileUrlTemplate + '&product=TIRS&colorMap=T', {
-          attribution: 'TerrAvion',
-          maxZoom: 19,
-          tms: true
-        })//.addTo(mymap);
-        var zone_layer=L.tileLayer(tileUrlTemplate + '&product=ZONE&colorMap=GRANULAR', {
-          attribution: 'TerrAvion',
-          maxZoom: 19,
-          tms: true
-        })//.addTo(mymap);
-
-        layersControl.addOverlay(mapbox_Layer,'mapbox')
-        layersControl.addOverlay(nc_layer,'nc')
-        layersControl.addOverlay(cir_layer,'cir')
-        layersControl.addOverlay(ndvi_layer,'ndvi')
-        layersControl.addOverlay(tirs_layer,'thermal')
-        layersControl.addOverlay(zone_layer,'zone')
-        layersControl.addTo(mymap)
+      $( document ).ready(()=>{
+        const apiUrl = 'https://api2.terravion.com'
+        const accessToken='2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
+        const userId='5bad4dfa-7262-4a0a-b1e5-da30793cec65'
+        const blockId = 'bc3f8b6f-cb17-4c1a-84ca-ec3fa681b862'
+        const cutToTile = true;
+        getLayers(apiUrl, userId, blockId, accessToken).then((layersResult)=>{
+          const layers = layersResult.data;
+          console.log(layers)
+          const layer = layers[layers.length - 1];
+          console.log('layer', layer)
+          getBlockGeom(apiUrl, blockId, accessToken).then((blockResult)=>{
+            console.log('blockResult', blockResult)
+            let sampleCoordinate = blockResult.data.coordinates[0];
+            if (blockResult.data.type=='MultiPolygon') {
+              sampleCoordinate = blockResult.data.coordinates[0][0];
+            }
+            const lat = sampleCoordinate[1];
+            const lng = sampleCoordinate[0];
+            initMap(lat, lng, layer, apiUrl, blockId, userId, accessToken, cutToTile);
+          })
+        })
       })
     </script>
   </head>
   <body>
     <div id="map" style="height:1000px;width:1000px"></div>
   </body>
+  <script>
+    const getLayers = (apiUrl, userId, blockId, accessToken) => {
+      let requestUrl = `${apiUrl}/users/${userId}/getLayers/`;
+      requestUrl += '?blockId=' + blockId;
+      requestUrl += '&access_token=' + accessToken
+      return axios.get(requestUrl)
+    }
+    const getBlockGeom = (apiUrl, blockId, accessToken) => {
+      let requestUrl = `${apiUrl}/blocks/${blockId}/geom.geojson`;
+      requestUrl += '?&access_token=' + accessToken
+      return axios.get(requestUrl)
+    }
+    const getTileUrl = (apiUrl, blockId, product, layer, userId, accessToken) => {
+      const epochStart = Math.round(layer.layerDateEpoch) - 60 * 60 * 24;
+      const epochEnd = Math.round(layer.layerDateEpoch) + 60 * 60 * 24;
+      let tileUrl = `${apiUrl}/users/${userId}`
+      tileUrl += '/{z}/{x}/{y}.png'
+      tileUrl += `?epochStart=${epochStart}&epochEnd=${epochEnd}` 
+      tileUrl += `&access_token=${accessToken}`
+      tileUrl += `&product=${product}`
+      if (blockId) {
+        tileUrl += `&blockId=${blockId}`
+      }
+      if (product=='NC' && layer.contrastBounds) {
+        tileUrl += `&upperBound=${layer.contrastBounds.NC.upper}`
+        tileUrl += `&lowerBound=${layer.contrastBounds.NC.lower}`
+      }
+      if (product=='CIR' && layer.contrastBounds) {
+        tileUrl += `&upperBound=${layer.contrastBounds.NIR.upper}`
+        tileUrl += `&lowerBound=${layer.contrastBounds.NIR.lower}`
+      }
+      if (product=='TIRS') {
+        tileUrl += '&colorMap=T'
+      }
+      if (product=='NDVI') {
+        tileUrl += '&colorMap=NDVI_2'
+      }
+      return tileUrl
+    }
+
+    const initMap = (lat, lng, layer, apiUrl, blockId, userId, accessToken, cutToTile) => {
+      const mymap = L.map('map').setView([38.540580, -121.877271], 15);
+      var layersControl = L.control.layers();
+      var mapbox_Layer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
+        drawControl: false,
+        maxZoom: 22,
+        maxNativeZoom: 19
+      }).addTo(mymap);
+      let targetBlockId = blockId;
+      if (!cutToTile) {
+        targetBlockId = undefined;
+      }
+      var nc_layer=L.tileLayer(getTileUrl(apiUrl, targetBlockId, 'NC', layer, userId, accessToken), {
+        attribution: 'TerrAvion',
+        maxZoom: 19,
+        tms: true
+      }).addTo(mymap);
+      var cir_layer=L.tileLayer(getTileUrl(apiUrl, targetBlockId, 'CIR', layer, userId, accessToken), {
+        attribution: 'TerrAvion',
+        maxZoom: 19,
+        tms: true
+      })//.addTo(mymap);
+      var ndvi_layer=L.tileLayer(getTileUrl(apiUrl, targetBlockId, 'NDVI', layer, userId, accessToken), {
+        attribution: 'TerrAvion',
+        maxZoom: 19,
+        tms: true
+      })//.addTo(mymap);
+      var tirs_layer=L.tileLayer(getTileUrl(apiUrl, targetBlockId, 'TIRS', layer, userId, accessToken), {
+        attribution: 'TerrAvion',
+        maxZoom: 19,
+        tms: true
+      })//.addTo(mymap);
+
+      layersControl.addOverlay(mapbox_Layer,'mapbox')
+      layersControl.addOverlay(nc_layer,'nc')
+      layersControl.addOverlay(cir_layer,'cir')
+      layersControl.addOverlay(ndvi_layer,'ndvi')
+      layersControl.addOverlay(tirs_layer,'thermal')
+      layersControl.addTo(mymap)
+    }
+  </script>
 </html>
