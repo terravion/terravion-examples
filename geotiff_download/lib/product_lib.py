@@ -44,7 +44,7 @@ class ProductLib(object):
 
         del R2, G2, B2
 
-        R, G, B = image_tools.pansharpen(R, G, B, pan, method='browley', W=0.65)
+        R, G, B = image_tools.pansharpen(R, G, B, pan, method='browley', W=0.25)
 
         del pan
 
@@ -52,9 +52,9 @@ class ProductLib(object):
         G = np.asarray(G, dtype=np.uint16)
         B = np.asarray(B, dtype=np.uint16)
 
-        if 'NC' in self.contrast_bounds and 'lower' in self.contrast_bounds['NC'] and 'upper' in self.contrast_bounds['NC']:
-            lower = self.contrast_bounds['NC']['lower']
-            upper = self.contrast_bounds['NC']['upper']
+        if 'NC' in self.contrast_bounds and 'lower' in self.contrast_bounds['NIR'] and 'upper' in self.contrast_bounds['NIR']:
+            lower = self.contrast_bounds['NIR']['lower']
+            upper = self.contrast_bounds['NIR']['upper']
 
             R = image_tools.rescale_intensity_to_bounds(R, lower, upper)
             G = image_tools.rescale_intensity_to_bounds(G, lower, upper)
