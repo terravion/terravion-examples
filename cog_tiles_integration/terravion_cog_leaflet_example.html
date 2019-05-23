@@ -18,40 +18,10 @@
       }
       
       </style>
-    <script>
-      document.addEventListener("DOMContentLoaded", function(event) {
-        let mymap = undefined;
-        let tileLayer = undefined;
-        let tileUrlTemplate = undefined;
-        const apiUrl = 'https://api2.terravion.com';
-        var accessToken='f39fde23-9169-418c-9945-92b3c0267adf'
-        var userId='1455cf90-af48-4fae-87d0-57523de51b8b'
-        var epochStart = 1531408011;
-        var epochEnd = 1531580811;
-        const initialZoom = 16;
-        const lat = 36.918078;
-        const lng = -101.788173;
-        tileUrlTemplate = `${apiUrl}/users/${userId}/{z}/{x}/{y}.png`;
-        tileUrlTemplate+= `?epochStart=${epochStart}&epochEnd=${epochEnd}&access_token=${accessToken}&useBeta=True`;
-        mymap = L.map('map').setView([lat, lng], initialZoom);
-        var layersControl = L.control.layers();
-
-        const mapboxLayer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
-          drawControl: false,
-          maxZoom: 22,
-          maxNativeZoom: 19
-        }).addTo(mymap);
-        tileLayer=L.tileLayer(tileUrlTemplate + '&equation=' + document.getElementById("equation").value, {
-          attribution: 'TerrAvion',
-          maxZoom: 19,
-          tms: true
-        }).addTo(mymap);
-      });
-    </script>
   </head>
   <body>
-    <div id="map" style="height:1000px;width:1000px;z-index:-1"></div>
-    <div style="z-index:1">
+    <div id="map" style="height:1000px;width:1000px"></div>
+    <div style="z-index:1000;height:1000px;width:200px;position:fixed;top:0px;">
       <select
         id="product"
         onchange="updateMap()"
@@ -151,40 +121,68 @@
       </table>
     </div>
     <script>
-        const updateMap = () => {
-          const product = document.getElementById("product").value;
-          if (product == 'equation') {
-            console.log('update display');
-          } else {
-            mymap.removeLayer(tileLayer);
-            let productQuery = product;
-            if (product == 'NDVI') {
-              productQuery += '&colorMap=GRANULAR';
-            } else if (product=='TIRS'){
-              productQuery += '&colorMap=T';
-            }
-            tileLayer=L.tileLayer(`${tileUrlTemplate}&product=${productQuery}`, {
-              attribution: 'TerrAvion',
-              maxZoom: 19,
-              tms: true
-            }).addTo(mymap);
-          }
-        }
+      document.addEventListener("DOMContentLoaded", function(event) {
+        let mymap = undefined;
+        let tileLayer = undefined;
+        let tileUrlTemplate = undefined;
+        const apiUrl = 'https://api2.terravion.com';
+        var accessToken='f39fde23-9169-418c-9945-92b3c0267adf'
+        var userId='1455cf90-af48-4fae-87d0-57523de51b8b'
+        var epochStart = 1531408011;
+        var epochEnd = 1531580811;
+        const initialZoom = 16;
+        const lat = 36.918078;
+        const lng = -101.788173;
+        tileUrlTemplate = `${apiUrl}/users/${userId}/{z}/{x}/{y}.png`;
+        tileUrlTemplate+= `?epochStart=${epochStart}&epochEnd=${epochEnd}&access_token=${accessToken}&useBeta=True`;
+        mymap = L.map('map').setView([lat, lng], initialZoom);
+        var layersControl = L.control.layers();
 
-        const updateMapByEquation = (equationId) => {
-          let equation = document.getElementById("equation").value;
-          if (equationId) {
-            document.getElementById("equation").value = document.getElementById(equationId).textContent;
-            equation = document.getElementById(equationId).textContent;
-          }
+        const mapboxLayer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
+          drawControl: false,
+          maxZoom: 22,
+          maxNativeZoom: 19
+        }).addTo(mymap);
+        tileLayer=L.tileLayer(tileUrlTemplate + '&equation=' + document.getElementById("equation").value, {
+          attribution: 'TerrAvion',
+          maxZoom: 19,
+          tms: true
+        }).addTo(mymap);
+      });
+      const updateMap = () => {
+        const product = document.getElementById("product").value;
+        if (product == 'equation') {
+          console.log('update display');
+        } else {
           mymap.removeLayer(tileLayer);
-          equation = encodeURIComponent(equation);
-          tileLayer=L.tileLayer(`${tileUrlTemplate}&equation=${equation}`, {
+          let productQuery = product;
+          if (product == 'NDVI') {
+            productQuery += '&colorMap=GRANULAR';
+          } else if (product=='TIRS'){
+            productQuery += '&colorMap=T';
+          }
+          tileLayer=L.tileLayer(`${tileUrlTemplate}&product=${productQuery}`, {
             attribution: 'TerrAvion',
             maxZoom: 19,
             tms: true
           }).addTo(mymap);
         }
-      </script>
+      }
+
+      const updateMapByEquation = (equationId) => {
+        let equation = document.getElementById("equation").value;
+        if (equationId) {
+          document.getElementById("equation").value = document.getElementById(equationId).textContent;
+          equation = document.getElementById(equationId).textContent;
+        }
+        mymap.removeLayer(tileLayer);
+        equation = encodeURIComponent(equation);
+        tileLayer=L.tileLayer(`${tileUrlTemplate}&equation=${equation}`, {
+          attribution: 'TerrAvion',
+          maxZoom: 19,
+          tms: true
+        }).addTo(mymap);
+      }
+    </script>
   </body>
 </html>
