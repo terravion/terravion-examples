@@ -15,7 +15,7 @@ def date_to_epoch(date_string):
         return int((datetime.datetime.strptime(date_string, "%Y-%m-%d") - datetime.datetime(1970,1,1)).total_seconds())
 
 def validate_product(product):
-    product_list = ['SYNTHETIC_NC'] # Coming Soon: NC, CIR, NDVI, THERMAL
+    product_list = ['SYNTHETIC_NC', 'MULTIBAND', 'NC', 'CIR', 'NDVI', 'THERMAL', 'TIRS']
     if product in product_list:
         return True
 
@@ -27,7 +27,7 @@ def get_cog_multiband_download_links(access_token, block_name=None,
 
     if product:
         if not validate_product(product):
-            log.info('Pleaese select a valid product: SYNTHETIC_NC')
+            log.info('Pleaese select a valid product: MULTIBAND, SYNTHETIC_NC, NC, CIR, NDVI, THERMAL [TIRS]')
             return
     from lib.cog_raster_lib import CogRasterLib
     cr_lib = CogRasterLib()
@@ -68,7 +68,7 @@ def get_cog_multiband_download_links(access_token, block_name=None,
                     multiband_filename = os.path.join(working_dir, multiband_filename)
 
                 cr_lib.download_cog_from_s3(s3_url, multiband_filename, epsg=4326, geojson_string=json.dumps(block_info), working_dir=working_dir, no_clipping=no_clipping)
-                if multiband_filename and working_dir and product:
+                if multiband_filename and working_dir and product and not product == 'MULTIBAND':
                     from lib.product_lib import ProductLib
                     p_l = ProductLib(product, layer_info['contrastBounds'], multiband_filename, working_dir, root_name)
                     p_l.create_product()

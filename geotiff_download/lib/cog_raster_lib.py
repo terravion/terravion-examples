@@ -105,3 +105,21 @@ class CogRasterLib(object):
             tb = traceback.format_exc()
             self.log.info('failed: %s', str(tb))
             return False
+
+
+    def get_cog_tags(self, file_path):
+        cog_tags = {}
+        with rasterio.open(file_path) as src:
+            tags_dict = dict(src.tags())
+
+            if 'NDVI_BETA' in tags_dict and 'NDVI_ALPHA' in tags_dict:
+                cog_tags['ndvi_beta'] = float(tags_dict['NDVI_BETA'])
+                cog_tags['ndvi_alpha'] = float(tags_dict['NDVI_ALPHA'])
+
+            if src.count == 7:
+                thermal_tags = dict(src.tags(7))
+                if 'SI_UNIT' in thermal_tags:
+                    cog_tags['si_unit'] = thermal_tags['SI_UNIT']
+                else:
+                    cog_tags['si_unit'] = 'decikelvin'
+        return cog_tags

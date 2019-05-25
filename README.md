@@ -1,26 +1,19 @@
-terravion-examples
+TerrAvion Examples
 ====================
 This repository contains example codes to use [TerrAvion's API](https://api2.terravion.com/)
-Pleaese contact api@terravion.com for your access_token.
+
+Pleaese contact [api@terravion.com](api@terravion.com) for your access_token.
+
+There are two types of integration avaliable for accessing TerrAvion Imagery.
+- Geotiff Download
+- Tiles Integration
 
 Cloud Optimized Geotiff Download
 ====================
-Levearge cloud optimized geotiff to download imagery from TerrAvion API.
+TerrAvion's cloud optimized geotiff is avaliable for partners for download through TerrAvion's API. 
 
-Example Script: [cog_main.py](https://github.com/terravion/terravion-examples/blob/master/geotiff_download/cog_main.py)
+See [Documentation](https://github.com/terravion/terravion-examples/tree/master/geotiff_download#cloud-optimized-geotiff-download-cog_mainpy) for more information.
 
-[Documentation](https://github.com/terravion/terravion-examples/tree/master/geotiff_download#cloud-optimized-geotiff-download-cog_mainpy)
-
-Geotiff Download 
-====================
-Downloading geotiff from TerrAvion API is easy, simply run the following python script to streamline the process.
-
-[main.py](https://github.com/terravion/terravion-examples/blob/master/geotiff_download/main.py)
-
-Workflow overview:
-1. get the blocks/fields 
-2. get the layers 
-3. download the imagery 
 
 TerrAvion v2 Tiles End Point Specification
 ====================
@@ -33,7 +26,7 @@ The following is are the parameters of the end point
 Parameter| Description | Type 
 --- | --- | ---
 user | user id | Text 
-product| Product Type (NC,CIR,NDVI,TIRS, ZONE) | Text
+product| Product Type (NC, CIR, NDVI, TIRS, ZONE) | Text
 epochStart| Start date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer
 epochEnd| End date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer
 z| Tile Zoom Level | Integer
@@ -114,6 +107,9 @@ code:
 preview: 
 <a href="https://rawgit.com/terravion/terravion-examples/master/terravion_openLayers_example.html" target="_blank">terravion_openLayers_example.html</a>
 
+<a href="https://terravion.github.io/terravion-examples/cog_tiles_integration/terravion_cog_leaflet_example.html" target="_blank">Example Sandbox</a>
+
+
 TerrAvion API2 Dynamic Colormap tiles endpoint
 ====================
 Parameter| Description | Type | Required
@@ -143,3 +139,15 @@ Automatic Colormap Flow
 3. Add the a and b parameter into the tiles call using api2 tiles api endpoint to get dynamic colormap. 
 
 See the example above. If you have any questions, email api@terravion.com for support. 
+
+
+Legacy Tasked-Based Geotiff Download 
+====================
+API partners may use tasked based geotiff download to access TerrAvion's imagery. 
+
+[main.py](https://github.com/terravion/terravion-examples/blob/master/geotiff_download/main.py)
+
+Workflow overview:
+1. get the blocks/fields 
+2. get the layers 
+3. download the imagery 

@@ -35,7 +35,7 @@ class TerrAvionAPI2Layer:
         user_blocks = ta2_user_block.get_user_blocks_from_gps(lat, lng)
         if user_blocks:
             for user_block in user_blocks:
-                layers = self.get_layers(block_id = user_block['blockId'])
+                layers = self.get_layers(block_id=user_block['blockId'])
                 if layers:
                     maser_layer_list += layers
         return maser_layer_list
@@ -43,7 +43,7 @@ class TerrAvionAPI2Layer:
         maser_layer_list = []
         for block_id in block_id_list:
             self.log.debug('block_id: %s', block_id)
-            layers = self.get_layers(block_id = block_id)
+            layers = self.get_layers(block_id=block_id)
             if layers:
                 maser_layer_list += layers
         return maser_layer_list
