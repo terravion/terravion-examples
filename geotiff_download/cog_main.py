@@ -73,8 +73,9 @@ def main(args):
         parser.print_help()
 
 if __name__ == '__main__':
-    argument_sample = 'python ' + basename(os.path.realpath(__file__)) + \
-        ' --input_tif '
+    argument_sample = 'Example: python ' + basename(os.path.realpath(__file__)) + \
+        ' --access_token <access_token> --working_dir <working_dir> --block_id_list <block_id> '
+    
     parser = argparse.ArgumentParser(description=argument_sample)
     # flags
     parser.add_argument('--validate_terravion_cog', help='validate_terravion_cog',
@@ -101,7 +102,7 @@ if __name__ == '__main__':
                         nargs='?', default=None)
     parser.add_argument('--end_date', help='capture end_date YY-MM-DD',
                         nargs='?', default=None)
-    parser.add_argument('--product', help='product => SYNTHETIC_NC [Coming Soon: NC, NDVI, CIR, THERMAL]',
+    parser.add_argument('--product', help='product => MULTIBAND [default], SYNTHETIC_NC, NC, NDVI, CIR, THERMAL',
                         nargs='?', default=None)
     parser.add_argument('--input_tif', help='input_tif',
                         nargs='?', default=None)

@@ -52,7 +52,7 @@ logging.basicConfig(level=logging.INFO)
     NDVI => NDVI
     TIRS => Thermal
     FULL => all of the above
-    ALL => all of the above + MULTIABND
+    ALL => all of the above + MULTIBAND
 '''
 
 '''

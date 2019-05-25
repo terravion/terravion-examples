@@ -20,13 +20,31 @@
       </style>
   </head>
   <body>
-    <div id="map" style="height:1000px;width:1000px"></div>
+    <div id="map"
+      style="margin-top:50px;height:1000px;width:1000px">
+    </div>
     <div style="z-index:1000;height:1000px;width:200px;position:fixed;top:0px;">
+        <a href="https://s3-us-west-2.amazonaws.com/cog-terravion-com/6fc967ca-b0fe-4c94-ad2b-aa5f2cb4596d_TA_COG.tif"
+          target="_blank">
+          Example Multiband COG
+        </a>
+      <div
+        id="api_url"
+        style="position:fixed;
+        top:30px;
+        right:20px;
+        background:white;
+        height:30px;
+        font-size:12px;
+        border: 1px solid;
+        "
+        >API URL
+      </div>
       <select
         id="product"
         onchange="updateMap()"
         style="position:fixed;
-          top:10px;
+          top:80px;
           right:20px;
           background:white;
           height:30px;
@@ -47,20 +65,20 @@
         name="equation"
         style="
           position:fixed;
-          top:50px;
+          top:120px;
           right:20px;
           background:white;
           height:30px;
           width: 300px;
           font-size:20px;
           "
-        value="B3*120,B2*120,B1*120" />
+        value="B3*20,B2*20,B1*20" />
       <button
         id="button"
         onclick="updateMapByEquation()"
         style="
           position:fixed;
-          top:90px;
+          top:170px;
           right:20px;
           background:white;height:30px;
           font-size:20px;
@@ -72,7 +90,7 @@
       <table
       style="
         position:fixed;
-        top:200px;
+        top:220px;
         right:10px;
         background:white;height:30px;
         font-size:20px;
@@ -84,28 +102,28 @@
           <th>Select Equation</th>
         </tr>
         <tr>
-          <td id='eq1'>B3*120,B2*120,B1*120</td>
+          <td id='eq1'>B3*22,B2*22,B1*22</td>
           <td>RGB Bright</td>
           <td>
             <button onclick="updateMapByEquation('eq1')">Select</button>
           </td>
         </tr>
         <tr>
-          <td id='eq2'>B3*70,B2*70,B1*70</td>
+          <td id='eq2'>B3*10,B2*10,B1*10</td>
           <td>RGB Dark</td>
           <td>
             <button onclick="updateMapByEquation('eq2')">Select</button>
           </td>
         </tr>
         <tr>
-          <td id='eq3'>B4*20,B1*80,B2*80</td>
+          <td id='eq3'>B4*10,B1*20,B2*20</td>
           <td>CIR Bright</td>
           <td>
             <button onclick="updateMapByEquation('eq3')">Select</button>
           </td>
         </tr>  
         <tr>
-          <td id='eq4'>B4*16,B1*32,B2*32</td>
+          <td id='eq4'>B4*5,B1*15,B2*15</td>
           <td>CIR</td>
           <td>
             <button onclick="updateMapByEquation('eq4')">Select</button>
@@ -121,33 +139,35 @@
       </table>
     </div>
     <script>
+      let mymap = undefined;
+      let tileLayer = undefined;
+      let tileUrlTemplate = undefined;
       document.addEventListener("DOMContentLoaded", function(event) {
-        let mymap = undefined;
-        let tileLayer = undefined;
-        let tileUrlTemplate = undefined;
         const apiUrl = 'https://api2.terravion.com';
         var accessToken='f39fde23-9169-418c-9945-92b3c0267adf'
         var userId='1455cf90-af48-4fae-87d0-57523de51b8b'
-        var epochStart = 1531408011;
-        var epochEnd = 1531580811;
+        const epochLayerDate = 1551033790;
+        var epochStart = epochLayerDate - 24 * 60 * 60; // filter by 1 day before
+        var epochEnd = epochLayerDate + 24 * 60 * 60; // filter by 1 day after
         const initialZoom = 16;
-        const lat = 36.918078;
-        const lng = -101.788173;
+        const lat = 33.018038;
+        const lng =  -112.107196;
         tileUrlTemplate = `${apiUrl}/users/${userId}/{z}/{x}/{y}.png`;
-        tileUrlTemplate+= `?epochStart=${epochStart}&epochEnd=${epochEnd}&access_token=${accessToken}&useBeta=True`;
+        tileUrlTemplate+= `?epochStart=${epochStart}&epochEnd=${epochEnd}&access_token=${accessToken}`;
+        const tilesUrl = tileUrlTemplate + '&equation=' + document.getElementById("equation").value
         mymap = L.map('map').setView([lat, lng], initialZoom);
         var layersControl = L.control.layers();
-
         const mapboxLayer= L.tileLayer("https://api.tiles.mapbox.com/v2/cgwright.ca5740e5/{z}/{x}/{y}.jpg",{
           drawControl: false,
           maxZoom: 22,
           maxNativeZoom: 19
         }).addTo(mymap);
-        tileLayer=L.tileLayer(tileUrlTemplate + '&equation=' + document.getElementById("equation").value, {
+        tileLayer=L.tileLayer(tilesUrl, {
           attribution: 'TerrAvion',
           maxZoom: 19,
           tms: true
         }).addTo(mymap);
+        document.getElementById("api_url").innerHTML = tilesUrl;
       });
       const updateMap = () => {
         const product = document.getElementById("product").value;
@@ -160,12 +180,16 @@
             productQuery += '&colorMap=GRANULAR';
           } else if (product=='TIRS'){
             productQuery += '&colorMap=T';
+            productQuery += '&a=26';
+            productQuery += '&b=39';
           }
-          tileLayer=L.tileLayer(`${tileUrlTemplate}&product=${productQuery}`, {
+          const tilesUrl = `${tileUrlTemplate}&product=${productQuery}`
+          tileLayer=L.tileLayer(tilesUrl, {
             attribution: 'TerrAvion',
             maxZoom: 19,
             tms: true
           }).addTo(mymap);
+          document.getElementById("api_url").innerHTML = tilesUrl;
         }
       }
 
@@ -177,11 +201,13 @@
         }
         mymap.removeLayer(tileLayer);
         equation = encodeURIComponent(equation);
-        tileLayer=L.tileLayer(`${tileUrlTemplate}&equation=${equation}`, {
+        const tilesUrl = `${tileUrlTemplate}&equation=${equation}`
+        tileLayer=L.tileLayer(tilesUrl, {
           attribution: 'TerrAvion',
           maxZoom: 19,
           tms: true
         }).addTo(mymap);
+        document.getElementById("api_url").innerHTML = tilesUrl;
       }
     </script>
   </body>
