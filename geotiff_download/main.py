@@ -36,16 +36,17 @@ import os
 import json
 import argparse
 import logging
-from os.path import basename
-import lib.workflow_lib as workflow_lib
+
+from lib.workflow_lib import get_download_links, download_imagery
 from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 
 logging.basicConfig(level=logging.INFO)
 
-# Contact wmaio@terravion.com for access_token
+# Contact api@terravion.com for access_token
 # Access_token
-# Pleaese modify the product_name to download the perspective product
+# Please modify the product_name to download the prospective product
+
 '''
     NC => RGB
     CIR => Color Infrared
@@ -65,42 +66,42 @@ logging.basicConfig(level=logging.INFO)
     N => TerrAvion Historic - This is the pallet we provided at the beginning of the season, it is provided for comparison and continuity purposes.  It is useful in looking at extreme changes in vigor.
 '''
 
-timeout_seconds = 7200  # 2 hours
-api_server = 'https://api2.terravion.com/'
 
-
-def run_geotiff_download(access_token=None,
-            working_dir=None, get_block_list=None,
-            product=None,
-            block_name=None, block_id_list=None, lat=None, lng=None,
-            add_start_date=None,
-            start_date=None, end_date= None,
-            with_colormap=False, geotiff_epsg=None):
+def run_geotiff_download(access_token=None, working_dir=None,
+                         get_block_list=None, product=None, block_name=None,
+                         block_id_list=None, lat=None, lng=None,
+                         add_start_date=None, start_date=None, end_date=None,
+                         with_colormap=False, geotiff_epsg=None):
     log = logging.getLogger(__name__)
+
     if geotiff_epsg:
         if not geotiff_epsg.isdigit() or not len(geotiff_epsg) == 4:
-            log.critical('invalid EPSG Code: '+str(geotiff_epsg))
+            log.critical('Invalid EPSG Code: %s', str(geotiff_epsg))
             return False
+
     if not access_token:
-        log.critical('email api@terravion.com for access_token')
+        log.critical('Email api@terravion.com for access_token')
         log.critical(parser.print_help())
         return False
-    elif (block_name or (lat and lng) or block_id_list or
-        add_start_date or start_date or end_date):
-        log.debug('downloading geotiffs')
-        download_info_list = workflow_lib.get_download_links(
-            access_token, block_name,
-            lat, lng, block_id_list, start_date, end_date, add_start_date,
-            geotiff_epsg, product=product, with_colormap=with_colormap)
+
+    elif (block_name or (lat and lng) or block_id_list or add_start_date or start_date or end_date):
+        log.debug('Downloading Geotiffs')
+        download_info_list = get_download_links(
+            access_token, block_name, lat, lng, block_id_list,
+            start_date, end_date, add_start_date, geotiff_epsg,
+            product=product, with_colormap=with_colormap)
+
         if download_info_list:
             if working_dir:
-                log.info('download start:' + str(len(download_info_list)) +' files to be downloaded')
-                workflow_lib.donwload_imagery(access_token, working_dir,
-                    download_info_list)
+                log.info('Download start: %s files to be downloaded',
+                         str(len(download_info_list)))
+                download_imagery(access_token, working_dir, download_info_list)
             else:
                 for download_info in download_info_list:
                     log.info(json.dumps(download_info, sort_keys=True, indent=2))
+
         return True
+
     elif get_block_list:
         ta2_user = TerrAvionAPI2User(access_token)
         user_id = ta2_user.get_user_id()
@@ -110,13 +111,17 @@ def run_geotiff_download(access_token=None,
 
         for user_block in user_block_list:
             log.info(','.join([user_block['blockId'], user_block['fieldName']]))
+
         return True
-# Creating the folder if it does not exist
+
+
 def main(args):
     log = logging.getLogger(__name__)
+
     # Input Parameter
     access_token = args.access_token
     working_dir = args.working_dir
+
     # Workflow Parameters
     get_block_list = args.get_block_list
     product = args.product
@@ -130,20 +135,31 @@ def main(args):
     start_date = args.start_date
     end_date = args.end_date
     with_colormap = args.with_colormap
+
     # Geotiff parameters
     geotiff_epsg = args.EPSG
-    run_flag = run_geotiff_download(access_token=access_token,
-        working_dir=working_dir, get_block_list=get_block_list,
-        product=product, block_name=block_name,
-        block_id_list=block_id_list, lat=lat, lng=lng,
+
+    run_flag = run_geotiff_download(
+        access_token=access_token,
+        working_dir=working_dir,
+        get_block_list=get_block_list,
+        product=product,
+        block_name=block_name,
+        block_id_list=block_id_list,
+        lat=lat,
+        lng=lng,
         add_start_date=add_start_date,
-        start_date=start_date, end_date=end_date,
-        with_colormap=with_colormap, geotiff_epsg=geotiff_epsg)
+        start_date=start_date,
+        end_date=end_date,
+        with_colormap=with_colormap,
+        geotiff_epsg=geotiff_epsg)
+
     if not run_flag:
         log.info(parser.print_help())
 
+
 if __name__ == '__main__':
-    argument_sample = 'python ' + basename(os.path.realpath(__file__)) + \
+    argument_sample = 'python ' + os.path.basename(os.path.realpath(__file__)) + \
         ' -working_dir <working_dir>  -access_token <access_token> '
 
     parser = argparse.ArgumentParser(description=argument_sample)
@@ -153,8 +169,7 @@ if __name__ == '__main__':
     parser.add_argument('-working_dir', help='working_dir',
                         nargs='?', default=None)
 
-    # workflow parameters
-
+    # Workflow Parameters
     parser.add_argument('-get_block_list', help='get_block_list',
                         nargs='?', default=None)
     parser.add_argument('-product', help='NC, CIR, NDVI, TIRS, MULTIBAND, FULL, ALL',
@@ -190,6 +205,7 @@ if __name__ == '__main__':
 
     parser.add_argument('-l', '-log', '--log', type=str,
                         default='INFO', help='Input log level')
+
     log_level_dict = {
         'CRITICAL': 50,
         'ERROR': 40,
@@ -198,9 +214,12 @@ if __name__ == '__main__':
         'DEBUG': 10,
         'NOTSET': 0
     }
+
     args = parser.parse_args()
+
     # Get log level value from log_level_dict lookup
     log_level = log_level_dict[args.log.upper()]
     logger = logging.getLogger()
     logger.setLevel(log_level)
+
     main(args)
