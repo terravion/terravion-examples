@@ -38,9 +38,11 @@ import json
 import argparse
 import logging
 import logging.config
-from os.path import basename
-from lib import workflow_lib
+
+from lib.workflow_lib import get_cog_multiband_download_links
 from lib.cog_raster_lib import CogRasterLib
+
+
 def main(args):
     log = logging.getLogger(__name__)
     # Input Parameter
@@ -50,7 +52,7 @@ def main(args):
     block_id_list = args.block_id_list
     block_name = args.block_name
     add_start_date = args.add_start_date
-    add_end_date = args.add_end_date
+    # add_end_date = args.add_end_date
     product = args.product
     no_clipping = args.no_clipping
     start_date = args.start_date
@@ -58,26 +60,35 @@ def main(args):
     get_layers = args.get_layers
     get_summary = args.get_summary
     access_token = args.access_token
+
     if validate_terravion_cog and input_tif:
-        cr_lib = CogRasterLib()
-        if cr_lib.validate_terravion_cog(input_tif):
+        if CogRasterLib().validate_terravion_cog(input_tif):
             log.info('%s is a valid terravion cog', input_tif)
         else:
             log.info('%s is not a valid terravion cog', input_tif)
+
     elif (get_summary or get_layers) and access_token:
-        workflow_lib.get_cog_multiband_download_links(access_token, block_name=block_name,
-            block_id_list=block_id_list, start_date=start_date, end_date=end_date,
-            add_start_date=add_start_date, working_dir=working_dir,
-            print_summary=get_summary, no_clipping=no_clipping, product=product)
+        get_cog_multiband_download_links(
+            access_token,
+            block_name=block_name,
+            block_id_list=block_id_list,
+            start_date=start_date,
+            end_date=end_date,
+            add_start_date=add_start_date,
+            working_dir=working_dir,
+            print_summary=get_summary,
+            no_clipping=no_clipping,
+            product=product)
     else:
         parser.print_help()
 
+
 if __name__ == '__main__':
-    argument_sample = 'Example: python ' + basename(os.path.realpath(__file__)) + \
+    argument_sample = 'Example: python ' + os.path.basename(os.path.realpath(__file__)) + \
         ' --access_token <access_token> --working_dir <working_dir> --block_id_list <block_id> '
-    
+
     parser = argparse.ArgumentParser(description=argument_sample)
-    # flags
+
     parser.add_argument('--validate_terravion_cog', help='validate_terravion_cog',
                         action='store_true')
     parser.add_argument('--get_layers', help='get_layers',
@@ -96,8 +107,8 @@ if __name__ == '__main__':
                         nargs='?', default=None)
     parser.add_argument('--add_start_date', help='add start_date YY-MM-DD',
                         nargs='?', default=None)
-    parser.add_argument('--add_end_date', help='add end_date YY-MM-DD',
-                        nargs='?', default=None)
+    # parser.add_argument('--add_end_date', help='add end_date YY-MM-DD',
+    #                     nargs='?', default=None)
     parser.add_argument('--start_date', help='capture start_date YY-MM-DD',
                         nargs='?', default=None)
     parser.add_argument('--end_date', help='capture end_date YY-MM-DD',
@@ -110,6 +121,7 @@ if __name__ == '__main__':
                         nargs='?', default=None)
     parser.add_argument('-l', '-log', '--log', type=str,
                         default='INFO', help='Input log level')
+
     log_level_dict = {
         'CRITICAL': logging.CRITICAL,
         'ERROR': logging.ERROR,
@@ -118,8 +130,11 @@ if __name__ == '__main__':
         'DEBUG': logging.DEBUG,
         'NOTSET': 0
     }
+
     args = parser.parse_args()
+
     # Get log level value from log_level_dict lookup
     log_level = log_level_dict[args.log.upper()]
     logging.basicConfig(level=log_level)
+
     main(args)

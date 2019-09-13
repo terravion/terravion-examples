@@ -5,6 +5,7 @@ import skimage
 UINT8 = float(2**8 - 1)  # 255.0
 UINT16 = float(2**16 - 1)  # 65535.0
 
+
 def convert_16bit_to_8bit(array):
     array = np.clip(array, 0, UINT16).astype(np.uint16)
     array = np.asarray(array, dtype=np.float)

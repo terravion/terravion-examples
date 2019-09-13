@@ -1,11 +1,14 @@
 import os
+import csv
 import logging
 import json
 import traceback
 import re
 import requests
 import time
+
 timeout_seconds = 1000
+
 
 def check_duplicate_block_name(block_dic):
     block_name_list = []
@@ -20,8 +23,10 @@ def check_duplicate_block_name(block_dic):
     else:
         return True
 
+
 def clean_filename(filename):
     return re.sub("[!|*'();:@&=+$,/?# [\]]", '-', filename)
+
 
 def run_download_file(url, outfilename):
     r = requests.get(url, stream=True, timeout=timeout_seconds, verify=False)
@@ -41,24 +46,25 @@ def download_file(url, outfilename):
     log = logging.getLogger(__name__)
     error_log_list = []
     download_try_limit = 5
-    download_time_elapsed = 0
-    download_complete = False
-    kill_download_thread = False
+    # download_time_elapsed = 0
+    # download_complete = False
+    # kill_download_thread = False
 
     for attempt in range(download_try_limit):
         try:
-            log.debug('download_url:'+ url)
-            log.debug('download_filename:'+ outfilename)
+            log.debug('download_url: %s', str(url))
+            log.debug('download_filename: %s', str(outfilename))
             run_download_file(url, outfilename)
 
         except:
             # thread_a.stop()
             # thread_b.stop()
-            log.debug("download stuck?")
+            log.debug("Download stuck?")
             error_log_list.append(str(traceback.format_exc()))
 
             if os.path.isfile(outfilename):
                 os.remove(outfilename)
+
             time.sleep(5)
             continue
 
@@ -69,20 +75,20 @@ def download_file(url, outfilename):
 
 
 class DownloadingReport(object):
-
     def __init__(self, csv_filename=None):
+        self.log = logging.getLogger(__name__)
         self.csv_filename = csv_filename
         self.csv_header_list = ['output_filename', 'status',
                                 'request_url', 'download_url',
                                 'timestamp', 'message']
         self.download_record_list = []
-        self.log = logging.getLogger(__name__)
+
     def insert_download_result(self, download_record):
         self.download_record_list.append(download_record)
 
     def write_csv_file(self, csv_filename=None):
         if csv_filename and not self.csv_filename:
-            self.csv_filename = output_csv
+            self.csv_filename = csv_filename
 
         if self.download_record_list:
             with open(self.csv_filename, 'wb') as csv_file:
@@ -150,4 +156,8 @@ class DownloadingReport(object):
 
                 if 'request_url' in download_record:
                     request_url = download_record['request_url']
-                self.log.debug(' '.join([output_filename, status, download_url, timestamp, message]))
+
+                self.log.debug(' '.join([
+                    output_filename, status, request_url,
+                    download_url, timestamp, message
+                ]))
