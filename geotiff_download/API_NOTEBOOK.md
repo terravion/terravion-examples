@@ -36,7 +36,7 @@ curl -X GET --header "Accept: application/json" "https://api2.terravion.com/user
 
 ## Bulk Download Geotiffs
 
-> This call allows you to request all the geotiffs for your layers on a given time range.
+> This call allows you to request all the geotiffs for your layers on a given time range.  
 > As a result it will generate a task_id which will allow you to access your download once ready.
 
 ### ENDPOINT
