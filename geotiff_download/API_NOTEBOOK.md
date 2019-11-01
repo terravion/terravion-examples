@@ -45,15 +45,15 @@ curl -X GET --header "Accept: application/json" "https://api2.terravion.com/user
 
 ### OPTIONS
 
-Parameter | Required | Format | Data Type
-- | - | - | - 
-userId | true | | string
-dateFilterStart | true | YYYY-MM-DD | string
-dateFilterEnd | true |YYYY-MM-DD | string
-colorMap | false |  | string
-isColormapRgb | false |  | string
-epsgCode | false |  | double
-multiband | false |  | boolean 
+| Parameter | Required | Format | Data Type |
+| - | - | - | - |
+| userId | true | | string |
+| dateFilterStart | true | YYYY-MM-DD | string |
+| dateFilterEnd | true |YYYY-MM-DD | string |
+| colorMap | false |  | string |
+| isColormapRgb | false |  | string |
+| epsgCode | false |  | double |
+| multiband | false |  | boolean |
 
 ### EXAMPLE
 ```
