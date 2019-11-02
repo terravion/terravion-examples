@@ -57,7 +57,7 @@ curl -X GET --header "Accept: application/json" "https://api2.terravion.com/user
 
 ### EXAMPLE
 ```
-curl -X POST --header "Content-Type: application/json" --header "Accept: application/json" "https://api2.terravion.com/\
+curl -X POST --header "Content-Type: application/json" "https://api2.terravion.com/\
 tasks/requestGeotiffTaskBulk?\
 userId=YOUR_USER_ID&\
 dateFilterStart=YYYY-MM-DD&\
