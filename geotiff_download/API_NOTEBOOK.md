@@ -254,19 +254,43 @@ access_token=YOUR_ACCESS_TOKEN"
 > Every note will therefore, be binded to a specific set of coordinates.  
 > Note: for the time being you can add Images only through our app.
 
-### ENDPOINTS
+### ENDPOINTS & OPTIONS
 
 `POST /features/storePin` => Store a single Pin
 
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| data | false | formData | String |
+
 `GET /features/getAllPins` => Get all your existing Pins
+
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| userId | false | formData | String |
 
 `GET /features/getPins` => Get all pins related to a single LayerID
 
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| blockId | false | formData | String |
+
 `GET /features/getPinData` => Get data related to a single Pin
+
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| featureId | false | formData | String |
 
 `GET /features/{featureId}/thumb.jpg` => Get image related to a single Pin
 
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| featureId | false | formData | String |
+
 `GET /features/deletePin` => Delete a single Pin
+
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| featureId | false | formData | String |
 
 ### EXAMPLE
 
