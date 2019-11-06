@@ -10,4 +10,6 @@ This repo is intended to help you get started on our API integration. Most of th
 4. [Get image tiles](docs/GET_IMAGE_TILES.md)
 5. [Check delivery status](docs/CHECK_DELIVERY_STATUS.md)
 6. [Work with Notes](docs/PIN_NOTES.md)
-7. [Placeholder](#)
+7. [Work with Inbox](docs/INBOX.md)
+8. [Work with Orders](docs/ORDERS.md)
+9. [Report an image issue](docs/REPORT_IMAGE_ISSUE.md)
