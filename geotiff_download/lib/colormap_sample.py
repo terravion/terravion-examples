@@ -62,10 +62,11 @@ from urllib2 import Request, urlopen, URLError, HTTPError
 
 def main(argv):
     working_dir = argv[0]
-    user_id = 'support+demo@terravion.com'
+    # user_id = 'support+demo@terravion.com'
     access_token = '2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
     layer_id = 'f229593c-feb4-43a8-8259-d7618244a3bc'
-    colorMap_list = [
+
+    color_map_list = [
         'N-GREENG', 'N-R2', 'N-R3', 'T', 'N-AVHRR', 'JG', 'BW',
         'RW-LEGACY', 'GRANULAR', 'GM-COMP1', 'GM-RGB3', 'GM-QUAD',
         'CVC', 'CHS_HC2', 'CHS_HC1', 'SMWE', '10 Class Agroprecision Grey',
@@ -73,7 +74,7 @@ def main(argv):
         '10 Class Agroprecision', 'CHS-LEGACY', 'TRICOLOR', 'TWE'
     ]
 
-    for color_map in colorMap_list:
+    for color_map in color_map_list:
         out_file_name = os.path.join(working_dir, color_map + '.tiff')
 
         request_url = (
@@ -82,22 +83,22 @@ def main(argv):
             '&access_token=' + access_token
         ).replace(' ', '%20')
 
-        print request_url
+        print(request_url)
 
         request = Request(request_url)
         response_file = urlopen(request)
 
         try:
-            print 'writing ' + str(out_file_name)
-            with open(out_file_name, "wb") as local_file:
+            print('writing ' + str(out_file_name))
+            with open(out_file_name, 'wb') as local_file:
                 local_file.write(response_file.read())
 
-        except HTTPError, e:
-            # handle errors
-            print "HTTP Error:", e.code, url
+        except HTTPError as e:
+            print("HTTP Error:", e.code)
 
-        except URLError, e:
-            print "URL Error:", e.reason, url
+        except URLError as e:
+            print("URL Error:", e.reason)
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])
