@@ -32,7 +32,7 @@
 ### EXAMPLE
 
 ```
-curl -X GET --header "Accept: application/json" "http://api2.terravion.com/users/\
+curl -X GET --header "Accept: application/json" "https://api2.terravion.com/users/\
 YOUR_USER_ID/getDeliveryTracking?\
 access_token=YOUR_ACCESS_TOKEN"
 ```

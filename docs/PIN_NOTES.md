@@ -45,7 +45,7 @@
 ### EXAMPLE
 
 ```
-curl -X GET --header "Accept: application/json" "http://api2.terravion.com/features/getAllPins?\
+curl -X GET --header "Accept: application/json" "https://api2.terravion.com/features/getAllPins?\
 userId=YOUR_USER_ID\
 &access_token=YOUR_ACCESS_TOKEN"
 ```
