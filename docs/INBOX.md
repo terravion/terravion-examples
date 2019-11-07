@@ -10,7 +10,7 @@
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
-| userId | true | | String |
+| userId | true | TerrAvion User ID | String |
 | inboxSettings | true | formData | Object |
 
 

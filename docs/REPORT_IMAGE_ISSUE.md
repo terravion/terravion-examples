@@ -9,8 +9,8 @@
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
-| layerId | true | | String |
-| data | false | | String |
+| layerId | true | TerrAvion Layer ID | String |
+| data | false | JSON: example below | String |
 
 ***data***
 ```
