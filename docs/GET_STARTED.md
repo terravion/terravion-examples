@@ -6,7 +6,7 @@ Another thing that you will often need will be a userId. this is basically for t
 
 In this document we will show you how to obtain your own accessToken and userId. And we also provide you a demo userId and accessToken should you only want to try things out.
 
-## Assumtions
+## Assumptions
 
 Throughout all our docs we'd do the following assumptions:
 
