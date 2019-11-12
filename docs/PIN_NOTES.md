@@ -1,4 +1,10 @@
-## Working with Notes/ Pins
+## Intro
+
+The Pin Notes feature help our user to mark a point on any of their fields and add notes and images to it. Then every person who has access to that field can view that note. Also they can share that note's content to people outside our infrastructure.
+
+In order to create a note you will need a coordinate pair -latitude and longitude- and at least a title, text or image.
+
+## Working with Pin Notes
 
 > You can add/ edit/ delete Notes in different ways interactively on our maps through our API.  
 > Every note will therefore, be binded to a specific set of coordinates.  
