@@ -28,7 +28,7 @@ Alternativeley, you can start using our demo accessToken
 03uKC6WwDrVUfh4jFrANmEMUegXApJXTeEYrGQc9Rf1ViWtByZEIMQ43CIepS7Cg
 ```
 
-### 2. Your userId
+### 2. Get your User ID using from access token
 
 #### A. With your own accessToken:
 
@@ -45,7 +45,7 @@ curl -X GET --header "Accept: application/json" "https://api2.terravion.com/user
 
 ```
 {
-  "userId": "7fd1da8b-a067-48e5-ab04-84ab6645409b"
+  "userId": "1455cf90-af48-4fae-87d0-57523de51b8b"
 }
 ```
 

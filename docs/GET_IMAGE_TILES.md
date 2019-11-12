@@ -8,29 +8,29 @@
 
 ### OPTIONS
 
-| Parameter| Required | Description | Type | 
+| Parameter| Required | Description | Type |
 | - | - | - | - |
-| user |  true  | user id | String | 
-| z | true  | Tile Zoom Level | Integer | 
-| x | true | Tile x-axis position | Integer | 
-| y | true | Tile Y-axis position | Integer | 
-| tms | false | Default true | Boolean |
-| t | false | threshold | String |
-| a | false | low threshold parameter | Double |
-| b | false | high threshold parameter | Double |
-| product | false | Product Type (NC, CIR, NDVI, TIRS, ZONE) | String | 
-| colorMap | false | Color Map to apply for NDVI, ZONE, TIRS Example: N-R2, ,N-R3,N-AVHRR, T, N  Default: NONE. | String |  
-| epochStart | false | Start date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer | 
-| epochEnd | false | End date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer | 
+| user |  true  | TerrAvion User ID | String |
+| z | true  | Tile Zoom Level | Integer |
+| x | true | Tile x-axis position | Integer |
+| y | true | Tile Y-axis position | Integer |
+| tms | false | Default: true | Boolean |
+| t | false | Histogram threshold | String |
+| a | false | Low threshold parameter | Double |
+| b | false | High threshold parameter | Double |
+| product | false | Product Type (NC, CIR, NDVI, TIRS, etc.) | String |
+| colorMap | false | Color Map to apply for NDVI, ZONE, TIRS Example: N-R2, ,N-R3,N-AVHRR, T, N  Default: NONE. | String |
+| epochStart | false | Start date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer |
+| epochEnd | false | End date in Epoch time (seconds since 1970-01-01T00:00:00Z) | Integer |
 | dataJSON | false | | String |
 | useSentinel2Scale | false | flag to indicate using sentinel 2 scale | Boolean |
-| equation | false | | String |
-| lowerBound | false | | Double |
-| upperBound | false | | Double |
-| lowDegC | false | | Double |
-| highDegC | false | | Double |
-| blockId | false | | String |
-| useAutoBounds | false | | Boolean |
+| equation | false | Veg Index Equation (eg. ((B4-B6)/(B4+B6))) | String |
+| lowerBound | false | Lower contrast boundary (16bit) | Double |
+| upperBound | false | Upper contrast boundary (16bit) | Double |
+| lowDegC | false | Lower thermal temperature boundary | Double |
+| highDegC | false | Upper thermal temperature boundary | Double |
+| blockId | false | TerrAvion Block ID | String |
+| useAutoBounds | false |  | Boolean |
 
 ## EXAMPLE
 

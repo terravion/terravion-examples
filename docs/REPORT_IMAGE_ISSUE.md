@@ -1,33 +1,37 @@
 ## Reporting image issue
-> There are various methods to work with orders.  
-> Here we only show you a single endpoint example.
+> Sends an email to layer_issue@terravion.com about user reported issue.
 
 ### ENDPOINTS
 
-`GET /layers/getOrderList`
+`POST /layers/{layerId}/reportLayerIssue`
 
 ### OPTIONS
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
-| userId | false | | String |
-| distributorId | false | | String |
-| orderDateEpochEnd | false | | Double |
+| layerId | true | TerrAvion Layer ID | String |
+| data | false | JSON: example below | String |
+
+***data***
+```
+{
+  "userId": "string",
+  "description": "string",
+}
+```
 
 ### EXAMPLE
 
 ```
-curl -X POST --header "Accept: application/json" "http://api2.terravion.com/orders/getOrderList?\
-userId=YOUR_USER_ID\
-&access_token=YOUR_ACCESS_TOKEN"
+curl -X POST --header "Accept: application/json" -d "{
+  \"description\": \"test\",
+  \"userId\": \"7ct1da8c-b067-48e5-ab04-84fb6645409e\"
+}" "https://api2.terravion.com/layers/YOUR_LAYER_ID/\
+reportLayerIssue?access_token=YOUR_ACCESS_TOKEN"
 ```
 
 ### RESULT
 
 ```
-[
-  "a3ad5ba7-2e9f-4ef5-b676-9be00f4aaec9",
-  "bdce472c-549e-44cf-899e-6896d1ddb353",
-  "4a330d11-da1f-4712-8012-9c98f58f9fc8"
-]
+204   Request was successful
 ```

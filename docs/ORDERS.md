@@ -17,7 +17,7 @@
 ### EXAMPLE
 
 ```
-curl -X POST --header "Accept: application/json" "http://api2.terravion.com/orders/getOrderList?\
+curl -X POST --header "Accept: application/json" "https://api2.terravion.com/orders/getOrderList?\
 userId=YOUR_USER_ID\
 &access_token=YOUR_ACCESS_TOKEN"
 ```

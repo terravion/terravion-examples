@@ -10,7 +10,7 @@
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
-| userId | true | | String |
+| userId | true | TerrAvion User ID | String |
 | inboxSettings | true | formData | Object |
 
 
@@ -38,7 +38,7 @@ curl -X POST --header "Accept: application/json" -d "{
   \"page\": 1,
   \"maxPage\": null,
   \"loading\": false
-}" "http://api2.terravion.com/layers/getLayersByDate?\
+}" "https://api2.terravion.com/layers/getLayersByDate?\
 userId=YOUR_USER_ID\
 &access_token=YOUR_ACCESS_TOKEN"
 ```
