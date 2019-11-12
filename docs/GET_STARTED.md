@@ -6,6 +6,7 @@ Another thing that you will often need will be a userId. this is basically for t
 
 In this document we will show you how to obtain your own accessToken and userId. And we also provide you a demo userId and accessToken should you only want to try things out.
 
+---
 ## Assumptions
 
 Throughout all our docs we'd do the following assumptions:
@@ -14,23 +15,25 @@ Throughout all our docs we'd do the following assumptions:
 2. That you are familiar with javascript and/ or python.
 3. That you have a basic knowledge on how an api works.
 
-### 1. Your accessToken
+---
+## How to get your access token
 
-#### A. Get your own accessToken:
+### A. Get your own accessToken:
 
 To get your own accessToken write us to api@terravion.com specifying your username or the main account you need it for.
 
-#### B. Using our demo accessToken
+### B. Using our demo accessToken
 
-Alternativeley, you can start using our demo accessToken
+Alternativeley, you can ge start using our demo accessToken
 
 ```
 03uKC6WwDrVUfh4jFrANmEMUegXApJXTeEYrGQc9Rf1ViWtByZEIMQ43CIepS7Cg
 ```
 
-### 2. Get your User ID using from access token
+---
+## How to get a User ID
 
-#### A. With your own accessToken:
+### A. With your own accessToken
 
 **ENDPOINT**
 
@@ -49,7 +52,9 @@ curl -X GET --header "Accept: application/json" "https://api2.terravion.com/user
 }
 ```
 
-#### B. With our demo accessToken your `userId` would be
+### B. With our demo accessToken 
+
+In this case, your `userId` would be:
 
 ```
 1455cf90-af48-4fae-87d0-57523de51b8b
