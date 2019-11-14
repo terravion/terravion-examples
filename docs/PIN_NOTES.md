@@ -11,6 +11,90 @@ In order to create a note you will need a coordinate pair -latitude and longitud
 
 ### ENDPOINTS & OPTIONS
 
+#### `GET /features/getAllPins` => Get all your existing Pins
+
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| userId | false | | String |
+
+***Sample Response***
+```
+[
+  {
+    "block_id": "99cd2c6e-e61f-c88f-981d-decc7e8e79c2",
+    "feature_id": "0404cd00-bf51-4c3e-7186-f7780924a8cb",
+    "meta": {
+      "title": "IDC",
+      "text": ""
+    },
+    "add_date": "2019-09-12T00:21:13.285Z",
+    "creator_user_id": "0d4eae7e-43ce-4574-8ec4-270881bab6d1",
+    "st_asgeojson": "{\"type\":\"Point\",\"coordinates\":[-101.60236709429,35.6356264849986]}",
+    "first_name": "Joe",
+    "last_name": "Doe"
+  },
+  ...
+]
+```
+---
+
+#### `GET /features/getPins` => Get all pins related to a single Block ID
+
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| blockId | false |  | String |
+
+***Sample Response***
+```
+[
+  {
+    "block_id": "0404cd00-c88f-4c3e-981d-decc7e8e79c2",
+    "feature_id": "0d4eae7e-bf51-e61f-7186-f7780924a8cb"
+  }
+]
+```
+
+---
+
+#### `GET /features/getPinData` => Get data related to a single Pin
+
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| featureId | false | | String |
+
+***Sample Response***
+```
+[
+  {
+    "feature_id": "0d4eae7e-bf51-e61f-7186-f7780924a8cb",
+    "meta": {
+      "title": "IDC",
+      "text": ""
+    },
+    "add_date": "2019-09-12T00:21:13.285Z",
+    "creator_user_id":
+     "1bab6d1e-43ce-4574-8ec4-2708899cd2c6",
+    "first_name": "Joe",
+    "last_name": "Doe",
+    "st_asgeojson": "{\"type\":\"Point\",\"coordinates\":[-100.60236709429,37.6356264849986]}",
+    "block_id": "0404cd00-c88f-4c3e-981d-decc7e8e79c2"
+  }
+]
+```
+---
+
+#### `GET /features/{featureId}/thumb.jpg` => Get image related to a single Pin
+
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| featureId | false |  | String |
+
+***Sample response***
+```
+YOU WOULD GET A JPG IMAGE
+```
+
+---
 #### `POST /features/storePin` => Store a single Pin
 
 | Parameter| Required | Description | Type |
@@ -62,57 +146,6 @@ UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
   name,
 }
 ```
-
----
-
-#### `GET /features/getAllPins` => Get all your existing Pins
-
-| Parameter| Required | Description | Type |
-| - | - | - | - |
-| userId | false | | String |
-
-***Sample Response***
-```
-[
-  {
-    "block_id": "99cd2c6e-e61f-c88f-981d-decc7e8e79c2",
-    "feature_id": "0404cd00-bf51-4c3e-7186-f7780924a8cb",
-    "meta": {
-      "title": "IDC",
-      "text": ""
-    },
-    "add_date": "2019-09-12T00:21:13.285Z",
-    "creator_user_id": "0d4eae7e-43ce-4574-8ec4-270881bab6d1",
-    "st_asgeojson": "{\"type\":\"Point\",\"coordinates\":[-101.60236709429,35.6356264849986]}",
-    "first_name": "Joe",
-    "last_name": "Doe"
-  },
-  ...
-]
-```
----
-
-#### `GET /features/getPins` => Get all pins related to a single LayerID
-
-| Parameter| Required | Description | Type |
-| - | - | - | - |
-| blockId | false | formData | String |
-
----
-
-#### `GET /features/getPinData` => Get data related to a single Pin
-
-| Parameter| Required | Description | Type |
-| - | - | - | - |
-| featureId | false | formData | String |
-
----
-
-#### `GET /features/{featureId}/thumb.jpg` => Get image related to a single Pin
-
-| Parameter| Required | Description | Type |
-| - | - | - | - |
-| featureId | false | formData | String |
 
 ---
 
