@@ -59,3 +59,25 @@ In this case, your `userId` would be:
 ```
 1455cf90-af48-4fae-87d0-57523de51b8b
 ```
+---
+## How to get a Block by Name
+
+`GET /userBlocks/getBlocksByName`
+
+**EXAMPLE**
+```
+curl -X GET --header "Accept: application/json" "https://api2.terravion.com/userBlocks/getBlocksByName?\
+userId=YOUR_USER_ID\
+userId=YOUR_BLOCK_NAME\
+access_token=YOUR_ACCESS_TOKEN"
+``` 
+**RESULT**
+```
+[
+  {
+    "blockId": "1f7141a9-7930-4715-9d60-d057fed6207d",
+    "name": "Joe Doe/SW 34_23_24",
+    "role": "OWNER"
+  }
+]
+```

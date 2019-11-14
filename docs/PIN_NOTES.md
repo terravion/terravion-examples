@@ -4,45 +4,119 @@ The Pin Notes feature help our user to mark a point on any of their fields and a
 
 In order to create a note you will need a coordinate pair -latitude and longitude- and at least a title, text or image.
 
-## Working with Pin Notes
+## Assumptions
 
-> You can add/ edit/ delete Notes in different ways interactively on our maps through our API.  
-> Every note will therefore, be binded to a specific set of coordinates.  
-> Note: for the time being you can add Images only through our app.
+1. You already went through our [Get Started](GET_STARTED.md) doc.
+2. That you know what's the block_id that you want to insert a note for (same doc).
 
 ### ENDPOINTS & OPTIONS
 
-`POST /features/storePin` => Store a single Pin
+#### `POST /features/storePin` => Store a single Pin
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
 | data | false | formData | String |
 
-`GET /features/getAllPins` => Get all your existing Pins
+***Sample formData***
+```
+{
+  meta: {
+    title, text
+  },
+  imageMeta: {
+    url
+  },
+  st_asgeojson: {
+    type: "Point",
+    coordinates: [longitude, latitude]
+  },
+  block_id,
+  feature_id: uuid,
+  userId,
+  add_date: 2018-10-14T15:19:31.073Z
+}
+```
+***`uuid` python example***
+
+```
+>>> import uuid
+
+>>> # make a random UUID
+>>> uuid.uuid4()
+
+UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
+```
+
+---
+
+#### `POST /features/storePinImage` => Store image for Pin
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
-| userId | false | formData | String |
+| data | false | formData | String |
 
-`GET /features/getPins` => Get all pins related to a single LayerID
+***Sample formData***
+```
+{
+  uri: base64_encoded_image
+  name,
+}
+```
+
+---
+
+#### `GET /features/getAllPins` => Get all your existing Pins
+
+| Parameter| Required | Description | Type |
+| - | - | - | - |
+| userId | false | | String |
+
+***Sample Response***
+```
+[
+  {
+    "block_id": "99cd2c6e-e61f-c88f-981d-decc7e8e79c2",
+    "feature_id": "0404cd00-bf51-4c3e-7186-f7780924a8cb",
+    "meta": {
+      "title": "IDC",
+      "text": ""
+    },
+    "add_date": "2019-09-12T00:21:13.285Z",
+    "creator_user_id": "0d4eae7e-43ce-4574-8ec4-270881bab6d1",
+    "st_asgeojson": "{\"type\":\"Point\",\"coordinates\":[-101.60236709429,35.6356264849986]}",
+    "first_name": "Joe",
+    "last_name": "Doe"
+  },
+  ...
+]
+```
+---
+
+#### `GET /features/getPins` => Get all pins related to a single LayerID
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
 | blockId | false | formData | String |
 
-`GET /features/getPinData` => Get data related to a single Pin
+---
+
+#### `GET /features/getPinData` => Get data related to a single Pin
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
 | featureId | false | formData | String |
 
-`GET /features/{featureId}/thumb.jpg` => Get image related to a single Pin
+---
+
+#### `GET /features/{featureId}/thumb.jpg` => Get image related to a single Pin
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
 | featureId | false | formData | String |
 
-`GET /features/deletePin` => Delete a single Pin
+---
+
+#### `GET /features/deletePin` => Delete a single Pin
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
