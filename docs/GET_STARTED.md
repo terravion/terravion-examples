@@ -68,7 +68,7 @@ In this case, your `userId` would be:
 ```
 curl -X GET --header "Accept: application/json" "https://api2.terravion.com/userBlocks/getBlocksByName?\
 userId=YOUR_USER_ID\
-userId=YOUR_BLOCK_NAME\
+blockName=YOUR_BLOCK_NAME\
 access_token=YOUR_ACCESS_TOKEN"
 ``` 
 **RESULT**

@@ -9,6 +9,10 @@ In order to create a note you will need a coordinate pair -latitude and longitud
 1. You already went through our [Get Started](GET_STARTED.md) doc.
 2. That you know what's the block_id that you want to insert a note for (same doc).
 
+## Note
+
+The pin note identifier is called Feature ID.
+
 ### ENDPOINTS & OPTIONS
 
 #### `GET /features/getAllPins` => Get all your existing Pins
@@ -17,6 +21,25 @@ In order to create a note you will need a coordinate pair -latitude and longitud
 | - | - | - | - |
 | userId | false | | String |
 
+***Python example***
+```
+import urllib2
+
+def get_all_pins():
+    base_url = 'https://api2.terravion.com/'
+    method = 'features/getAllPins'
+    user_id = 'YOUR_USER_UD'
+    access_token = 'YOUR_ACCESS_TOKEN'
+    url = base_url + method
+    url += '?userId=' + user_id
+    url += '&access_token=' + access_token
+    req = urllib2.Request(url)
+    response = urllib2.urlopen(req)
+    the_page = response.read()
+    return the_page
+
+get_all_pins()
+```
 ***Sample Response***
 ```
 [
@@ -44,6 +67,26 @@ In order to create a note you will need a coordinate pair -latitude and longitud
 | - | - | - | - |
 | blockId | false |  | String |
 
+***Python example***
+```
+import urllib2
+
+def get_pins_by_block_id():
+    base_url = 'https://api2.terravion.com/'
+    method = 'features/getPins'
+    block_id = 'YOUR_BLOCK_ID'
+    access_token = 'YOUR_ACCESS_TOKEN'
+    url = base_url + method
+    url += '?blockId=' + block_id
+    url += '&access_token=' + access_token
+    req = urllib2.Request(url)
+    response = urllib2.urlopen(req)
+    the_page = response.read()
+    return the_page
+
+get_pins_by_block_id()
+```
+
 ***Sample Response***
 ```
 [
@@ -61,6 +104,26 @@ In order to create a note you will need a coordinate pair -latitude and longitud
 | Parameter| Required | Description | Type |
 | - | - | - | - |
 | featureId | false | | String |
+
+***Python example***
+```
+import urllib2
+
+def get_pin_data():
+    base_url = 'https://api2.terravion.com/'
+    method = 'features/getPinData'
+    feature_id = 'YOUR_FEATURE_ID'
+    access_token = 'YOUR_ACCESS_TOKEN'
+    url = base_url + method
+    url += '?featureId=' + feature_id
+    url += '&access_token=' + access_token
+    req = urllib2.Request(url)
+    response = urllib2.urlopen(req)
+    the_page = response.read()
+    return the_page
+
+get_pin_data()
+```
 
 ***Sample Response***
 ```
@@ -88,6 +151,24 @@ In order to create a note you will need a coordinate pair -latitude and longitud
 | Parameter| Required | Description | Type |
 | - | - | - | - |
 | featureId | false |  | String |
+
+***Python example***
+```
+import urllib2
+
+def get_pin_image():
+    base_url = 'https://api2.terravion.com/'
+    feature_id = 'YOUR_FEATURE_ID'
+    method = 'features/' + feature_id + '/thumb.jpg'
+    access_token = 'YOUR_ACCESS_TOKEN'
+    url = base_url + method
+    url += '?access_token=' + access_token
+    response = urllib2.urlopen(url)
+    img = response.read()
+    return img
+
+get_pin_image()
+```
 
 ***Sample response***
 ```
@@ -120,17 +201,54 @@ YOU WOULD GET A JPG IMAGE
   add_date: 2018-10-14T15:19:31.073Z
 }
 ```
-***`uuid` python example***
-
+***Python example***
 ```
->>> import uuid
+import urllib
+import urllib2
+import json
+import uuid
 
->>> # make a random UUID
->>> uuid.uuid4()
+def store_pin():
+    base_url = 'https://api2.terravion.com/'
+    method = 'features/storePin'
+    user_id = 'YOUR_USER_ID'
+    access_token = 'YOUR_ACCESS_TOKEN'
+    uuid = str(uuid.uuid4())
 
-UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
+    url = base_url + method
+    url += '?access_token=' + access_token
+
+    # create a Python data object (dict):
+    data = {
+      "meta": {
+        title,
+        text
+      },
+      "imageMeta": {
+        "origURL": "DEVICE_LOCAL_PATH",
+        "url": "CLOUD_URL_IF_ANY"
+      },
+      "st_asgeojson": {
+        "type": "Point",
+        "coordinates": [ longitude, latitude ]
+      },
+      "block_id": "YOUR_BLOCK_ID",
+      "feature_id": uuid,
+      "userId": "YOUR_USER_ID",
+      "add_date": "2018-10-14T15:19:31.073Z"
+    }
+    data = urllib.urlencode(data)
+    req = urllib2.Request(url, data)
+    response = urllib2.urlopen(req).read()
+
+    return response
+
+store_pin()
 ```
-
+***Response***
+```
+Simple 200 response
+```
 ---
 
 #### `POST /features/storePinImage` => Store image for Pin
@@ -142,43 +260,70 @@ UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
 ***Sample formData***
 ```
 {
-  uri: base64_encoded_image
-  name,
+  uri: base64_encoded_image,
+  name
 }
 ```
+***Python example***
+```
+import urllib
+import urllib2
+import json
+import uuid
 
+def store_pin_image():
+    base_url = 'https://api2.terravion.com/'
+    method = 'features/storePinImage'
+    user_id = 'YOUR_USER_ID'
+    access_token = 'YOUR_ACCESS_TOKEN'
+    image_name = 'YOUR_FEATURE_ID' + '.jpg'
+
+    url = base_url + method
+    url += '?access_token=' + access_token
+
+    # create a Python data object (dict):
+    data = {
+      "uri": "YOUR_BASE64_IMG",
+      "name": image_name
+    }
+    data = urllib.urlencode(data)
+    req = urllib2.Request(url, data)
+    response = urllib2.urlopen(req).read()
+
+    return response
+
+store_pin_image()
+```
+***Response***
+```
+Simple 200 response
+```
 ---
 
 #### `GET /features/deletePin` => Delete a single Pin
 
 | Parameter| Required | Description | Type |
 | - | - | - | - |
-| featureId | false | formData | String |
-
-### EXAMPLE
-
+| featureId | false |  | String |
+***Python example***
 ```
-curl -X GET --header "Accept: application/json" "https://api2.terravion.com/features/getAllPins?\
-userId=YOUR_USER_ID\
-&access_token=YOUR_ACCESS_TOKEN"
-```
+import urllib2
 
-### RESULT
+def delete_pin():
+    base_url = 'https://api2.terravion.com/'
+    method = 'features/deletePin'
+    feature_id = 'YOUR_FEATURE_ID'
+    access_token = 'YOUR_ACCESS_TOKEN'
+    url = base_url + method
+    url += '?feature_id=' + feature_id
+    url += '?access_token=' + access_token
+    response = urllib2.urlopen(url)
+    img = response.read()
+    return img
 
+delete_pin()
 ```
-[
-  {
-    "block_id": "6884bb81-c9a1-4473-9174-fb5d057dfa27",
-    "feature_id": "28a3083d-c0c7-ebd7-c215-1d6bbd02b34e",
-    "meta": {
-      "title": "Common rust 3rd leaf below tassels",
-      "url": "https://user-upload-terravion-com.s3.amazonaws.com/overview-app/28a3083d-c0c7-ebd7-c215-1d6bbd02b34e.jpeg"
-    },
-    "add_date": "2019-07-06T23:56:55.277Z",
-    "creator_user_id": "003be027-bdc1-4a05-96a8-b8b8976abaea",
-    "st_asgeojson": "{\"type\":\"Point\",\"coordinates\":[-99.710712488215,37.2586363652761]}",
-    "first_name": "Joe",
-    "last_name": "Public"
-  }
-]
+***Response***
+```
+Simple 200 response
 ```
