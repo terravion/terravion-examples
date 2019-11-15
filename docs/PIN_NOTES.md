@@ -305,6 +305,7 @@ Simple 200 response
 | Parameter| Required | Description | Type |
 | - | - | - | - |
 | featureId | false |  | String |
+
 ***Python example***
 ```
 import urllib2
