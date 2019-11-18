@@ -1,6 +1,9 @@
 # TerrAvion API Notebook
+This repo is intended to help you started working with our API quickly and painlessly. If you're new to our API, check out the Get Started section.
 
-This repo is intended to help you get started on our API integration. Most of the stuff you'll need is covered here. But don't hesitate to contact us if you think there's something missing.
+All the other links below have instructions on how to use the API for common use cases.
+
+If you would like to use the API for something that isn't listed here, let us know, and if you find anything that doesn't work, go ahead and create and issue, and we'll respond right away.
 
 ## INDEX
 
