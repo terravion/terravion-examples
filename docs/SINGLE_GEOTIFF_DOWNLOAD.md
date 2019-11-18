@@ -11,7 +11,7 @@
 | Parameter | Required | Description | Data Type |
 | - | - | - | - |
 | userId | true | TerrAvion User ID | string |
-| LayerId | true | TerrAvion Layer ID | string |
+| layerId | true | TerrAvion Layer ID | string |
 | colorMap | false | Specified colormap | string |
 | isColormapRgb | false | RGB Flag | string |
 | epsgCode | false | EPSG Code (eg. 4326) | double |
