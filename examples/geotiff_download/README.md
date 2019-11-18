@@ -7,24 +7,24 @@ Request api@terravion.com for an access_token
 
 **Retrieve all the blocks:**
 
-`python main.py -access_token <access_token> -get_block_list True`
+`python main.py --access_token <access_token> --get_block_list`
 
 **Retrieve download links by block id:**
 
-`python main.py -access_token <access_token> -block_id_list <bid1> <bid2> <...> -product MULTIBAND`
+`python main.py --access_token <access_token> --block_id_list <bid1> <bid2> <...> --product MULTIBAND`
 
 Add --working_dir <working_dir> to download actual image
 
 **Retrieve download links by block_name:**
 
-`python main.py -access_token <access_token> -block_name <block_name> -product MULTIBAND`
+`python main.py --access_token <access_token> --block_name <block_name> --product MULTIBAND`
 
 Add --working_dir <working_dir> to download actual image
 
 cloud optimized geotiff download [cog_main.py]
 ====================
 
-In order to leverage cloud optimized geotiff and use this example code, gdal and rasterio must be downloaded. 
+In order to leverage cloud optimized geotiff and use this example code, gdal and rasterio must be downloaded.
 
 https://www.gdal.org/
 
