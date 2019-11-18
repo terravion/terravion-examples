@@ -47,7 +47,7 @@ def main(args):
     log = logging.getLogger(__name__)
     # Input Parameter
     input_tif = args.input_tif
-    working_dir = args.working_dir
+    output_dir = args.output_dir
     validate_terravion_cog = args.validate_terravion_cog
     block_id_list = args.block_id_list
     block_name = args.block_name
@@ -75,7 +75,7 @@ def main(args):
             start_date=start_date,
             end_date=end_date,
             add_start_date=add_start_date,
-            working_dir=working_dir,
+            output_dir=output_dir,
             print_summary=get_summary,
             no_clipping=no_clipping,
             product=product)
@@ -85,7 +85,7 @@ def main(args):
 
 if __name__ == '__main__':
     argument_sample = 'Example: python ' + os.path.basename(os.path.realpath(__file__)) + \
-        ' --access_token <access_token> --working_dir <working_dir> --block_id_list <block_id> '
+        ' --access_token <access_token> --output_dir <output_dir> --block_id_list <block_id> '
 
     parser = argparse.ArgumentParser(description=argument_sample)
 
@@ -117,7 +117,7 @@ if __name__ == '__main__':
                         nargs='?', default=None)
     parser.add_argument('--input_tif', help='input_tif',
                         nargs='?', default=None)
-    parser.add_argument('--working_dir', help='working_dir',
+    parser.add_argument('--output_dir', help='output_dir',
                         nargs='?', default=None)
     parser.add_argument('-l', '-log', '--log', type=str,
                         default='INFO', help='Input log level')

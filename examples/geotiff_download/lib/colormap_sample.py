@@ -61,7 +61,7 @@ from urllib2 import Request, urlopen, URLError, HTTPError
 
 
 def main(argv):
-    working_dir = argv[0]
+    output_dir = argv[0]
     # user_id = 'support+demo@terravion.com'
     access_token = '2e68cee0-b2fd-4ef5-97f6-8e44afb09ffa'
     layer_id = 'f229593c-feb4-43a8-8259-d7618244a3bc'
@@ -75,7 +75,7 @@ def main(argv):
     ]
 
     for color_map in color_map_list:
-        out_file_name = os.path.join(working_dir, color_map + '.tiff')
+        out_file_name = os.path.join(output_dir, color_map + '.tiff')
 
         request_url = (
             'https://api.terravion.com/v1/layers/' + layer_id +

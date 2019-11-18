@@ -33,7 +33,7 @@ class TestMain(object):
         access_token = config.ACCESS_TOKEN
 
         root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        working_dir = os.path.join(root_dir, 'download')
+        output_dir = os.path.join(root_dir, 'download')
 
         block_name = None
         lat = None
@@ -52,8 +52,8 @@ class TestMain(object):
             product=product, with_colormap=with_colormap)
 
         if download_info_list:
-            if working_dir:
-                download_imagery(access_token, working_dir, download_info_list)
+            if output_dir:
+                download_imagery(access_token, output_dir, download_info_list)
             else:
                 for download_info in download_info_list:
                     log.debug(json.dumps(download_info, sort_keys=True, indent=2))
@@ -65,7 +65,7 @@ class TestMain(object):
         access_token = config.ACCESS_TOKEN
 
         root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        working_dir = os.path.join(root_dir, 'download')
+        output_dir = os.path.join(root_dir, 'download')
 
         block_name = None
         lat = None
@@ -84,8 +84,8 @@ class TestMain(object):
             product=product, with_colormap=with_colormap)
 
         if download_info_list:
-            if working_dir:
-                download_imagery(access_token, working_dir, download_info_list)
+            if output_dir:
+                download_imagery(access_token, output_dir, download_info_list)
             else:
                 for download_info in download_info_list:
                     log.debug(json.dumps(download_info, sort_keys=True, indent=2))

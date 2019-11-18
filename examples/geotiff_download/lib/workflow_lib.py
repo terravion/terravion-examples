@@ -34,7 +34,7 @@ def validate_product(product):
 def get_cog_multiband_download_links(access_token, block_name=None,
                                      lat=None, lng=None, block_id_list=None,
                                      start_date=None, end_date=None,
-                                     add_start_date=None, working_dir=None,
+                                     add_start_date=None, output_dir=None,
                                      print_summary=False, no_clipping=False,
                                      product=None):
     log = logging.getLogger(__name__)
@@ -87,23 +87,23 @@ def get_cog_multiband_download_links(access_token, block_name=None,
                     root_name = block_id + '_' + root_name
                     multiband_filename = root_name + '.tif'
 
-                if working_dir:
-                    multiband_filename = os.path.join(working_dir, multiband_filename)
+                if output_dir:
+                    multiband_filename = os.path.join(output_dir, multiband_filename)
 
                 CogRasterLib().download_cog_from_s3(
                     s3_url=s3_url,
                     outfile=multiband_filename,
                     epsg=4326,
                     geojson_string=json.dumps(block_info),
-                    working_dir=working_dir,
+                    output_dir=output_dir,
                     no_clipping=no_clipping)
 
-                if multiband_filename and working_dir and product and product != 'MULTIBAND':
+                if multiband_filename and output_dir and product and product != 'MULTIBAND':
                     p_l = ProductLib(
                         product,
                         layer_info['contrastBounds'],
                         multiband_filename,
-                        working_dir,
+                        output_dir,
                         root_name)
 
                     p_l.create_product()
@@ -369,11 +369,11 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None,
     return task_info_list
 
 
-def download_imagery(access_token, working_dir, download_info_list):
+def download_imagery(access_token, output_dir, download_info_list):
     log = logging.getLogger(__name__)
 
-    if not os.path.exists(working_dir):
-        os.mkdir(working_dir)
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
 
     ta_b = TerrAvionAPI2Block(access_token)
 
@@ -412,7 +412,7 @@ def download_imagery(access_token, working_dir, download_info_list):
                 root_name += download_info['blockId'] + '_'
 
             root_name += download_info['product'] + '.tif'
-            out_file = os.path.join(working_dir, root_name)
+            out_file = os.path.join(output_dir, root_name)
 
             logging.debug('url: %s', str(download_info['download_url']))
             logging.debug('out_file: %s', str(out_file))

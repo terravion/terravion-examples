@@ -54,7 +54,7 @@ class CogRasterLib(object):
 
     def download_cog_from_s3(self, s3_url, outfile, epsg=4326,
                              geojson_file=None, geojson_string=None,
-                             working_dir=None, no_clipping=False):
+                             output_dir=None, no_clipping=False):
         # Download Multiband from COG
         gdalwarp_cmd_list = [
             'gdalwarp',
@@ -83,7 +83,7 @@ class CogRasterLib(object):
 
         gdalwarp_cmd = ' '.join(gdalwarp_cmd_list)
 
-        if working_dir:
+        if output_dir:
             self.log.debug(str(gdalwarp_cmd))
             os.system(gdalwarp_cmd)
         else:

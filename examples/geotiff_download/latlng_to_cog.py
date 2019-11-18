@@ -59,7 +59,7 @@ class LatLngToCOG:
         r = requests.get(q_url)
         return self.parse_response(r)
 
-    def get_cogs(self, working_dir):
+    def get_cogs(self, output_dir):
         self.user_id = self.get_user_id()
         layers = self.get_layers()
 
@@ -68,9 +68,9 @@ class LatLngToCOG:
                 print(json.dumps(layer, sort_keys=True, indent=2))
                 outfile = None
 
-                if working_dir:
+                if output_dir:
                     layer_date = datetime.datetime.utcfromtimestamp(layer['layerDateEpoch']).strftime('%Y-%m-%d')
-                    outfile = os.path.join(working_dir, layer_date + '_' + layer['blockId'] + 'tif')
+                    outfile = os.path.join(output_dir, layer_date + '_' + layer['blockId'] + 'tif')
 
                 geom = json.dumps(self.get_geom(layer['blockId']))
 
@@ -79,18 +79,18 @@ class LatLngToCOG:
                     outfile=outfile,
                     epsg=4326,
                     geojson_string=geom,
-                    working_dir=working_dir)
+                    output_dir=output_dir)
 
 
 def main(args):
     lat = args.lat
     lng = args.lng
     access_token = args.access_token
-    working_dir = args.working_dir
+    output_dir = args.output_dir
 
     if lat and lng and access_token:
         ll2cog = LatLngToCOG(access_token, lat, lng)
-        ll2cog.get_cogs(working_dir)
+        ll2cog.get_cogs(output_dir)
     else:
         parser.print_help()
 
@@ -107,7 +107,7 @@ if __name__ == '__main__':
                         nargs='?', default=None)
     parser.add_argument('--lng', help='lng',
                         nargs='?', default=None)
-    parser.add_argument('--working_dir', help='working_dir',
+    parser.add_argument('--output_dir', help='output_dir',
                         nargs='?', default=None)
 
     args = parser.parse_args()
