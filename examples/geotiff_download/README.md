@@ -13,13 +13,13 @@ Request api@terravion.com for an access_token
 
 `python main.py --access_token <access_token> --block_id_list <bid1> <bid2> <...> --product MULTIBAND`
 
-Add --working_dir <working_dir> to download actual image
+Add --output_dir <output_dir> to download actual image
 
 **Retrieve download links by block_name:**
 
 `python main.py --access_token <access_token> --block_name <block_name> --product MULTIBAND`
 
-Add --working_dir <working_dir> to download actual image
+Add --output_dir <output_dir> to download actual image
 
 cloud optimized geotiff download [cog_main.py]
 ====================
@@ -43,8 +43,8 @@ https://rasterio.readthedocs.io/en/stable/installation.html
 
 `python cog_main.py --access_token <access_token> --get_layers`
 
-**Download multiband to working_dir**
+**Download multiband to output_dir**
 
-`python cog_main.py --access_token <access_token> --get_layers --working_dir <working_dir>`
+`python cog_main.py --access_token <access_token> --get_layers --output_dir <output_dir>`
 
 Run tests to check out example usage

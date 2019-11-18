@@ -15,19 +15,19 @@ from lib.cog_raster_lib import CogRasterLib
 
 
 class ProductLib(object):
-    def __init__(self, product, contrast_bounds, input_filepath, working_dir=None, root_name=None):
+    def __init__(self, product, contrast_bounds, input_filepath, output_dir=None, root_name=None):
         self.log = logging.getLogger(__name__)
         self.product = product
         self.contrast_bounds = contrast_bounds
-        self.working_dir = working_dir
+        self.output_dir = output_dir
         self.root_name = root_name
         self.input_filepath = input_filepath
         self.cog_tags = CogRasterLib().get_cog_tags(input_filepath)
 
     def create_product(self, out_filepath=None):
-        if not out_filepath and self.working_dir and self.root_name:
+        if not out_filepath and self.output_dir and self.root_name:
             out_filepath = os.path.join(
-                self.working_dir,
+                self.output_dir,
                 self.root_name + '_' + self.product + '.tif')
 
         if self.product == 'SYNTHETIC_NC':

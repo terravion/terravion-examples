@@ -67,7 +67,7 @@ logging.basicConfig(level=logging.INFO)
 '''
 
 
-def run_geotiff_download(access_token=None, working_dir=None,
+def run_geotiff_download(access_token=None, output_dir=None,
                          get_block_list=None, product=None, block_name=None,
                          block_id_list=None, lat=None, lng=None,
                          add_start_date=None, start_date=None, end_date=None,
@@ -92,10 +92,10 @@ def run_geotiff_download(access_token=None, working_dir=None,
             product=product, with_colormap=with_colormap)
 
         if download_info_list:
-            if working_dir:
+            if output_dir:
                 log.info('Download start: %s files to be downloaded',
                          str(len(download_info_list)))
-                download_imagery(access_token, working_dir, download_info_list)
+                download_imagery(access_token, output_dir, download_info_list)
             else:
                 for download_info in download_info_list:
                     log.info(json.dumps(download_info, sort_keys=True, indent=2))
@@ -120,7 +120,7 @@ def main(args):
 
     # Input Parameter
     access_token = args.access_token
-    working_dir = args.working_dir
+    output_dir = args.output_dir
 
     # Workflow Parameters
     get_block_list = args.get_block_list
@@ -141,7 +141,7 @@ def main(args):
 
     run_flag = run_geotiff_download(
         access_token=access_token,
-        working_dir=working_dir,
+        output_dir=output_dir,
         get_block_list=get_block_list,
         product=product,
         block_name=block_name,
@@ -160,14 +160,14 @@ def main(args):
 
 if __name__ == '__main__':
     argument_sample = 'python ' + os.path.basename(os.path.realpath(__file__)) + \
-        ' -working_dir <working_dir>  -access_token <access_token> '
+        ' --output_dir <output_dir>  --access_token <access_token> '
 
     parser = argparse.ArgumentParser(description=argument_sample)
 
     parser.add_argument('--access_token', help='access_token',
                         nargs='?', default=None)
 
-    parser.add_argument('--working_dir', help='working_dir',
+    parser.add_argument('--output_dir', help='output_dir',
                         nargs='?', default=None)
 
     # Workflow Parameters
