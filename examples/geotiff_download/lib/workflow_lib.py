@@ -178,10 +178,10 @@ def get_download_links(access_token, block_name=None, lat=None, lng=None,
         layer_info_list = ta2_layer.get_layers(field_name=block_name)
 
     if not layer_info_list:
-        log.debug('no layers found')
+        log.debug('No layers found')
         return None
 
-    log.info('found: %s layers', str(len(layer_info_list)))
+    log.info('%s layers found', str(len(layer_info_list)))
     ta2_task = TerrAvionAPI2Task(user_id, access_token)
 
     if product:
@@ -190,6 +190,7 @@ def get_download_links(access_token, block_name=None, lat=None, lng=None,
             geotiff_epsg, product, with_colormap)
 
         download_url_list = check_tasks_until_finish(task_info_list, ta2_task)
+
         return download_url_list
 
     else:
@@ -215,13 +216,15 @@ def check_tasks_until_finish(task_info_list, ta2_task):
 
     while True:
         if task_info_list:
-            log.debug('%s tasks remaining', str(len(task_info_list)))
+            log.info('%s tasks remaining', str(len(task_info_list)))
 
         for task_info in task_info_list:
             task_response = ta2_task.get_task_info(task_info['task_id'])
+
+            # If finished, get download link
             download_url = get_finished_download_link(task_response)
 
-            if download_url:
+            if download_url is not None:
                 task_info['download_url'] = download_url
                 download_url_list.append(task_info)
             else:
@@ -233,7 +236,9 @@ def check_tasks_until_finish(task_info_list, ta2_task):
         task_info_list = new_task_info_list
         new_task_info_list = []
 
-        time.sleep(1)
+        # Sleeping for 10 seconds
+        log.info('Waiting for tasks to finish, sleeping for 10 seconds...')
+        time.sleep(10)
 
     log.info('%s downloads ready', str(len(download_url_list)))
 

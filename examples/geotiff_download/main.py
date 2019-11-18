@@ -164,43 +164,46 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description=argument_sample)
 
-    parser.add_argument('-access_token', help='access_token',
+    parser.add_argument('--access_token', help='access_token',
                         nargs='?', default=None)
-    parser.add_argument('-working_dir', help='working_dir',
+
+    parser.add_argument('--working_dir', help='working_dir',
                         nargs='?', default=None)
 
     # Workflow Parameters
-    parser.add_argument('-get_block_list', help='get_block_list',
-                        nargs='?', default=None)
-    parser.add_argument('-product', help='NC, CIR, NDVI, TIRS, MULTIBAND, FULL, ALL',
+    parser.add_argument('--get_block_list', help='get_block_list',
+                        action='store_true')
+
+    parser.add_argument('--product', help='NC, CIR, NDVI, TIRS, MULTIBAND, FULL, ALL',
                         nargs='?', default=None)
 
     # Optional Filters
-    parser.add_argument('-block_name', help='block_name',
+    parser.add_argument('--block_name', help='block_name',
                         nargs='?', default=None)
 
-    parser.add_argument('-lat', help='lat',
-                        nargs='?', default=None)
-    parser.add_argument('-lng', help='lng',
+    parser.add_argument('--lat', help='lat',
                         nargs='?', default=None)
 
-    parser.add_argument('-block_id_list', help='block_id_list',
+    parser.add_argument('--lng', help='lng',
+                        nargs='?', default=None)
+
+    parser.add_argument('--block_id_list', help='block_id_list',
                         nargs='+', default=None)
 
-    parser.add_argument('-add_start_date', help='add_start_date',
+    parser.add_argument('--add_start_date', help='add_start_date',
                         nargs='?', default=None)
 
-    parser.add_argument('-start_date', help='start_date',
+    parser.add_argument('--start_date', help='start_date',
                         nargs='?', default=None)
 
-    parser.add_argument('-end_date', help='end_date',
+    parser.add_argument('--end_date', help='end_date',
                         nargs='?', default=None)
 
-    parser.add_argument('-with_colormap', help='with_colormap',
+    parser.add_argument('--with_colormap', help='with_colormap',
                         action='store_true')
 
     # geotiff parameters
-    parser.add_argument('-EPSG', help='EPSG',
+    parser.add_argument('--EPSG', help='EPSG',
                         nargs='?', default=None)
 
     parser.add_argument('-l', '-log', '--log', type=str,
