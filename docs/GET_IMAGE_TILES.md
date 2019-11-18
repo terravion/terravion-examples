@@ -36,7 +36,7 @@
 
 ```
 curl -X POST "https://api2.terravion.com/users/YOUR_USER_ID\
-/16/14498/40135.png.png?\
+/16/14498/40135.png?\
 tms=true&product=NC&\
 epochStart=1568828725&epochEnd=1569001525&\
 lowerBound=1660&upperBound=4364&\
