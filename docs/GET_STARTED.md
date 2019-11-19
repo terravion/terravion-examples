@@ -38,8 +38,10 @@ We have an [instructional video](https://www.youtube.com/watch?v=-Ur1WI4Iaj0) wh
 
 You will need a _client ID_ and _client secret_ which can be obtained by visiting the [developer apps](https://maps.terravion.com/settings/developer-apps) section of the settings page in your account, clicking _register new application_, then providing an Application name and [callback URL](https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2).
 
-You can use the following API calls for authentication
+You can use the following API calls for authentication:
+
 **Oauth2 Authorize endpoint**: https://maps.terravion.com/oauth2/authorize
+
 **Oauth2 Token endpoint**: https://maps.terravion.com/oauth2/token
 
 Following the instructional video will give you the access token for the account you used.
