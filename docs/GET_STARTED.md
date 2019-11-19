@@ -1,14 +1,14 @@
 ## Intro
 
 To start using the API, you will need 3 things:
-1. An _Activated_ TerrAvion user account 
+1. An **Activated** TerrAvion user account 
 2. The access token for the account
 3. Images, field names, or other data in the account
 
 ---
 ## Assumptions
 
-Throughout all of our docs we make the following assumptions:
+In these docs we make the following assumptions:
 
 1. That you know how to use the comand line tools on your computer.
 2. That you are familiar with javascript and/ or python.
