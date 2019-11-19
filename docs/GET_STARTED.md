@@ -5,8 +5,6 @@ To start using the API, you will need 3 things:
 2. The access token for the account
 3. Images, field names, or other data in the account
 
-In this document we will show you how to obtain your own accessToken and userId. We will also provide you a demo userId and accessToken should you only want to try things out.
-
 ---
 ## Assumptions
 
@@ -53,7 +51,13 @@ If you just want to test the API you can get started using our demo accessToken
 ```
 
 ---
-## Getting your User ID
+## Getting sample fields or data into your account
+
+The simplest way to get sample data into your account is to have an existing user [share imagery](https://help.terravion.com/how-to-share-my-terravion) with you.
+
+If you're building a new API connection and do not have any sample imagery, your sales representative can share some data with you, or you can email support@terravion.com
+
+## Other Basic functionality: Getting your User ID
 
 Each email address in our system has a User ID. We use [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)s and these IDs are required for many api calls.
 
@@ -84,7 +88,7 @@ In this case, your `userId` would be:
 1455cf90-af48-4fae-87d0-57523de51b8b
 ```
 ---
-## How to get a Block by Name
+## Looking up field (block) information by name
 
 `GET /userBlocks/getBlocksByName`
 
