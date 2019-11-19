@@ -1,37 +1,61 @@
 ## Intro
 
-When interacting with our api you will need an authorization token on each request you make to the api, so as we know it is you the one asking for access to your resources. This is called an accessToken and it is binded to your userId.
+To start using the API, you will need 3 things:
+1. An _Activated_ TerrAvion user account 
+2. The access token for the account
+3. Images, field names, or other data in the account
 
-Another thing that you will often need will be a userId. this is basically for the cases when you are doing a request on another users's behalf -for which you are authorized- and you need to specify which users you are asking this for.
-
-In this document we will show you how to obtain your own accessToken and userId. And we also provide you a demo userId and accessToken should you only want to try things out.
+In this document we will show you how to obtain your own accessToken and userId. We will also provide you a demo userId and accessToken should you only want to try things out.
 
 ---
 ## Assumptions
 
-Throughout all our docs we'd do the following assumptions:
+Throughout all of our docs we make the following assumptions:
 
 1. That you know how to use the comand line tools on your computer.
 2. That you are familiar with javascript and/ or python.
-3. That you have a basic knowledge on how an api works.
+3. That you have a basic knowledge of how an api works.
 
 ---
-## How to get your access token
+## Getting a TerrAvion account
+
+There are several ways to get a TerrAvion account:
+1. You can sign up for a new account [here](https://maps.terravion.com/signup) or view instructions [here](https://help.terravion.com/how-to-create-an-account-with-terravion).
+2. If you are setting up the API for a co-worker or client, they can [share imagery](https://help.terravion.com/how-to-share-my-terravion) with your email address, and this will create an account.
+
+You will need to authenticate your account before you can log in or start using the API. You will receive an email, and you'll need to click a link and set a password, so make sure you have the ability to check email for whichever email address you use.
+
+---
+## Getting an access token
+
+When interacting with our api you will need authorization to get information from a user's account. This authorization is called an _access token_. Each user has a unique acess token for their account. 
 
 ### A. Get your own accessToken:
 
-To get your own accessToken write us to api@terravion.com specifying your username or the main account you need it for.
+An access token can be obtained by authenticating via [Oauth2](https://oauth.net/2/). 
+
+We have an [instructional video](https://www.youtube.com/watch?v=-Ur1WI4Iaj0) which shows how to authenticate using the [postman](https://www.getpostman.com/) client.
+
+You will need a _client ID_ and _client secret_ which can be obtained by visiting the [developer apps](https://maps.terravion.com/settings/developer-apps) section of the settings page in your account, clicking _register new application_, then providing an Application name and [callback URL](https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2).
+
+You can use the following API calls for authentication
+**Oauth2 Authorize endpoint**: https://maps.terravion.com/oauth2/authorize
+**Oauth2 Token endpoint**: https://maps.terravion.com/oauth2/token
+
+Following the instructional video will give you the access token for the account you used.
 
 ### B. Using our demo accessToken
 
-Alternativeley, you can ge start using our demo accessToken
+If you just want to test the API you can get started using our demo accessToken
 
 ```
 03uKC6WwDrVUfh4jFrANmEMUegXApJXTeEYrGQc9Rf1ViWtByZEIMQ43CIepS7Cg
 ```
 
 ---
-## How to get a User ID
+## Getting your User ID
+
+Each email address in our system has a User ID. We use [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)s and these IDs are required for many api calls.
 
 ### A. With your own accessToken
 
@@ -81,3 +105,18 @@ access_token=YOUR_ACCESS_TOKEN"
   }
 ]
 ```
+
+
+
+
+---
+
+## FAQ
+
+**Q:** Should I have one master account connect to the TerrAvion app--or should I allow users to make their own connections?
+
+**A:** In most cases you'll want to allow users to make their own connection: for security purposes when you're using             our tile API, if they're going to report image issues through our APP, or any time they're going to purchase their own image             subscription.
+
+**Q:** What if I just need to use the API one time to do a bulk data export? Can you help me with the API connection? Can you connect to my app's API?
+
+**A:** We offer custom engineering services--reach out to support@terravion.com to start a discussion.
