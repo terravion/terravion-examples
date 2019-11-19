@@ -21,12 +21,14 @@ There are several ways to get a TerrAvion account:
 1. You can sign up for a new account [here](https://maps.terravion.com/signup) or view instructions [here](https://help.terravion.com/how-to-create-an-account-with-terravion).
 2. If you are setting up the API for a co-worker or client, they can [share imagery](https://help.terravion.com/how-to-share-my-terravion) with your email address, and this will create an account.
 
-You will need to authenticate your account before you can log in or start using the API. You will receive an email, and you'll need to click a link and set a password, so make sure you have the ability to check email for whichever email address you use.
+You will need to authenticate your account before you can log in or start using the API. You will receive an email, and you'll need to click a link and set a password.
+
+Make sure you have the ability to check messages for whichever email address you use.
 
 ---
 ## Getting an access token
 
-When interacting with our api you will need authorization to get information from a user's account. This authorization is called an _access token_. Each user has a unique acess token for their account. 
+When using our api you will need authorization to get information from a user's account. This authorization is called an _access token_. Each user has a unique acess token for their account. 
 
 ### A. Get your own accessToken:
 
@@ -53,9 +55,9 @@ If you just want to test the API you can get started using our demo accessToken
 ---
 ## Getting sample fields or data into your account
 
-The simplest way to get sample data into your account is to have an existing user [share imagery](https://help.terravion.com/how-to-share-my-terravion) with you.
+The simplest way to get sample data into your account is to have an existing user [share imagery](https://help.terravion.com/how-to-share-my-terravion) with you. This could be a co-worker, a client, or even one of our salespeople.
 
-If you're building a new API connection and do not have any sample imagery, your sales representative can share some data with you, or you can email support@terravion.com
+If you're building a new API connection and do not have any sample imagery, a sales representative can share some data with you: email sales@terravion.com
 
 ## Other Basic functionality: Getting your User ID
 
