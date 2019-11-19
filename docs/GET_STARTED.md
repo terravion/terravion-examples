@@ -10,9 +10,9 @@ To start using the API, you will need 3 things:
 
 In these docs we make the following assumptions:
 
-1. That you know how to use the comand line tools on your computer.
-2. That you are familiar with javascript and/ or python.
-3. That you have a basic knowledge of how an api works.
+1. You know how to use the comand line tools on your computer.
+2. You are familiar with javascript and/ or python.
+3. You have a basic knowledge of how an api works.
 
 ---
 ## Getting a TerrAvion account
