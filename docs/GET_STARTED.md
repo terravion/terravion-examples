@@ -32,7 +32,7 @@ When using our api you will need authorization to get information from a user's 
 
 ### A. Get your own accessToken:
 
-#### Via Oauth2
+#### i. via Oauth2
 
 An access token can be obtained by authenticating via [Oauth2](https://oauth.net/2/). 
 
@@ -48,11 +48,11 @@ You can use the following API calls for authentication:
 
 Following the instructional video will give you the access token for the account you used.
 
-#### via Customer Support
+#### ii. via Customer Support
 
 If you are experiencing any problem on via _Oauth2_ you can always email our customer support team writing them an email to api@terravion.com letting them know what's your issue and requesting an access token.
 
-#### via Profile on our web app
+#### iii. via Profile on our web app
 
 If you already got access to our web app, then you can go to  `> Settings > Profile` to get your access token. To get there you will need to click on your name at the top right corner of the app, then Settings, then Profile.
 
