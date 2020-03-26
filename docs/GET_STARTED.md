@@ -127,9 +127,85 @@ access_token=YOUR_ACCESS_TOKEN"
 ]
 ```
 
+---
+## Looking up fields (blocks) by user
 
+`GET /userBlocks/getUserBlocksForMap`
 
-
+**EXAMPLE**
+```
+curl -X GET --header "Accept: application/json" "https://api2.terravion.com/userBlocks/getUserBlocksForMap?\
+userId=YOUR_USER_ID\
+orderEpochStartDate=STRING\
+orderEpochEndDate=STRING\
+season=STRING\
+agronomistId=STRING\
+farmerId=STRING\
+farm=STRING\
+orderId=STRING\
+blockId=STRING\
+lat=DOUBLE\
+lng	=DOUBLE\
+distanceM=DOUBLE\
+agronomistsOnly=BOOLEAN\
+farmersOnly=BOOLEAN\
+farmsOnly=BOOLEAN\
+includePending=BOOLEAN\
+seasonOnly=BOOLEAN\
+countOnly=BOOLEAN\
+limit=DOUBLE\
+offset=DOUBLE\
+blockName=YOUR_BLOCK_NAME\
+access_token=YOUR_ACCESS_TOKEN"
+```
+**RESULT**
+```
+[
+  {
+    "role": "OWNER",
+    "blockId": "f1171aa5-38aa-432f-914a-700d8d0b5420",
+    "fieldName": "Joe Doe/NE 2_30_28",
+    "farm": "Joe Doe",
+    "field": "NE 2_30_28",
+    "geom": "{\"type\":\"Polygon\",\"coordinates\":[...]}",
+    "fieldTLLat": 32.352254547626,
+    "fieldTLLng": -101.4675835580814,
+    "fieldBRLat": 32.343283711049,
+    "fieldBRLng": -101.4746611063508,
+    "acres": 121.481084872608,
+    "blockStatus": "APPROVED",
+    "blockMeta": null,
+    "distributorId": "ea967725-e57b-4c36-a643-612a5c45e125",
+    "distributorName": "Example Crop Consult.",
+    "farmerId": "c4eea2-e1ec-4f74-ab88-a818718a6d3e3e",
+    "farmerEmail": "jdoe@example.com",
+    "farmerFirstName": "Joe",
+    "farmerLastName": "Doe",
+    "agronomistId": "7565fdb4-4750-439b-a8c5-fa2b7c8379ee",
+    "agronomistEmail": "bdoe@example.com",
+    "agronomistFirstName": "Bill",
+    "agronomistLastName": "Doe",
+    "orderStartDate": null,
+    "orderEndDate": null,
+    "orderId": "483eccd3-800d-47f6-93cb-1a74431fdac3",
+    "orderCustomerId": "a83e3ec4-e1ec-4f74-ab88-18718a6deea2",
+    "orderAddDate": "2018-03-05T23:07:55.648Z",
+    "planId": "7fdb00e3-eb85-4fe7-bb7f-61c7349e0ea4",
+    "boOrderId": "b32ebe51-883b-4f2b-a2ba-7eb1bf64e1af",
+    "boOrderAddDate": "2019-02-18T19:07:48.425Z",
+    "boOrderCustomerId": "fa2b7565-4750-439b-a8c5-7c8379eefdb4",
+    "boStatus": "active",
+    "jdUB": false,
+    "jdStatus": null,
+    "agxUB": false,
+    "agxStatus": null,
+    "climateUB": false,
+    "climateStatus": null,
+    "sampleField": null,
+    "season": "2019"
+  }
+]
+```
 ---
 
 ## FAQ
