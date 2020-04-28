@@ -34,7 +34,7 @@ class ProductLib(object):
         self.product_args = {
             'ndvi_alpha': 0.0,
             'ndvi_beta': 1.0,
-            'ndvi_low': 0.8,
+            'ndvi_low': 0.0,
             'ndvi_high': 1.0,
             'lowdegc': 0,
             'highdegc': 70,
