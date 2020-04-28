@@ -1,3 +1,5 @@
-rasterio==1.0.22
-requests>=2.20.0
-pytest==4.3.1
+numpy == 1.16.3
+pytest == 4.3.1
+rasterio == 1.0.22
+requests >= 2.20.0
+scikit-image == 0.12.3

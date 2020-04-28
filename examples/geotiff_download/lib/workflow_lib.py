@@ -24,11 +24,20 @@ def date_to_epoch(date_string):
 
 
 def validate_product(product):
-    product_list = ['SYNTHETIC_NC', 'MULTIBAND', 'NC',
-                    'CIR', 'NDVI', 'THERMAL', 'TIRS']
+    log = logging.getLogger(__name__)
+
+    product_list = [
+        'MULTIBAND', 'SYNTHETIC_NC', 'SYNTHETIC_COLOR', 'SYNTHETIC_RGB',
+        'NC', 'COLOR', 'RGB', 'CIR', 'INFRARED', 'NDVI', 'VIGOR',
+        'TIRS', 'THERMAL', 'PANSHARPEN_TIRS', 'PANSHARPEN_THERMAL',
+        'ZONE', 'ZONING', 'CANOPY_VIGOR'
+    ]
 
     if product in product_list:
         return True
+    else:
+        log.error('Please select a valid product: %s', str(product_list))
+        return False
 
 
 def get_cog_multiband_download_links(access_token, block_name=None,
@@ -40,8 +49,7 @@ def get_cog_multiband_download_links(access_token, block_name=None,
     log = logging.getLogger(__name__)
 
     if product:
-        if not validate_product(product):
-            log.info('Please select a valid product: MULTIBAND, SYNTHETIC_NC, NC, CIR, NDVI, THERMAL [TIRS]')
+        if validate_product(product) is False:
             return None
 
     tapi2_block = TerrAvionAPI2Block(access_token)
@@ -73,11 +81,30 @@ def get_cog_multiband_download_links(access_token, block_name=None,
             log.info('Found 0 layers')
     else:
         for layer_info in layer_info_list:
-            log.debug('layer_info %s', json.dumps(layer_info, indent=2, sort_keys=True))
+            log.debug('layer_info: %s', json.dumps(layer_info, indent=2, sort_keys=True))
+
             block_id = layer_info['blockId']
             block_info = tapi2_block.get_geom(block_id)
+
             log.debug('block_info: %s', json.dumps(block_info))
-            s3_url = layer_info['cogUrl']
+
+            s3_url = layer_info.get('cogUrl', None)
+
+            product_args = {}
+
+            # Add contrast boundaries to product_args
+            contrast_bounds = layer_info.get('contrastBounds', None)
+
+            if contrast_bounds:
+                if 'NC' in contrast_bounds:
+                    if 'lower' in contrast_bounds['NC'] and 'upper' in contrast_bounds['NC']:
+                        product_args['nc_lower_bound'] = contrast_bounds['NC']['lower']
+                        product_args['nc_upper_bound'] = contrast_bounds['NC']['upper']
+
+                if 'NIR' in contrast_bounds:
+                    if 'lower' in contrast_bounds['NIR'] and 'upper' in contrast_bounds['NIR']:
+                        product_args['nir_lower_bound'] = contrast_bounds['NIR']['lower']
+                        product_args['nir_upper_bound'] = contrast_bounds['NIR']['upper']
 
             if s3_url:
                 root_name, ext = os.path.splitext(os.path.basename(s3_url))
@@ -90,21 +117,22 @@ def get_cog_multiband_download_links(access_token, block_name=None,
                 if output_dir:
                     multiband_filename = os.path.join(output_dir, multiband_filename)
 
-                CogRasterLib().download_cog_from_s3(
-                    s3_url=s3_url,
-                    outfile=multiband_filename,
-                    epsg=4326,
-                    geojson_string=json.dumps(block_info),
-                    output_dir=output_dir,
-                    no_clipping=no_clipping)
+                if not os.path.isfile(multiband_filename):
+                    CogRasterLib().download_cog_from_s3(
+                        s3_url=s3_url,
+                        outfile=multiband_filename,
+                        epsg=4326,
+                        geojson_string=json.dumps(block_info),
+                        output_dir=output_dir,
+                        no_clipping=no_clipping)
 
                 if multiband_filename and output_dir and product and product != 'MULTIBAND':
                     p_l = ProductLib(
-                        product,
-                        layer_info['contrastBounds'],
-                        multiband_filename,
-                        output_dir,
-                        root_name)
+                        product=product,
+                        input_filepath=multiband_filename,
+                        product_args=product_args,
+                        output_dir=output_dir,
+                        root_name=root_name)
 
                     p_l.create_product()
 
@@ -124,8 +152,8 @@ def print_layer_summary(layer_info_list, access_token):
         else:
             block_info = tapi2_block.get_block(block_id)
 
-        log.debug('layer_info %s', json.dumps(layer_info, indent=2, sort_keys=True))
-        log.debug('block_info %s', json.dumps(block_info, indent=2, sort_keys=True))
+        log.debug('layer_info: %s', json.dumps(layer_info, indent=2, sort_keys=True))
+        log.debug('block_info: %s', json.dumps(block_info, indent=2, sort_keys=True))
 
         epoch_time = layer_info['layerDateEpoch']
         cog_url = layer_info['cogUrl']
@@ -333,10 +361,10 @@ def request_geotiff_tasks(ta2_task, layer_info_list, geotiff_epsg=None,
                     product_info_list.append(thermal_layer_dict)
 
             for product_info in product_info_list:
-                log.debug(json.dumps(product_info, indent=2, sort_keys=True))
+                log.debug('product_info: %s', json.dumps(product_info, indent=2, sort_keys=True))
 
                 if not product_info['layer_id']:
-                    log.debug('missing layer_id')
+                    log.debug('Missing layer_id')
                     continue
 
                 if product_info['product'] == 'MULTIBAND':

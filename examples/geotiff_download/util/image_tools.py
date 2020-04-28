@@ -23,6 +23,12 @@ def rescale_intensity_to_bounds(band, lower_bound, upper_bound):
     return band
 
 
+def clean_zeros_with_mask(array, mask):
+    array[array == 0] = 1
+    array[mask] = 0
+    return array
+
+
 def pansharpen(r, g, b, pan, method='browley', W=0.1):
     rgb = np.empty((r.shape[0], r.shape[1], 3))
     rgb[:, :, 0] = r

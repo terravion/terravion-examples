@@ -61,6 +61,11 @@ def main(args):
     get_summary = args.get_summary
     access_token = args.access_token
 
+    # Create output dir if it doesnt already exist
+    if output_dir is not None:
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
     if validate_terravion_cog and input_tif:
         if CogRasterLib().validate_terravion_cog(input_tif):
             log.info('%s is a valid terravion cog', input_tif)
