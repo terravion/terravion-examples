@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+- Need to include colormap colormap output in next release
+
+
+## [1.2.0] - 2020-04-29
+
+### Added
+- `--dynamic` flag added to `cog_main.py`. This will trigger layer stats to be grabbed from the terravion API and used to generate a dynamic NDVI or THERMAL or PANSHARPEN_THERMAL product.
+- `ta_layer_stats.py` module added to grab layer stats from terravion API.
+
 
 ## [1.1.0] - 2020-04-27
 

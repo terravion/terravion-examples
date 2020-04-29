@@ -55,6 +55,7 @@ def main(args):
     # add_end_date = args.add_end_date
     product = args.product
     no_clipping = args.no_clipping
+    dynamic = args.dynamic
     start_date = args.start_date
     end_date = args.end_date
     get_layers = args.get_layers
@@ -83,7 +84,8 @@ def main(args):
             output_dir=output_dir,
             print_summary=get_summary,
             no_clipping=no_clipping,
-            product=product)
+            product=product,
+            dynamic=dynamic)
     else:
         parser.print_help()
 
@@ -101,6 +103,8 @@ if __name__ == '__main__':
     parser.add_argument('--get_summary', help='get_summary',
                         action='store_true')
     parser.add_argument('--no_clipping', help='no_clipping',
+                        action='store_true')
+    parser.add_argument('--dynamic', help='Flag for enabling dynamic colormap for NDVI or Thermal products',
                         action='store_true')
 
     # parameters
