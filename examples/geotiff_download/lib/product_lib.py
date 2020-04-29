@@ -432,6 +432,8 @@ class ProductLib(object):
         if si_unit == 'centikelvin':
             old_thermal_flag = False
 
+        mask = (R == 0)
+
         # temp_range_max = 0.04 * UINT8
 
         t = np.asarray(t, dtype=np.float)
@@ -461,6 +463,9 @@ class ProductLib(object):
         t *= 1.3
 
         pan = convert_16bit_to_8bit(t)
+
+        # Fixes nodata holes in middle of data caused by rescaling
+        pan = clean_zeros_with_mask(pan, mask)
 
         kwargs.update(dtype=np.uint8, compress='LZW', photometric='rgb')
         kwargs.update(alpha='no', count=3)

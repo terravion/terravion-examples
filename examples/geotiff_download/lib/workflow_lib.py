@@ -10,6 +10,7 @@ from lib.api2.ta_user import TerrAvionAPI2User
 from lib.api2.ta_block import TerrAvionAPI2Block
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 from lib.api2.ta_layer import TerrAvionAPI2Layer
+from lib.api2.ta_layer_stats import TerrAvionAPI2LayerStats
 from lib.api2.ta_task import TerrAvionAPI2Task
 from util.file_util import clean_filename, run_download_file
 
@@ -45,10 +46,11 @@ def get_cog_multiband_download_links(access_token, block_name=None,
                                      start_date=None, end_date=None,
                                      add_start_date=None, output_dir=None,
                                      print_summary=False, no_clipping=False,
-                                     product=None):
+                                     product=None, dynamic=False):
     log = logging.getLogger(__name__)
 
     if product:
+        # Exit if input product is invalid
         if validate_product(product) is False:
             return None
 
@@ -105,6 +107,39 @@ def get_cog_multiband_download_links(access_token, block_name=None,
                     if 'lower' in contrast_bounds['NIR'] and 'upper' in contrast_bounds['NIR']:
                         product_args['nir_lower_bound'] = contrast_bounds['NIR']['lower']
                         product_args['nir_upper_bound'] = contrast_bounds['NIR']['upper']
+
+            if dynamic is True:
+                ta_ls = TerrAvionAPI2LayerStats(user_id, access_token)
+
+                if product in ['NDVI', 'VIGOR']:
+                    # Add NDVI dynamic ndvi_low and ndvi_high values using mean & std stats
+                    ndvi_layer_stats = ta_ls.get_layer_stats_by_layer_id(layer_info['ndviLayerId'])
+
+                    product_args['ndvi_low'] = float(ndvi_layer_stats['meta']['meanLow']) - 3.0 * float(ndvi_layer_stats['meta']['stdLow'])
+                    product_args['ndvi_high'] = float(ndvi_layer_stats['meta']['meanLow']) + 3.0 * float(ndvi_layer_stats['meta']['stdLow'])
+
+                    log.info('ndvi_low: %s', str(product_args['ndvi_low']))
+                    log.info('ndvi_high: %s', str(product_args['ndvi_high']))
+
+                if product in ['TIRS', 'THERMAL']:
+                    # Add THERMAL dynamic lowdegc and highdegc values using mean & std stats
+                    thermal_layer_stats = ta_ls.get_layer_stats_by_layer_id(layer_info['thermalLayerId'])
+
+                    product_args['lowdegc'] = (float(thermal_layer_stats['meta']['meanLow']) - 3.0 * float(thermal_layer_stats['meta']['stdLow'])) * 70.0
+                    product_args['highdegc'] = (float(thermal_layer_stats['meta']['meanLow']) + 3.0 * float(thermal_layer_stats['meta']['stdLow'])) * 70.0
+
+                    log.info('lowdegc: %s', str(product_args['lowdegc']))
+                    log.info('highdegc: %s', str(product_args['highdegc']))
+
+                if product in ['PANSHARPEN_TIRS', 'PANSHARPEN_THERMAL']:
+                    # Add PANSHARPEN_THERMAL dynamic lowdegc and highdegc values using mean & std stats
+                    pansharpen_thermal_layer_stats = ta_ls.get_layer_stats_by_layer_id(layer_info['panTIRSLayerId'])
+
+                    product_args['lowdegc'] = (float(pansharpen_thermal_layer_stats['meta']['meanLow']) - 3.0 * float(pansharpen_thermal_layer_stats['meta']['stdLow'])) * 70.0
+                    product_args['highdegc'] = (float(pansharpen_thermal_layer_stats['meta']['meanLow']) + 3.0 * float(pansharpen_thermal_layer_stats['meta']['stdLow'])) * 70.0
+
+                    log.info('lowdegc: %s', str(product_args['lowdegc']))
+                    log.info('highdegc: %s', str(product_args['highdegc']))
 
             if s3_url:
                 root_name, ext = os.path.splitext(os.path.basename(s3_url))

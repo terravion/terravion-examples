@@ -26,7 +26,7 @@ class TerrAvionAPI2Layer:
             result = r.json()
             return result
         else:
-            self.log.debug('error:' + str(r.status_code))
+            self.log.debug('error: %s', str(r.status_code))
             self.log.debug(r.text)
             self.log.debug('-------------------------------------------------------')
 
