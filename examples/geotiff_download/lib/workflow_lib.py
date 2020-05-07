@@ -7,6 +7,7 @@ import datetime
 from lib.product_lib import ProductLib
 from lib.cog_raster_lib import CogRasterLib
 from lib.api2.ta_user import TerrAvionAPI2User
+from lib.api2.ta_colormap import TerrAvionAPI2Colormap
 from lib.api2.ta_block import TerrAvionAPI2Block
 from lib.api2.ta_user_block import TerrAvionAPI2UserBlock
 from lib.api2.ta_layer import TerrAvionAPI2Layer
@@ -46,7 +47,8 @@ def get_cog_multiband_download_links(access_token, block_name=None,
                                      start_date=None, end_date=None,
                                      add_start_date=None, output_dir=None,
                                      print_summary=False, no_clipping=False,
-                                     product=None, dynamic=False):
+                                     product=None, dynamic=False,
+                                     colormap_name=None, colormap_id=None):
     log = logging.getLogger(__name__)
 
     if product:
@@ -92,7 +94,20 @@ def get_cog_multiband_download_links(access_token, block_name=None,
 
             s3_url = layer_info.get('cogUrl', None)
 
+            if not s3_url:
+                log.error('s3_url not in layer_info, skipping...')
+                continue
+
             product_args = {}
+
+            # Add colormap to product_args
+            if colormap_id or colormap_name:
+                colormap = TerrAvionAPI2Colormap().get_colormap(
+                    colormap_id=colormap_id,
+                    colormap_name=colormap_name,
+                    output_format='rasterio')
+
+                product_args['colormap'] = colormap
 
             # Add contrast boundaries to product_args
             contrast_bounds = layer_info.get('contrastBounds', None)
@@ -108,6 +123,7 @@ def get_cog_multiband_download_links(access_token, block_name=None,
                         product_args['nir_lower_bound'] = contrast_bounds['NIR']['lower']
                         product_args['nir_upper_bound'] = contrast_bounds['NIR']['upper']
 
+            # Add dynamic low/high values to product_args
             if dynamic is True:
                 ta_ls = TerrAvionAPI2LayerStats(user_id, access_token)
 
@@ -141,35 +157,34 @@ def get_cog_multiband_download_links(access_token, block_name=None,
                     log.info('lowdegc: %s', str(product_args['lowdegc']))
                     log.info('highdegc: %s', str(product_args['highdegc']))
 
-            if s3_url:
-                root_name, ext = os.path.splitext(os.path.basename(s3_url))
+            root_name, ext = os.path.splitext(os.path.basename(s3_url))
+            multiband_filename = root_name + '.tif'
+
+            if not no_clipping:
+                root_name = block_id + '_' + root_name
                 multiband_filename = root_name + '.tif'
 
-                if not no_clipping:
-                    root_name = block_id + '_' + root_name
-                    multiband_filename = root_name + '.tif'
+            if output_dir:
+                multiband_filename = os.path.join(output_dir, multiband_filename)
 
-                if output_dir:
-                    multiband_filename = os.path.join(output_dir, multiband_filename)
+            if not os.path.isfile(multiband_filename):
+                CogRasterLib().download_cog_from_s3(
+                    s3_url=s3_url,
+                    outfile=multiband_filename,
+                    epsg=4326,
+                    geojson_string=json.dumps(block_info),
+                    output_dir=output_dir,
+                    no_clipping=no_clipping)
 
-                if not os.path.isfile(multiband_filename):
-                    CogRasterLib().download_cog_from_s3(
-                        s3_url=s3_url,
-                        outfile=multiband_filename,
-                        epsg=4326,
-                        geojson_string=json.dumps(block_info),
-                        output_dir=output_dir,
-                        no_clipping=no_clipping)
+            if multiband_filename and output_dir and product and product != 'MULTIBAND':
+                p_l = ProductLib(
+                    product=product,
+                    input_filepath=multiband_filename,
+                    product_args=product_args,
+                    output_dir=output_dir,
+                    root_name=root_name)
 
-                if multiband_filename and output_dir and product and product != 'MULTIBAND':
-                    p_l = ProductLib(
-                        product=product,
-                        input_filepath=multiband_filename,
-                        product_args=product_args,
-                        output_dir=output_dir,
-                        root_name=root_name)
-
-                    p_l.create_product()
+                p_l.create_product()
 
 
 def print_layer_summary(layer_info_list, access_token):

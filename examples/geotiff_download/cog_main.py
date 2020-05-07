@@ -56,6 +56,8 @@ def main(args):
     product = args.product
     no_clipping = args.no_clipping
     dynamic = args.dynamic
+    colormap_name = args.colormap_name
+    colormap_id = args.colormap_id
     start_date = args.start_date
     end_date = args.end_date
     get_layers = args.get_layers
@@ -85,7 +87,9 @@ def main(args):
             print_summary=get_summary,
             no_clipping=no_clipping,
             product=product,
-            dynamic=dynamic)
+            dynamic=dynamic,
+            colormap_name=colormap_name,
+            colormap_id=colormap_id)
     else:
         parser.print_help()
 
@@ -113,6 +117,10 @@ if __name__ == '__main__':
     parser.add_argument('--block_id_list', help='block_id_list',
                         nargs='+', default=None)
     parser.add_argument('--block_name', help='block_name <name>',
+                        nargs='?', default=None)
+    parser.add_argument('--colormap_name', type=str, help='Colormap name in quotes (eg. "GRANULAR", "NDVI_2", "T", etc.)',
+                        nargs='?', default=None)
+    parser.add_argument('--colormap_id', type=str, help='Colormap ID',
                         nargs='?', default=None)
     parser.add_argument('--add_start_date', help='add start_date YY-MM-DD',
                         nargs='?', default=None)
