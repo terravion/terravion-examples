@@ -4,7 +4,7 @@ import json
 import logging
 import numpy as np
 import skimage
-from skimage.filter.rank import median
+from skimage.filters.rank import median
 from skimage.morphology import disk
 
 
@@ -38,7 +38,9 @@ class ProductLib(object):
             'ndvi_high': 1.0,
             'lowdegc': 0,
             'highdegc': 70,
-            'si_unit': 'decikelvin'
+            'si_unit': 'decikelvin',
+            'singleband': False,
+            'colormap': None
         }
 
         # NOTE: For backwards compatability with previous version 1.0.0
@@ -235,7 +237,8 @@ class ProductLib(object):
         sndvi_alpha = self.product_args['ndvi_alpha']
         low = self.product_args['ndvi_low']
         high = self.product_args['ndvi_high']
-        singleband = self.product_args.get('singleband', False)
+        singleband = self.product_args['singleband']
+        colormap = self.product_args['colormap']
 
         # Get the bands - TA stand geotiff goes B G R N T
         with rasterio.open(self.input_filepath) as src:
@@ -268,6 +271,9 @@ class ProductLib(object):
         kwargs.update(dtype=np.uint8, compress='LZW', photometric='rgb')
         kwargs.update(alpha='no', count=3)
 
+        if colormap:
+            singleband = True
+
         if singleband:
             kwargs.update(alpha='no', count=1)
 
@@ -280,6 +286,9 @@ class ProductLib(object):
                 dst.write(ndvi, 2)
                 dst.write(ndvi, 3)
 
+            if colormap:
+                dst.write_colormap(1, colormap)
+
             dst.nodata = 0
 
     def make_zone(self, output_filepath):
@@ -289,6 +298,8 @@ class ProductLib(object):
         sndvi_alpha = self.product_args['ndvi_alpha']
         low = self.product_args['ndvi_low']
         high = self.product_args['ndvi_high']
+        singleband = self.product_args['singleband']
+        colormap = self.product_args['colormap']
 
         # Get the bands - TA stand geotiff goes B G R N T
         with rasterio.open(self.input_filepath) as src:
@@ -316,12 +327,24 @@ class ProductLib(object):
         kwargs.update(dtype=np.uint8, compress='LZW', photometric='rgb')
         kwargs.update(alpha='no', count=3)
 
+        if colormap:
+            singleband = True
+
+        if singleband:
+            kwargs.update(alpha='no', count=1)
+
         self.log.info('Writing file: %s', str(output_filepath))
 
         with rasterio.open(output_filepath, 'w', **kwargs) as dst:
             dst.write(ndvi_processed, 1)
-            dst.write(ndvi_processed, 2)
-            dst.write(ndvi_processed, 3)
+
+            if not singleband:
+                dst.write(ndvi_processed, 2)
+                dst.write(ndvi_processed, 3)
+
+            if colormap:
+                dst.write_colormap(1, colormap)
+
             dst.nodata = 0
 
     def make_tirs(self, output_filepath):
@@ -330,6 +353,8 @@ class ProductLib(object):
         lowdegc = self.product_args['lowdegc']
         highdegc = self.product_args['highdegc']
         si_unit = self.product_args['si_unit']
+        singleband = self.product_args['singleband']
+        colormap = self.product_args['colormap']
 
         # Get the red and NIR bands - TA stand geotiff goes B G R N T
         with rasterio.open(self.input_filepath) as src:
@@ -393,19 +418,28 @@ class ProductLib(object):
         t = np.asarray(t, dtype=np.uint8)
         t = np.clip(t, 0, UINT8).astype(np.uint8)
 
-        # Update to only have 1 88888888-bit bands,
-        # no compression and a colormap
-
         # Now write the bands in the standard RGB
         kwargs.update(dtype=np.uint8, compress='LZW', photometric='rgb')
         kwargs.update(alpha='no', count=3)
+
+        if colormap:
+            singleband = True
+
+        if singleband:
+            kwargs.update(alpha='no', count=1)
 
         self.log.info('Writing file: %s', str(output_filepath))
 
         with rasterio.open(output_filepath, 'w', **kwargs) as dst:
             dst.write(t, 1)
-            dst.write(t, 2)
-            dst.write(t, 3)
+
+            if not singleband:
+                dst.write(t, 2)
+                dst.write(t, 3)
+
+            if colormap:
+                dst.write_colormap(1, colormap)
+
             dst.nodata = 0
 
     def make_pansharpen_tirs(self, output_filepath):
@@ -414,6 +448,8 @@ class ProductLib(object):
         lowdegc = self.product_args['lowdegc']
         highdegc = self.product_args['highdegc']
         si_unit = self.product_args['si_unit']
+        singleband = self.product_args['singleband']
+        colormap = self.product_args['colormap']
 
         with rasterio.open(self.input_filepath) as src:
             B, G, R, t = map(src.read, (4, 5, 6, 7))
@@ -470,12 +506,24 @@ class ProductLib(object):
         kwargs.update(dtype=np.uint8, compress='LZW', photometric='rgb')
         kwargs.update(alpha='no', count=3)
 
+        if colormap:
+            singleband = True
+
+        if singleband:
+            kwargs.update(alpha='no', count=1)
+
         self.log.info('Writing file: %s', str(output_filepath))
 
         with rasterio.open(output_filepath, 'w', **kwargs) as dst:
             dst.write(pan, 1)
-            dst.write(pan, 2)
-            dst.write(pan, 3)
+
+            if not singleband:
+                dst.write(pan, 2)
+                dst.write(pan, 3)
+
+            if colormap:
+                dst.write_colormap(1, colormap)
+
             dst.nodata = 0
 
     def calculate_ndvi(self, red, nir, alpha=0.0, beta=1.0, low=0.0, high=1.0):

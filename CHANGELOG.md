@@ -5,8 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-- Need to include colormap colormap output in next release
+
+## [1.3.0] - 2020-05-06
+
+### Added
+- `--colormap_name` and `--colormap_id` flags added to `cog_main.py`. This output any product that supports a colormap from the name or id used as an input.
+- All products that support products also support singleband flags in `product_lib.py` since applying a colormap with `write_colormap()` in `rasterio` requires a single band.
+- `./examples/geotiff_download/lib/api2/ta_colormap.py`. Used for downloading colormap objects by name or colormap_id.
+
+### Removed
+- `./examples/geotiff_download/lib/colormap_sample.py` because it was out of date. The list of given example colormap names was moved to `ta_colormap.py` as the list object `color_map_list`.
 
 
 ## [1.2.0] - 2020-04-29
