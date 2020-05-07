@@ -75,7 +75,7 @@ access_token=YOUR_ACCESS_TOKEN"
 ### REQUEST EXAMPLE
 ```
 curl -X POST --header "Content-Type: application/json" "https://api2.terravion.com/\
-tasks/requestGeotiffTaskBulk?\
+tasks/requestGeotiffTask?\
 userId=YOUR_USER_ID&\
 layerId=SELECTED_LAYER_ID&
 multiband=true&\
