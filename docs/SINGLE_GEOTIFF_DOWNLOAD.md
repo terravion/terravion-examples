@@ -88,6 +88,49 @@ access_token=YOUR_ACCESS_TOKEN"
 }
 ```
 
+## 3. Check Geotiff Task Status
+
+> This call allows you to check the status of your geotiff task, and when it's ready to download it exposes the download endpoint.
+
+### ENDPOINT
+
+`GET /tasks/getUserDownloads`
+
+### OPTIONS
+
+| Parameter | Required | Description | Data Type |
+| - | - | - | - |
+| userId | true | TerrAvion User ID | string |
+
+### REQUEST EXAMPLE
+```
+curl -X POST --header "Content-Type: application/json" "https://api2.terravion.com/\
+tasks/getUserDownloads?\
+userId=YOUR_USER_ID&\
+access_token=YOUR_ACCESS_TOKEN"
+```
+
+## 4. Download Geotiff
+
+> This call allows you to download the requested geotiff once it's ready.
+
+### ENDPOINT
+
+`GET /tasks/downloadSingleGeotiff/YOUR_TASK_ID.tiff`
+
+### OPTIONS
+
+| Parameter | Required | Description | Data Type |
+| - | - | - | - |
+| taskId | true | Single Geotiff Download Task ID | string |
+
+### REQUEST EXAMPLE
+```
+wget -O YOUR_FILE_NAME.tiff "https://api2.terravion.com/\
+tasks/downloadSingleGeotiff/YOUR_TASK_ID.tiff&\
+access_token=YOUR_ACCESS_TOKEN"
+```
+
 ### MORE EXAMPLES
 
 * [Geotiff Download Python Script](../examples/geotiff_download)
