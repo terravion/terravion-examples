@@ -7,7 +7,7 @@ from util import config
 
 # List of commonly used colormaps by name
 color_map_list = [
-    'N-GREENG', 'N-R2', 'N-R3', 'T', 'N-AVHRR', 'JG', 'BW',
+    'N-GREENG', 'N-R2', 'N-R3', 'T', 'N-AVHRR', 'JG', 'BW', 'NDVI_2',
     'RW-LEGACY', 'GRANULAR', 'GM-COMP1', 'GM-RGB3', 'GM-QUAD',
     'CVC', 'CHS_HC2', 'CHS_HC1', 'SMWE', '10 Class Agroprecision Grey',
     '6 Class Agroprecision', '6 Class Agroprecision Grey',
