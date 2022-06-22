@@ -1,4 +1,4 @@
-numpy == 1.16.3
+numpy == 1.22.0
 pytest == 4.3.1
 rasterio == 1.0.22
 requests >= 2.20.0
